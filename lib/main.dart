@@ -1,8 +1,15 @@
-import 'package:aplikasi_ekstraksi_file_gpt4/home.dart';
+import 'package:aplikasi_ekstraksi_file_gpt4/screen/home.dart';
+import 'package:aplikasi_ekstraksi_file_gpt4/providers/theme_provider.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 void main() {
-  runApp(const MyApp());
+  return runApp((
+    MultiProvider(providers: [
+    ChangeNotifierProvider(create: (_) => new ThemeNotifier()),
+    ],
+    child: const MyApp(),
+  )));
 }
 
 class MyApp extends StatelessWidget {
@@ -11,28 +18,26 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Ekstraksi File',
-      theme: ThemeData(
-        // This is the theme of your application.
-        //
-        // TRY THIS: Try running your application with "flutter run". You'll see
-        // the application has a purple toolbar. Then, without quitting the app,
-        // try changing the seedColor in the colorScheme below to Colors.green
-        // and then invoke "hot reload" (save your changes or press the "hot
-        // reload" button in a Flutter-supported IDE, or press "r" if you used
-        // the command line to start the app).
-        //
-        // Notice that the counter didn't reset back to zero; the application
-        // state is not lost during the reload. To reset the state, use hot
-        // restart instead.
-        //
-        // This works for code too, not just values: Most code changes can be
-        // tested with just a hot reload.
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-        useMaterial3: true,
+    return Consumer<ThemeNotifier>(
+      builder: (context, theme, _) => MaterialApp(
+        title: 'Ekstraksi File',
+        theme: ThemeData(
+              primaryColor: Colors.blue,
+              colorScheme: ColorScheme.light(
+                primary: Colors.indigo,
+                onPrimary: Colors.white,
+              ),
+            ),
+            darkTheme: ThemeData(
+              primaryColor: Colors.blueGrey,
+              colorScheme: ColorScheme.dark(
+                primary: Colors.blueGrey,
+                onPrimary: Colors.black,
+              ),
+            ),
+        themeMode: theme.currentTheme,
+        home: const Home(),
       ),
-      home: const Home(),
     );
   }
 }

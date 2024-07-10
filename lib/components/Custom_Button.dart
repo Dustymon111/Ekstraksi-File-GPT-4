@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 class CustomElevatedButton extends StatelessWidget {
   final String label;
-  final VoidCallback onPressed;
+  final VoidCallback? onPressed;
 
   const CustomElevatedButton({
     Key? key,
@@ -12,15 +12,23 @@ class CustomElevatedButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     return ElevatedButton(
-      style: ElevatedButton.styleFrom(
-        backgroundColor: Colors.black, // Button background color
-        shadowColor: Colors.black54, // Shadow color
-        elevation: 5, // Elevation
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(10), // Rounded corners
-        ),
-        padding: EdgeInsets.symmetric(horizontal: 20, vertical: 15), // Padding
+      style:ButtonStyle(
+        backgroundColor: WidgetStateProperty.resolveWith((states) {
+          if (states.contains(WidgetState.disabled)) {
+            return theme.colorScheme.onSurface.withOpacity(0.38);
+          }
+          return theme.colorScheme.primary;
+        }),
+        foregroundColor: WidgetStateProperty.resolveWith((states) {
+          if (states.contains(WidgetState.disabled)) {
+            return theme.colorScheme.onSurface.withOpacity(0.18);
+          }
+          return theme.colorScheme.onPrimary;
+        }),
+        padding: WidgetStateProperty.all(EdgeInsets.symmetric(horizontal: 24, vertical: 12)),
+        textStyle: WidgetStateProperty.all(TextStyle(fontSize: 16)),
       ),
       onPressed: onPressed,
       child: Text(
