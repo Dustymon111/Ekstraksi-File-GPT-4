@@ -102,7 +102,7 @@ class _BookmarkDetailScreenState extends State<BookmarkDetailScreen> {
                           barWidth: 3,
                           isStrokeCapRound: true,
                           belowBarData: BarAreaData(show: false),
-                          dotData: FlDotData(show: false),
+                          dotData: FlDotData(show: true),
                         ),
                       ],
                     ),

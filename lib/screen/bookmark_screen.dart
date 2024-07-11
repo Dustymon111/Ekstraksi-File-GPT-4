@@ -34,7 +34,7 @@ void initState() {
            IconButton(
             icon: const Icon(Icons.home_work),
             onPressed: (){
-              Navigator.pushReplacementNamed(context, '/questions');
+              Navigator.pushNamed(context, '/questions');
             }
           ),
           Switch(
@@ -86,8 +86,6 @@ void initState() {
           StreamBuilder<List<Bookmark>>(
             stream: bookmarkprov.bookmarksStream,
             builder: (context, snapshot) {
-
-              print(snapshot.data);
               if (snapshot.connectionState == ConnectionState.waiting) {
                 return const Center(child: CircularProgressIndicator());
               } else if (snapshot.hasError) {

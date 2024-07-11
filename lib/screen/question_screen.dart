@@ -2,7 +2,6 @@ import 'package:aplikasi_ekstraksi_file_gpt4/components/question_card.dart';
 import 'package:aplikasi_ekstraksi_file_gpt4/models/question_model.dart';
 import 'package:aplikasi_ekstraksi_file_gpt4/providers/question_provider.dart';
 import 'package:aplikasi_ekstraksi_file_gpt4/providers/theme_provider.dart';
-import 'package:aplikasi_ekstraksi_file_gpt4/utils/question_stream.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -12,6 +11,15 @@ class QuestionScreen extends StatefulWidget {
 }
 
 class _QuestionScreenState extends State<QuestionScreen> {
+
+    @override
+void initState() {
+  super.initState();
+  WidgetsBinding.instance.addPostFrameCallback((_) {
+    context.read<QuestionProvider>().initiateQuestion();
+  });
+}
+
   @override
   Widget build(BuildContext context) {
     var questionprov = Provider.of<QuestionProvider>(context); 
@@ -21,6 +29,7 @@ class _QuestionScreenState extends State<QuestionScreen> {
         title: const Text('Question List'),
         actions: [
           Switch(
+            thumbIcon: themeprov.isDarkTheme? WidgetStateProperty.all(const Icon(Icons.nights_stay)) :WidgetStateProperty.all(const Icon(Icons.sunny)) ,
             activeColor: Colors.white,
             inactiveThumbColor: Colors.indigo,
             value: themeprov.isDarkTheme, 
@@ -31,7 +40,7 @@ class _QuestionScreenState extends State<QuestionScreen> {
         ],
       ),
       body: StreamBuilder<List<Question>>(
-        stream: QuestionStream.getQuestions(),
+        stream: questionprov.questionStream,
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(child: CircularProgressIndicator());

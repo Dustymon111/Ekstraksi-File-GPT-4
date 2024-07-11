@@ -1,6 +1,5 @@
 import 'package:aplikasi_ekstraksi_file_gpt4/providers/bookmark_provider.dart';
 import 'package:aplikasi_ekstraksi_file_gpt4/providers/question_provider.dart';
-import 'package:aplikasi_ekstraksi_file_gpt4/screen/bookmark_detail_screen.dart';
 import 'package:aplikasi_ekstraksi_file_gpt4/screen/bookmark_screen.dart';
 import 'package:aplikasi_ekstraksi_file_gpt4/screen/home_screen.dart';
 import 'package:aplikasi_ekstraksi_file_gpt4/providers/theme_provider.dart';
