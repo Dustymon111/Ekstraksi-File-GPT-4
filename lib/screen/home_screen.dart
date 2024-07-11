@@ -1,8 +1,6 @@
 import 'dart:io';
 
 import 'package:aplikasi_ekstraksi_file_gpt4/providers/theme_provider.dart';
-import 'package:aplikasi_ekstraksi_file_gpt4/screen/history.dart';
-import 'package:aplikasi_ekstraksi_file_gpt4/screen/questions.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
@@ -42,19 +40,8 @@ class _HomeState extends State<Home> {
       appBar: AppBar(
         title: const Text("Home"),
         actions: [
-          IconButton(
-            icon: const Icon(Icons.question_mark),
-            onPressed: (){
-              Navigator.push(context, MaterialPageRoute(builder: (context) => QuestionScreen()));
-            }
-          ),
-          IconButton(
-            icon: const Icon(Icons.work_history_outlined),
-            onPressed: (){
-              Navigator.push(context, MaterialPageRoute(builder: (context) => HistoryScreen()));
-            }
-          ),
           Switch(
+            thumbIcon: themeprov.isDarkTheme? WidgetStateProperty.all(const Icon(Icons.nights_stay)) :WidgetStateProperty.all(const Icon(Icons.sunny)) ,
             activeColor: Colors.white,
             inactiveThumbColor: Colors.indigo,
             value: themeprov.isDarkTheme, 
@@ -63,6 +50,25 @@ class _HomeState extends State<Home> {
             },
           )
         ],
+      ),
+      bottomNavigationBar: BottomAppBar(
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: [
+            IconButton(
+            icon: const Icon(Icons.home),
+            onPressed: (){
+              Navigator.pushReplacementNamed(context, '/');
+            }
+          ),
+          IconButton(
+            icon: const Icon(Icons.book_outlined),
+            onPressed: (){
+              Navigator.pushReplacementNamed(context, '/bookmarks');
+            }
+          ),
+          ]
+        ,),
       ),
       body: Center(
         child: Column(
