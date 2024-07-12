@@ -5,7 +5,28 @@ import 'package:flutter/material.dart';
 
 class QuestionProvider extends ChangeNotifier {
   Map <int, String> _selectedOption = {}; // keep track of the selected question option
+  Map <int, String> _sortedSelectedOption = {};
   List<Question> questions = [
+      Question(
+        text: 'What is your favorite color?',
+        options: ['Red', 'Green', 'Blue', 'Yellow'],
+        correctOption: "Red"
+      ),
+      Question(
+        text: 'Which programming language do you prefer?',
+        options: ['Dart', 'JavaScript', 'Python', 'Java'],
+        correctOption: "Python"
+      ),
+      Question(
+        text: 'What is your favorite color?',
+        options: ['Red', 'Green', 'Blue', 'Yellow'],
+        correctOption: "Red"
+      ),
+      Question(
+        text: 'Which programming language do you prefer?',
+        options: ['Dart', 'JavaScript', 'Python', 'Java'],
+        correctOption: "Python"
+      ),
       Question(
         text: 'What is your favorite color?',
         options: ['Red', 'Green', 'Blue', 'Yellow'],
@@ -45,10 +66,11 @@ class QuestionProvider extends ChangeNotifier {
   // }
 
   
-  Map<int, String> get selectedOption => _selectedOption;
+  Map<int, String> get selectedOption => _sortedSelectedOption;
   
   void setSelectedOption(int index, String option) {
     _selectedOption[index] = option;
+    _sortedSelectedOption= Map.fromEntries(_selectedOption.entries.toList()..sort((e1, e2) => e1.key.compareTo(e2.key)));
     notifyListeners();
   }
 }

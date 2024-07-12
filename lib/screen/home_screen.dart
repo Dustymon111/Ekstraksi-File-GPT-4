@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:aplikasi_ekstraksi_file_gpt4/providers/theme_provider.dart';
+import 'package:aplikasi_ekstraksi_file_gpt4/utils/page_animation.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
@@ -36,6 +37,7 @@ class _HomeState extends State<Home> {
   @override
   Widget build(BuildContext context) {
     var themeprov = Provider.of<ThemeNotifier>(context);
+    final theme = Theme.of(context);
     return Scaffold(
       appBar: AppBar(
         title: const Text("Home"),
@@ -57,14 +59,13 @@ class _HomeState extends State<Home> {
           children: [
             IconButton(
             icon: const Icon(Icons.home),
-            onPressed: (){
-              Navigator.pushReplacementNamed(context, '/');
-            }
+            onPressed: (){},
+            color: theme.colorScheme.primary,
           ),
           IconButton(
             icon: const Icon(Icons.book_outlined),
             onPressed: (){
-              Navigator.pushReplacementNamed(context, '/bookmarks');
+              Navigator.of(context).pushReplacement(homeBookmarkRoute());
             }
           ),
           ]
@@ -86,14 +87,14 @@ class _HomeState extends State<Home> {
                 File(pickedFile!.path!)),
             )
               :
-              Container(
-                child: const Text(
-                  "No File Selected",
-                  style: TextStyle(
-                    fontSize: 24,
-                  ),
+            Container(
+              child: const Text(
+                "No File Selected",
+                style: TextStyle(
+                  fontSize: 24,
                 ),
-              )
+              ),
+            )
             ,
             Container(
               padding: const EdgeInsets.only(right: 10, left: 10),

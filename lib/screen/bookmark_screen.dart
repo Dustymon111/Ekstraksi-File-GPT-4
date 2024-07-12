@@ -1,6 +1,7 @@
 import 'package:aplikasi_ekstraksi_file_gpt4/components/bookmark_card.dart';
 import 'package:aplikasi_ekstraksi_file_gpt4/models/bookmark_model.dart';
 import 'package:aplikasi_ekstraksi_file_gpt4/providers/bookmark_provider.dart';
+import 'package:aplikasi_ekstraksi_file_gpt4/utils/page_animation.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:aplikasi_ekstraksi_file_gpt4/providers/theme_provider.dart';
@@ -27,6 +28,7 @@ void initState() {
   Widget build(BuildContext context) {
     final themeprov = Provider.of<ThemeNotifier>(context);
     final bookmarkprov =  Provider.of<BookmarkProvider>(context);
+    final theme = Theme.of(context);
     return Scaffold(
         appBar: AppBar(
         title: const Text("Bookmark"),
@@ -55,14 +57,14 @@ void initState() {
             IconButton(
             icon: const Icon(Icons.home),
             onPressed: (){
-              Navigator.pushReplacementNamed(context, '/');
+              Navigator.of(context).pushReplacement(bookmarkHomeRoute());
+
             }
           ),
           IconButton(
             icon: const Icon(Icons.book_outlined),
-            onPressed: (){
-              Navigator.pushReplacementNamed(context, '/bookmarks');
-            }
+            onPressed: (){},
+            color: theme.colorScheme.primary,
           ),
           ]
         ,),
