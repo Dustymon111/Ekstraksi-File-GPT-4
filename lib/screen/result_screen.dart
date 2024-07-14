@@ -1,4 +1,3 @@
-import 'package:aplikasi_ekstraksi_file_gpt4/components/question_card.dart';
 import 'package:aplikasi_ekstraksi_file_gpt4/models/question_model.dart';
 import 'package:aplikasi_ekstraksi_file_gpt4/providers/question_provider.dart';
 import 'package:aplikasi_ekstraksi_file_gpt4/providers/theme_provider.dart';
@@ -49,7 +48,7 @@ class _ResultScreenState extends State<ResultScreen> {
               themeprov.toggleTheme();
             },
           ),
-        ],
+        ],  
       ),
       body: Column(
         children: [
