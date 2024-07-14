@@ -1,21 +1,11 @@
 import 'dart:async';
 import 'package:aplikasi_ekstraksi_file_gpt4/models/bookmark_model.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
 class BookmarkProvider extends ChangeNotifier {
-  List<Bookmark> _bookmarks =  [
-      Bookmark(
-        title: 'What is your favorite color?',
-        author: 'Mr.A',
-        pageNumber: 100 
-      ),
-      Bookmark(
-        title: 'Artificial Intelligence',
-        author: 'Mr.B',
-        pageNumber: 50
-      ),
-      // Add more questions as needed
-    ];// List of all bookmarks
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  List<Bookmark> _bookmarks = []; // List of all bookmarks
   List<Bookmark> _filteredBookmarks = []; // Filtered bookmarks based on search/query
 
   // StreamController and Stream for exposing bookmarks
@@ -25,34 +15,44 @@ class BookmarkProvider extends ChangeNotifier {
   // Getter for filtered bookmarks
   List<Bookmark> get filteredBookmarks => _filteredBookmarks;
   List<Bookmark> get bookmarks => _bookmarks;
-  
-  // Function to add bookmarks
-  void addBookmark(Bookmark bookmark) {
-    _bookmarks.add(bookmark);
-    initiateBookmark();
-    _notifyChanges();
+
+  // Fetch bookmarks from a specific book document
+  void fetchBookmarks(String bookId) async {
+    try {
+      // Fetch the existing bookmarks
+      DocumentReference docRef = _firestore.collection('books').doc(bookId);
+      DocumentSnapshot snapshot = await docRef.get();
+      List<Bookmark> existingBookmarks = [];
+      if (snapshot.exists) {
+        final data = snapshot.data() as Map<String, dynamic>;
+        // print(data['bookmarks']);
+        existingBookmarks = (data['bookmarks'] as List<dynamic>? ?? [])
+            .map((bookmark) => Bookmark.fromMap(bookmark as Map<String, dynamic>))
+            .toList();
+        _bookmarks = existingBookmarks;
+        initiateBookmark();
+      }
+    } catch (e) {
+      print('Error fetching bookmarks: $e');
+    }
   }
 
-  // Function to fetch bookmarks (replace with actual data fetch logic)
-  // void fetchBookmarks() {
-  //   // Replace with your actual logic to fetch bookmarks (e.g., from a database or API)
-  //   // Example:
-  //   _bookmarks = [
-  //     Bookmark(
-  //       title: 'What is your favorite color?',
-  //       author: 'Mr.A',
-  //       pageNumber: 100
-  //     ),
-  //     Bookmark(
-  //       title: 'Artificial Intelligence',
-  //       author: 'Mr.B',
-  //       pageNumber: 50
-  //     ),
-  //     // Add more questions as needed
-  //   ];
-  //   _updateFilteredBookmarks();
-  //   _notifyChanges();
-  // }
+  // Add bookmark to Firestore
+   Future<void> addBookmark(String bookId, Bookmark bookmark) async {
+    try {
+      DocumentReference docRef = _firestore.collection('books').doc(bookId);
+      DocumentSnapshot snapshot = await docRef.get();
+      if (snapshot.exists) {
+        final data = snapshot.data() as Map<String, dynamic>;
+        List<dynamic> bookmarks = data['bookmarks'] ?? [];
+        bookmarks.add(bookmark.toMap());
+        await docRef.update({'bookmarks': bookmarks});
+        fetchBookmarks(bookId); // Refresh the list after adding
+      }
+    } catch (e) {
+      print('Error adding bookmark: $e');
+    }
+  }
 
   // Function to update filtered bookmarks based on search/query
   void updateFilteredBookmarks(String query) {
@@ -77,7 +77,7 @@ class BookmarkProvider extends ChangeNotifier {
 
   // Utility method to update filtered bookmarks
   void initiateBookmark() {
-    _filteredBookmarks = List.from(_bookmarks); // Assuming initial filtered is same as all bookmarks
+    _filteredBookmarks = _bookmarks; // Assuming initial filtered is same as all bookmarks
     _notifyChanges();
   }
 }

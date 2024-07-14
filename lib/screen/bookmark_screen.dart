@@ -20,7 +20,7 @@ class _BookmarkScreenState extends State<BookmarkScreen> {
 void initState() {
   super.initState();
   WidgetsBinding.instance.addPostFrameCallback((_) {
-    context.read<BookmarkProvider>().initiateBookmark();
+    context.read<BookmarkProvider>().fetchBookmarks('book1');
   });
 }
 
@@ -84,44 +84,40 @@ void initState() {
               }
             )
           ),
-
-          StreamBuilder<List<Bookmark>>(
-            stream: bookmarkprov.bookmarksStream,
-            builder: (context, snapshot) {
-              if (snapshot.connectionState == ConnectionState.waiting) {
-                return const Center(child: CircularProgressIndicator());
-              } else if (snapshot.hasError) {
-                return Center(child: Text('Error: ${snapshot.error}'));
-              } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                return const Center(child: Text('No questions available'));
-              }
-              return Expanded(
-                child: 
-                SizedBox(
-                  child: ListView.builder(
-                    itemCount: snapshot.data!.length,
-                    itemBuilder: (context, index) {
-                      return buildBookmarkCard(
-                        bookmark: snapshot.data![index],
-                        title: snapshot.data![index].title,
-                        author: snapshot.data![index].author,
-                        pageNumber: snapshot.data![index].pageNumber,
-                        context: context,
-                        );
-                    },
-                  ),  
-              )
+            Expanded(
+            child: StreamBuilder<List<Bookmark>>(
+              stream: bookmarkprov.bookmarksStream,
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const Center(child: CircularProgressIndicator());
+                } else if (snapshot.hasError) {
+                  return Center(child: Text('Error: ${snapshot.error}'));
+                } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                  return const Center(child: Text('No bookmarks available'));
+                }
+                return ListView.builder(
+                  itemCount: snapshot.data!.length,
+                  itemBuilder: (context, index) {
+                    return buildBookmarkCard(
+                      bookmark: snapshot.data![index],
+                      title: snapshot.data![index].title,
+                      author: snapshot.data![index].author,
+                      pageNumber: snapshot.data![index].pageNumber,
+                      context: context,
+                    );
+                  },
                 );
-            },
+              },
+            ),
           ),
-        ]
-      ) 
+        ],
+      ),
     );
   }
-   @override
+
+  @override
   void dispose() {
     searchController.dispose();
     super.dispose();
   }
 }
-
