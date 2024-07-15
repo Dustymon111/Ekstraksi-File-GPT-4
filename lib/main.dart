@@ -1,19 +1,23 @@
 import 'package:aplikasi_ekstraksi_file_gpt4/providers/bookmark_provider.dart';
 import 'package:aplikasi_ekstraksi_file_gpt4/providers/question_provider.dart';
-import 'package:aplikasi_ekstraksi_file_gpt4/screen/bookmark_detail_screen.dart';
 import 'package:aplikasi_ekstraksi_file_gpt4/screen/bookmark_screen.dart';
 import 'package:aplikasi_ekstraksi_file_gpt4/screen/home_screen.dart';
 import 'package:aplikasi_ekstraksi_file_gpt4/providers/theme_provider.dart';
+import 'package:aplikasi_ekstraksi_file_gpt4/screen/login_screen.dart';
 import 'package:aplikasi_ekstraksi_file_gpt4/screen/question_screen.dart';
+import 'package:aplikasi_ekstraksi_file_gpt4/screen/register_screen.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
   return runApp((
     MultiProvider(providers: [
-    ChangeNotifierProvider(create: (_) => new ThemeNotifier()),
-    ChangeNotifierProvider(create: (_) => new QuestionProvider()),
-    ChangeNotifierProvider(create: (_) => new BookmarkProvider()),
+    ChangeNotifierProvider(create: (_) => ThemeNotifier()),
+    ChangeNotifierProvider(create: (_) => QuestionProvider()),
+    ChangeNotifierProvider(create: (_) => BookmarkProvider()),
     ],
     child: const MyApp(),
   )));
@@ -43,9 +47,11 @@ class MyApp extends StatelessWidget {
               ),
             ),
         themeMode: theme.currentTheme,
-        initialRoute: '/',
+        initialRoute: '/login',
         routes: {
           '/': (context) => const Home(),
+          '/login': (context) => LoginScreen(),
+          '/register': (context) => RegisterScreen(),
           '/questions': (context) => QuestionScreen(),
           '/bookmarks': (context) => BookmarkScreen(),
         },

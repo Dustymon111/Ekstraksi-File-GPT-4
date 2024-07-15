@@ -6,6 +6,7 @@ Widget buildQuestionCard({
   required int number, 
   required String selectedOption,
   required Function(String?) onOptionChanged,
+  Icon? secondary
 }) {
   return Card(
     margin: EdgeInsets.all(8),
@@ -22,7 +23,8 @@ Widget buildQuestionCard({
                 title: Text(option),
                 value: option,
                 groupValue: selectedOption, // Provide the selected answer here if implementing selection logic
-                onChanged: onOptionChanged // Handling the selected option
+                onChanged: onOptionChanged, // Handling the selected option
+                secondary: secondary,
               );
             }).toList(),
           ),

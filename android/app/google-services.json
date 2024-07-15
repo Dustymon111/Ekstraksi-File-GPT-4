@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "996221582414",
+    "project_id": "ektraksi-file-gpt-4",
+    "storage_bucket": "ektraksi-file-gpt-4.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:996221582414:android:dae87f47503fc0eaf6d71f",
+        "android_client_info": {
+          "package_name": "com.example.aplikasi_ekstraksi_file_gpt4"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCbuq8QOGMqzSmKnZ--C_e0vT0Rt5wr7E0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
