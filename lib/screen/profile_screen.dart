@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'login_screen.dart'; // Make sure to import your login screen
 
 class ProfileScreen extends StatelessWidget {
@@ -8,6 +9,9 @@ class ProfileScreen extends StatelessWidget {
     User? user = FirebaseAuth.instance.currentUser;
 
     return Scaffold(
+      appBar: AppBar(
+        title: Text('Profile'),
+      ),
       body: Center(
         child: Padding(
           padding: const EdgeInsets.all(16.0),
@@ -27,12 +31,23 @@ class ProfileScreen extends StatelessWidget {
               ElevatedButton(
                 onPressed: () async {
                   await FirebaseAuth.instance.signOut();
-                  Navigator.of(context).pushAndRemoveUntil(
-                    MaterialPageRoute(builder: (context) => LoginScreen()),
-                    (route) => false,
+                  if (Navigator.canPop(context)) {
+                    Navigator.of(context).pushNamedAndRemoveUntil(
+                      '/login',
+                      (Route<dynamic> route) => false,
+                    );
+                    Fluttertoast.showToast(
+                      msg: "Successfully Signed Out",
+                      toastLength: Toast.LENGTH_SHORT,
+                      gravity: ToastGravity.BOTTOM,
+                      timeInSecForIosWeb: 1,
+                      backgroundColor: Colors.green,
+                      textColor: Colors.white,
+                      fontSize: 16.0
                   );
+                  }
                 },
-                child: Text('Logout'),
+                child: Text('Sign Out'),
               ),
             ],
           ),
