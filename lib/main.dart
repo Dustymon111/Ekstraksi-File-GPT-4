@@ -1,5 +1,6 @@
 import 'package:aplikasi_ekstraksi_file_gpt4/providers/bookmark_provider.dart';
 import 'package:aplikasi_ekstraksi_file_gpt4/providers/question_provider.dart';
+import 'package:aplikasi_ekstraksi_file_gpt4/providers/user_provider.dart';
 import 'package:aplikasi_ekstraksi_file_gpt4/screen/bookmark_screen.dart';
 import 'package:aplikasi_ekstraksi_file_gpt4/screen/home_screen.dart';
 import 'package:aplikasi_ekstraksi_file_gpt4/providers/theme_provider.dart';
@@ -18,6 +19,7 @@ void main() async {
     ChangeNotifierProvider(create: (_) => ThemeNotifier()),
     ChangeNotifierProvider(create: (_) => QuestionProvider()),
     ChangeNotifierProvider(create: (_) => BookmarkProvider()),
+    ChangeNotifierProvider(create: (_) => UserProvider()),
     ],
     child: const MyApp(),
   )));

@@ -35,7 +35,7 @@ class _HomeState extends State<Home> {
   Future<void> uploadFile() async {
     pickedFile = await pickFile();
     if (pickedFile != null) {
-      print(pickedFile?.name);
+      // print(pickedFile?.name);
       setState(() {
         fileName = pickedFile!.name;
       });
@@ -68,14 +68,14 @@ class _HomeState extends State<Home> {
       }
     });
 
-    getCurrentUser().then((user) {
-      if (mounted) {
-        setState(() {
-          userEmail = user?.email;
-          userName = user?.displayName;
-        });
-      }
-    });
+    // getCurrentUser().then((user) {
+    //   if (mounted) {
+    //     setState(() {
+    //       userEmail = user?.email;
+    //       userName = user?.displayName;
+    //     });
+    //   }
+    // });
   }
 
   @override

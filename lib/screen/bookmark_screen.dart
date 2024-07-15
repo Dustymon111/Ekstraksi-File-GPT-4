@@ -1,6 +1,7 @@
 import 'package:aplikasi_ekstraksi_file_gpt4/components/bookmark_card.dart';
 import 'package:aplikasi_ekstraksi_file_gpt4/models/bookmark_model.dart';
 import 'package:aplikasi_ekstraksi_file_gpt4/providers/bookmark_provider.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -13,13 +14,14 @@ class BookmarkScreen extends StatefulWidget {
 
 class _BookmarkScreenState extends State<BookmarkScreen> {
   TextEditingController searchController = TextEditingController();
-
+  final FirebaseAuth _auth = FirebaseAuth.instance;
   @override
 void initState() {
-  super.initState();
+  String bookmarkId = "book_${_auth.currentUser!.uid}";
   WidgetsBinding.instance.addPostFrameCallback((_) {
-    context.read<BookmarkProvider>().fetchBookmarks('book1');
+    context.read<BookmarkProvider>().fetchBookmarks(bookmarkId);
   });
+  super.initState();
 }
 
   @override
