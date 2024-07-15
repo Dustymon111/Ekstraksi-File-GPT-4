@@ -8,6 +8,9 @@ class ProfileScreen extends StatelessWidget {
     User? user = FirebaseAuth.instance.currentUser;
 
     return Scaffold(
+      appBar: AppBar(
+        title: Text('Profile'),
+      ),
       body: Center(
         child: Padding(
           padding: const EdgeInsets.all(16.0),
@@ -27,12 +30,14 @@ class ProfileScreen extends StatelessWidget {
               ElevatedButton(
                 onPressed: () async {
                   await FirebaseAuth.instance.signOut();
-                  Navigator.of(context).pushAndRemoveUntil(
-                    MaterialPageRoute(builder: (context) => LoginScreen()),
-                    (route) => false,
-                  );
+                  if (Navigator.canPop(context)) {
+                    Navigator.of(context).pushNamedAndRemoveUntil(
+                      '/login',
+                      (Route<dynamic> route) => false,
+                    );
+                  }
                 },
-                child: Text('Logout'),
+                child: Text('Sign Out'),
               ),
             ],
           ),

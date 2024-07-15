@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 
 import 'package:aplikasi_ekstraksi_file_gpt4/providers/theme_provider.dart';
@@ -29,7 +30,7 @@ class _HomeState extends State<Home> {
   User? user;
   String? userEmail;
   String? userName;
-
+  late final StreamSubscription<User?> _authSubscription;
 
   Future<void> uploadFile() async {
     pickedFile = await pickFile();
@@ -49,33 +50,40 @@ class _HomeState extends State<Home> {
         duration: Duration(milliseconds: 300), curve: Curves.easeInOut);
   }
 
-
-Future<User?> getCurrentUser() async {
+  Future<User?> getCurrentUser() async {
     return auth.currentUser;
-}
+  }
 
   @override
   void initState() {
     super.initState();
-    auth.authStateChanges().listen((User? user) {
-    if (user == null) {
-      Navigator.of(context).pushAndRemoveUntil(
-        MaterialPageRoute(builder: (context) => LoginScreen()),
-        (route) => false,
-      );
-    } else {
-      print('User is signed in!');
-    }
-  });
-    getCurrentUser().then((user) {
-      setState(() {
-        userEmail = user?.email;
-        userName = user?.displayName;
-      });
+    _authSubscription = auth.authStateChanges().listen((User? user) {
+      if (user == null) {
+        Navigator.of(context).pushAndRemoveUntil(
+          MaterialPageRoute(builder: (context) => LoginScreen()),
+          (route) => false,
+        );
+      } else {
+        print('User is signed in!');
+      }
     });
-    
+
+    getCurrentUser().then((user) {
+      if (mounted) {
+        setState(() {
+          userEmail = user?.email;
+          userName = user?.displayName;
+        });
+      }
+    });
   }
 
+  @override
+  void dispose() {
+    _authSubscription.cancel();
+    _pageController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -182,11 +190,5 @@ Future<User?> getCurrentUser() async {
 
   Widget buildProfilePage(BuildContext context) {
     return ProfileScreen();
-  }
-
-  @override
-  void dispose() {
-    _pageController.dispose();
-    super.dispose();
   }
 }
