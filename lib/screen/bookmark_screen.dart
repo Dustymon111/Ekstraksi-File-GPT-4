@@ -19,7 +19,7 @@ class _BookmarkScreenState extends State<BookmarkScreen> {
 void initState() {
   String bookmarkId = "book_${_auth.currentUser!.uid}";
   WidgetsBinding.instance.addPostFrameCallback((_) {
-    context.read<BookmarkProvider>().fetchBookmarks(bookmarkId);
+    context.read<BookmarkProvider>().fetchBookmarks("book1");
   });
   super.initState();
 }
@@ -43,7 +43,7 @@ void initState() {
               }
             )
           ),
-            Expanded(
+          Expanded(
             child: StreamBuilder<List<Bookmark>>(
               stream: bookmarkprov.bookmarksStream,
               builder: (context, snapshot) {

@@ -1,8 +1,11 @@
 import 'package:aplikasi_ekstraksi_file_gpt4/models/bookmark_model.dart';
-import 'package:fl_chart/fl_chart.dart';
+import 'package:aplikasi_ekstraksi_file_gpt4/models/subject_model.dart';
+import 'package:aplikasi_ekstraksi_file_gpt4/providers/theme_provider.dart';
+import 'package:aplikasi_ekstraksi_file_gpt4/screen/subject_detail_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/widgets.dart';
+import 'package:provider/provider.dart';
 
 class BookmarkDetailScreen extends StatefulWidget {
   final Bookmark bookmark;
@@ -13,13 +16,27 @@ class BookmarkDetailScreen extends StatefulWidget {
 }
 
 class _BookmarkDetailScreenState extends State<BookmarkDetailScreen> {
-  bool _isChartVisible = false;
+  // bool _isChartVisible = false;
 
   @override
   Widget build(BuildContext context) {
+    final themeprov = Provider.of<ThemeNotifier>(context);
     return Scaffold(
       appBar: AppBar(
         title: Text('Detail Modul/Buku'),
+        actions: [
+          Switch(
+            thumbIcon: themeprov.isDarkTheme
+                ? WidgetStateProperty.all(const Icon(Icons.nights_stay))
+                : WidgetStateProperty.all(const Icon(Icons.sunny)),
+            activeColor: Colors.white,
+            inactiveThumbColor: Colors.indigo,
+            value: themeprov.isDarkTheme,
+            onChanged: (bool value) {
+              themeprov.toggleTheme();
+            },
+          ),
+        ],
       ),
       body: SingleChildScrollView(
         child: Padding(
@@ -42,87 +59,36 @@ class _BookmarkDetailScreenState extends State<BookmarkDetailScreen> {
                 style: TextStyle(fontSize: 16),
               ),
               SizedBox(height: 16),
-              GestureDetector(
-                onTap: () {
-                  setState(() {
-                    _isChartVisible = !_isChartVisible;
-                  });
-                },
-                child: Row(
-                  children: [
-                    const Text(
-                      'Grafik Pembelajaran',
-                      style: TextStyle(fontSize: 16, color: Colors.blue),
-                    ),
-                    Icon(_isChartVisible
-                        ? Icons.arrow_drop_up
-                        : Icons.arrow_drop_down),
-                  ],
-                ),
-              ),
-              if (_isChartVisible)
-                Container(
-                  padding: EdgeInsetsDirectional.all(10),
-                  height: 250,
-                  child: LineChart(
-                    LineChartData(
-                      gridData: const FlGridData(show: true, drawVerticalLine: false),
-                      borderData: FlBorderData(show: true, border: Border.all(color: Colors.black)),
-                      maxX: 10,
-                      minX: 1,
-                      maxY: 100,
-                      minY: 20,
-                      titlesData: const FlTitlesData(
-                        show: true,
-                        topTitles: AxisTitles(sideTitles: SideTitles(reservedSize: 0, showTitles: false)),
-                        rightTitles: AxisTitles(sideTitles: SideTitles(reservedSize: 0, showTitles: false)),
-                        leftTitles: AxisTitles(
-                          sideTitles: SideTitles(interval: 20, reservedSize: 35, showTitles: true)
-                          ) ,
-                          bottomTitles: AxisTitles(
-                            sideTitles: SideTitles(interval: 1, reservedSize: 24, showTitles: true)
-                          )
-                      ),
-                      lineBarsData: [
-                        LineChartBarData(
-                          spots: [
-                          FlSpot(1, 40), // Example data points (x, y)
-                          FlSpot(2, 60),
-                          FlSpot(3, 80),
-                          FlSpot(4, 20),
-                          FlSpot(5, 100),
-                          FlSpot(6, 60),
-                          FlSpot(7, 80),
-                          FlSpot(8, 40),
-                          FlSpot(9, 20),
-                          FlSpot(10, 80),
-                          ],
-                          isCurved: false,
-                          color:Colors.blue,
-                          barWidth: 3,
-                          isStrokeCapRound: true,
-                          belowBarData: BarAreaData(show: false),
-                          dotData: FlDotData(show: true),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
+           
+                
               SizedBox(height: 16),
-              Text("List Latihan", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),),
+              Text("List Topik", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),),
               ListView.builder(
                 shrinkWrap: true,
                 physics: NeverScrollableScrollPhysics(),
-                itemCount: 10,
+                itemCount: widget.bookmark.subjects.length,
                 itemBuilder: (context, index) {
-                  return ListTile(
-                    leading: Icon(Icons.check),
-                    title: Text('Subject ${index+1}', overflow: TextOverflow.ellipsis,),
+                  List <Subject> subjects = widget.bookmark.subjects;
+                  return Card(
+                    child: ListTile(
+                    title: SingleChildScrollView(
+                      scrollDirection: Axis.horizontal,
+                      child: Text(subjects[index].title, overflow: TextOverflow.ellipsis), 
+                    ),
                     onTap: () {
-                      // Navigate to another screen if needed
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => SubjectDetailScreen(
+                              subject: subjects[index], // Replace with your actual Subject object
+                            ),
+                          ),
+                        );
                     },
-                    trailing: Text('Hasil: 30/50'),
-                  );
+                    trailing: Text('${subjects[index].questionSets.length} latihan'),
+                  ),
+                  ) ;
+                  
                 },
               ),
             ],

@@ -1,18 +1,17 @@
 import 'dart:async';
 import 'dart:io';
 
+import 'package:aplikasi_ekstraksi_file_gpt4/components/custom_button.dart';
 import 'package:aplikasi_ekstraksi_file_gpt4/providers/theme_provider.dart';
 import 'package:aplikasi_ekstraksi_file_gpt4/screen/bookmark_screen.dart';
 import 'package:aplikasi_ekstraksi_file_gpt4/screen/login_screen.dart';
 import 'package:aplikasi_ekstraksi_file_gpt4/screen/profile_screen.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart'; // Import Firebase Storage
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:syncfusion_flutter_pdfviewer/pdfviewer.dart';
-
-import '../components/custom_button.dart';
-import '../utils/file_picker_service.dart';
 
 class Home extends StatefulWidget {
   const Home({super.key});
@@ -31,28 +30,6 @@ class _HomeState extends State<Home> {
   String? userEmail;
   String? userName;
   late final StreamSubscription<User?> _authSubscription;
-
-  Future<void> uploadFile() async {
-    pickedFile = await pickFile();
-    if (pickedFile != null) {
-      // print(pickedFile?.name);
-      setState(() {
-        fileName = pickedFile!.name;
-      });
-    }
-  }
-
-  void _onTabTapped(int index) {
-    setState(() {
-      _currentIndex = index;
-    });
-    _pageController.animateToPage(index,
-        duration: Duration(milliseconds: 300), curve: Curves.easeInOut);
-  }
-
-  Future<User?> getCurrentUser() async {
-    return auth.currentUser;
-  }
 
   @override
   void initState() {
@@ -83,6 +60,91 @@ class _HomeState extends State<Home> {
     _authSubscription.cancel();
     _pageController.dispose();
     super.dispose();
+  }
+
+  Future<void> pickFile() async {
+  try {
+    // Pick a file
+    final result = await FilePicker.platform.pickFiles(type: FileType.any);
+    
+    if (result != null && result.files.isNotEmpty) {
+      // Get the first file from the result
+      final pickedFile = result.files.first;
+      
+      setState(() {
+        // Update state with the picked file
+        this.pickedFile = pickedFile;
+        fileName = pickedFile.name;
+      });
+    } else {
+      // No file picked, handle as needed
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('No file selected!')),
+      );
+    }
+  } catch (e) {
+    // Handle any errors during file picking
+    print('Error picking file: $e');
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text('Failed to pick file: $e')),
+    );
+  }
+}
+
+
+  Future<void> uploadFile() async {
+    if (pickedFile != null) {
+      try {
+        final filePath = pickedFile!.path!;
+        final fileName = filePath.split('/').last; // Extract file name from path
+
+        // Create a reference to Firebase Storage
+        final storageRef = FirebaseStorage.instance
+            .ref()
+            .child('uploads/$fileName'); // Use the extracted file name
+
+        // Upload the file to Firebase Storage
+        final uploadTask = storageRef.putFile(File(filePath));
+        
+        // Show upload progress (optional)
+        uploadTask.snapshotEvents.listen((event) {
+          final progress = (event.bytesTransferred.toDouble() /
+                  event.totalBytes.toDouble()) *
+              100;
+          print('Upload progress: $progress%');
+        });
+
+        // Wait for the upload to complete
+        await uploadTask;
+
+        // Get the download URL
+        final downloadURL = await storageRef.getDownloadURL();
+        print('File uploaded successfully! Download URL: $downloadURL');
+
+        // Optionally, show a snackbar or dialog to notify the user of the upload
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('File uploaded successfully!')),
+        );
+
+      } catch (e) {
+        print('Error uploading file: $e');
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Failed to upload file: $e')),
+        );
+      }
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('No file selected!')),
+      );
+    }
+  }
+
+  void _onTabTapped(int index) {
+    setState(() {
+      _currentIndex = index;
+    });
+    _pageController.animateToPage(index,
+        duration: Duration(milliseconds: 300), curve: Curves.easeInOut);
   }
 
   @override
@@ -167,16 +229,13 @@ class _HomeState extends State<Home> {
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
               CustomElevatedButton(
-                  label: pickedFile != null ? "Ganti Berkas" : "Unggah Berkas",
-                  onPressed: uploadFile),
+                label: pickedFile != null ? "Ganti Berkas" : "Unggah Berkas",
+                onPressed: pickFile,
+              ),
               CustomElevatedButton(
                 label: "Ekstrak Berkas",
-                onPressed: pickedFile != null
-                    ? () {
-                        print("proses ekstraksi dimulai");
-                      }
-                    : null,
-              )
+                onPressed: pickedFile != null ? uploadFile : null,
+              ),
             ],
           ),
         ],
