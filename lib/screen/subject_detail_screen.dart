@@ -78,14 +78,14 @@ class _SubjectDetailScreenState extends State<SubjectDetailScreen> {
             Text("List Latihan", style: TextStyle(fontSize: 20)),
             Expanded(
               child: ListView.builder(
-                itemCount: widget.subject.questionSets.length,
+                itemCount: widget.subject.questionSets?.length,
                 itemBuilder: (context, index) {
-                  final questionSet = widget.subject.questionSets[index];
+                  final questionSet = widget.subject.questionSets?[index];
                   return Card(
                     margin: const EdgeInsets.only(bottom: 8.0),
                     child: ListTile(
                       title: Text('Question Set ${index + 1}'),
-                      subtitle: Text('Number of Questions: ${questionSet.questions.length}'),
+                      subtitle: Text('Number of Questions: ${questionSet?.questions.length}'),
                       onTap: () {
                         Navigator.push(context, MaterialPageRoute(
                           builder: (context) => QuestionScreen(),

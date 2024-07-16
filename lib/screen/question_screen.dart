@@ -3,7 +3,7 @@ import 'package:aplikasi_ekstraksi_file_gpt4/components/question_card.dart';
 import 'package:aplikasi_ekstraksi_file_gpt4/models/question_model.dart';
 import 'package:aplikasi_ekstraksi_file_gpt4/providers/question_provider.dart';
 import 'package:aplikasi_ekstraksi_file_gpt4/providers/theme_provider.dart';
-import 'package:aplikasi_ekstraksi_file_gpt4/screen/result_screen.dart';
+import 'package:aplikasi_ekstraksi_file_gpt4/screen/exercise_result_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -16,6 +16,9 @@ class QuestionScreen extends StatefulWidget {
 
 class _QuestionScreenState extends State<QuestionScreen> {
   final ScrollController _scrollController = ScrollController();
+  late int totalQuestions;
+  Set<int> answeredQuestions = Set<int>();
+  int correctAnswers = 0;
 
   @override
   void initState() {
@@ -49,7 +52,7 @@ class _QuestionScreenState extends State<QuestionScreen> {
               child: const Text('Submit'),
               onPressed: () {
                 Navigator.of(context).pop();
-                Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => ResultScreen(selectedOption: context.read<QuestionProvider>().selectedOption)));
+                Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => ExerciseResultScreen(totalQuestions: totalQuestions, correctAnswers: correctAnswers)));
               },
             ),
             TextButton(
@@ -109,14 +112,25 @@ class _QuestionScreenState extends State<QuestionScreen> {
                     controller: _scrollController,
                     itemCount: questions.length,
                     itemBuilder: (context, index) {
+                      totalQuestions = questions.length;
                       return buildQuestionCard(
                         number: index + 1,
                         question: questions[index],
                         selectedOption: questionprov.selectedOption[index] ?? "",
                         onOptionChanged: (value) {
                           context.read<QuestionProvider>().setSelectedOption(index, value!);
-                          print(questionprov.selectedOption[index]);
-                          print(questions[index].options);
+                          if (questionprov.selectedOption[index] == questions[index].correctOption && !answeredQuestions.contains(index))  {
+                            correctAnswers++;
+                            answeredQuestions.add(index);
+                          }else if (questionprov.selectedOption[index] != questions[index].correctOption && answeredQuestions.contains(index)){
+                            correctAnswers--;
+                            answeredQuestions.remove(index);
+                          }else if (questionprov.selectedOption[index] == questions[index].correctOption && answeredQuestions.contains(index)){
+                            correctAnswers++;
+                          }
+                          // print(questions[index].options);
+                          // print(answeredQuestions);
+                          print(correctAnswers);
                         }
                       );
                     },
@@ -129,7 +143,6 @@ class _QuestionScreenState extends State<QuestionScreen> {
             padding: const EdgeInsets.all(8.0),
             child: CustomElevatedButton(label: "Submit", onPressed: (){
               _dialogBuilder(context);
-
             }),
           )
         ],

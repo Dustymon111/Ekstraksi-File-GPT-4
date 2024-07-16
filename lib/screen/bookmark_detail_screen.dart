@@ -85,7 +85,7 @@ class _BookmarkDetailScreenState extends State<BookmarkDetailScreen> {
                           ),
                         );
                     },
-                    trailing: Text('${subjects[index].questionSets.length} latihan'),
+                    trailing: Text('${subjects[index].questionSets?.length} latihan'),
                   ),
                   ) ;
                   

@@ -4,16 +4,16 @@ import 'package:aplikasi_ekstraksi_file_gpt4/providers/theme_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-class ResultScreen extends StatefulWidget {
+class AnswersScreen extends StatefulWidget {
   final Map<int, String> selectedOption;
 
-  const ResultScreen({super.key, required this.selectedOption});
+  const AnswersScreen({super.key, required this.selectedOption});
 
   @override
-  _ResultScreenState createState() => _ResultScreenState();
+  _AnswersScreenState createState() => _AnswersScreenState();
 }
 
-class _ResultScreenState extends State<ResultScreen> {
+class _AnswersScreenState extends State<AnswersScreen> {
   final ScrollController _scrollController = ScrollController();
 
   @override
