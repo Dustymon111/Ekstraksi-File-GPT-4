@@ -130,7 +130,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     role: _role,
                     bookmarkId: "book_$uid"
                   );
-
+  
                   // Save user data to Firestore
                   await userprov.createOrUpdateUser(userModel);
 

@@ -5,12 +5,14 @@ class Bookmark {
   final String title;
   final String author;
   final int pageNumber;
+  final String downloadURL;
   final List<Subject> subjects;
 
   Bookmark({
     required this.title,
     required this.author,
     required this.pageNumber,
+    required this.downloadURL,
     required this.subjects,
   });
 
@@ -22,6 +24,7 @@ class Bookmark {
       title: data['title'] ?? '',
       author: data['author'] ?? '',
       pageNumber: data['pageNumber'] ?? 0,
+      downloadURL: data['downloadUrl'] ?? '',
       subjects: (data['subjects'] as List<dynamic>? ?? []).map((subjectData) {
         return Subject.fromMap(subjectData as Map<String, dynamic>);
       }).toList(),
@@ -34,6 +37,7 @@ class Bookmark {
       title: data['title'] ?? '',
       author: data['author'] ?? '',
       pageNumber: data['pageNumber'] ?? 0,
+      downloadURL: data['downloadURL'] ?? '',
       subjects: (data['subjects'] as List<dynamic>? ?? []).map((subjectData) {
         return Subject.fromMap(subjectData as Map<String, dynamic>);
       }).toList(),

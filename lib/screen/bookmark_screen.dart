@@ -43,7 +43,7 @@ void initState() {
               }
             )
           ),
-            Expanded(
+          Expanded(
             child: StreamBuilder<List<Bookmark>>(
               stream: bookmarkprov.bookmarksStream,
               builder: (context, snapshot) {
@@ -63,6 +63,7 @@ void initState() {
                       author: snapshot.data![index].author,
                       pageNumber: snapshot.data![index].pageNumber,
                       context: context,
+                      bookIdx: index
                     );
                   },
                 );

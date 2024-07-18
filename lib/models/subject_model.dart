@@ -1,14 +1,14 @@
-import 'package:aplikasi_ekstraksi_file_gpt4/models/question_set_mode.dart';
+import 'package:aplikasi_ekstraksi_file_gpt4/models/question_set_model.dart';
 
 class Subject {
   final String title;
   final String description;
-  final List<QuestionSet> questionSets;
+  final List<QuestionSet>? questionSets;
 
   Subject({
     required this.title,
     required this.description,
-    required this.questionSets,
+    this.questionSets,
   });
 
   factory Subject.fromMap(Map<String, dynamic> data) {
@@ -24,7 +24,7 @@ class Subject {
     return {
       'title': title,
       'description': description,
-      'questionSets': questionSets.map((questionSet) => questionSet.toMap()).toList(),
+      'questionSets': questionSets?.map((questionSet) => questionSet.toMap()).toList(),
     };
   }
 }

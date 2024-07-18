@@ -1,3 +1,4 @@
+import 'package:aplikasi_ekstraksi_file_gpt4/components/custom_button.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -28,7 +29,7 @@ class ProfileScreen extends StatelessWidget {
                 style: TextStyle(fontSize: 18),
               ),
               SizedBox(height: 24),
-              ElevatedButton(
+              CustomElevatedButton(
                 onPressed: () async {
                   await FirebaseAuth.instance.signOut();
                   if (Navigator.canPop(context)) {
@@ -47,7 +48,7 @@ class ProfileScreen extends StatelessWidget {
                   );
                   }
                 },
-                child: Text('Sign Out'),
+                label: 'Sign Out',
               ),
             ],
           ),
