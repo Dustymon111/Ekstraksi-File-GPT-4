@@ -19,7 +19,7 @@ class _BookmarkScreenState extends State<BookmarkScreen> {
 void initState() {
   String bookmarkId = "book_${_auth.currentUser!.uid}";
   WidgetsBinding.instance.addPostFrameCallback((_) {
-    context.read<BookmarkProvider>().fetchBookmarks("book1");
+    context.read<BookmarkProvider>().fetchBookmarks(bookmarkId);
   });
   super.initState();
 }
@@ -63,6 +63,7 @@ void initState() {
                       author: snapshot.data![index].author,
                       pageNumber: snapshot.data![index].pageNumber,
                       context: context,
+                      bookIdx: index
                     );
                   },
                 );

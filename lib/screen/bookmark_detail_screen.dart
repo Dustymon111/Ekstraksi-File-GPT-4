@@ -1,5 +1,6 @@
 import 'package:aplikasi_ekstraksi_file_gpt4/models/bookmark_model.dart';
 import 'package:aplikasi_ekstraksi_file_gpt4/models/subject_model.dart';
+import 'package:aplikasi_ekstraksi_file_gpt4/providers/global_provider.dart';
 import 'package:aplikasi_ekstraksi_file_gpt4/providers/theme_provider.dart';
 import 'package:aplikasi_ekstraksi_file_gpt4/screen/subject_detail_screen.dart';
 import 'package:flutter/material.dart';
@@ -76,11 +77,12 @@ class _BookmarkDetailScreenState extends State<BookmarkDetailScreen> {
                       child: Text(subjects[index].title, overflow: TextOverflow.ellipsis), 
                     ),
                     onTap: () {
+                      context.read<GlobalProvider>().setSubjectIndex(index);
                       Navigator.push(
                           context,
                           MaterialPageRoute(
                             builder: (context) => SubjectDetailScreen(
-                              subject: subjects[index], // Replace with your actual Subject object
+                              subject: subjects[index]
                             ),
                           ),
                         );

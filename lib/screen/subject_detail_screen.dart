@@ -1,4 +1,5 @@
 import 'package:aplikasi_ekstraksi_file_gpt4/components/graph_chart.dart';
+import 'package:aplikasi_ekstraksi_file_gpt4/providers/global_provider.dart';
 import 'package:aplikasi_ekstraksi_file_gpt4/providers/theme_provider.dart';
 import 'package:aplikasi_ekstraksi_file_gpt4/screen/question_screen.dart';
 import 'package:flutter/material.dart';
@@ -87,8 +88,9 @@ class _SubjectDetailScreenState extends State<SubjectDetailScreen> {
                       title: Text('Question Set ${index + 1}'),
                       subtitle: Text('Number of Questions: ${questionSet?.questions.length}'),
                       onTap: () {
+                        context.read<GlobalProvider>().setQuestionSetIndex(index);
                         Navigator.push(context, MaterialPageRoute(
-                          builder: (context) => QuestionScreen(),
+                          builder: (context) => QuestionScreen(questions: questionSet!.questions),
                         ));
                       },
                     ),

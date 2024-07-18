@@ -1,71 +1,18 @@
-import 'dart:async';
-
-import 'package:aplikasi_ekstraksi_file_gpt4/models/question_model.dart';
+// import 'package:aplikasi_ekstraksi_file_gpt4/models/question_model.dart';
+import 'package:aplikasi_ekstraksi_file_gpt4/models/bookmark_model.dart';
+import 'package:aplikasi_ekstraksi_file_gpt4/models/question_set_model.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
 class QuestionProvider extends ChangeNotifier {
   Map <int, String> _selectedOption = {}; // keep track of the selected question option
   Map <int, String> _sortedSelectedOption = {};
-  List<Question> questions = [
-      Question(
-        text: 'What is your favorite color?',
-        options: ['Red', 'Green', 'Blue', 'Yellow'],
-        correctOption: "Red"
-      ),
-      Question(
-        text: 'Which programming language do you prefer?',
-        options: ['Dart', 'JavaScript', 'Python', 'Java'],
-        correctOption: "Python"
-      ),
-      Question(
-        text: 'What is your favorite color?',
-        options: ['Red', 'Green', 'Blue', 'Yellow'],
-        correctOption: "Red"
-      ),
-      Question(
-        text: 'Which programming language do you prefer?',
-        options: ['Dart', 'JavaScript', 'Python', 'Java'],
-        correctOption: "Python"
-      ),
-      Question(
-        text: 'What is your favorite color?',
-        options: ['Red', 'Green', 'Blue', 'Yellow'],
-        correctOption: "Red"
-      ),
-      Question(
-        text: 'Which programming language do you prefer?',
-        options: ['Dart', 'JavaScript', 'Python', 'Java'],
-        correctOption: "Python"
-      ),
-      // Add more questions as needed
-    ];
+  List<QuestionSet> _questionsSet = [];
+  // List<Question> _questions = [];
 
-  final _questionController = StreamController<List<Question>>.broadcast();
-  Stream<List<Question>> get questionStream => _questionController.stream;
-  
-  void initiateQuestion() {
-    _questionController.sink.add(questions);
-    notifyListeners();
-  }
+  List<QuestionSet> get questionSet => _questionsSet;
 
 
-  // Stream<List<Question>> getQuestions() async* {
-  //   // Replace this with your actual data fetching logic
-  //   List<Question> questions = [
-  //     Question(
-  //       text: 'What is your favorite color?',
-  //       options: ['Red', 'Green', 'Blue', 'Yellow'],
-  //     ),
-  //     Question(
-  //       text: 'Which programming language do you prefer?',
-  //       options: ['Dart', 'JavaScript', 'Python', 'Java'],
-  //     ),
-  //     // Add more questions as needed
-  //   ];
-  //   yield questions;
-  // }
-
-  
   Map<int, String> get selectedOption => _sortedSelectedOption;
   
   void setSelectedOption(int index, String option) {
@@ -73,4 +20,53 @@ class QuestionProvider extends ChangeNotifier {
     _sortedSelectedOption= Map.fromEntries(_selectedOption.entries.toList()..sort((e1, e2) => e1.key.compareTo(e2.key)));
     notifyListeners();
   }
+
+  Future<void> updateQuestionSetFields(String bookId, int bookmarkIndex, int subjectIndex, int questionSetIndex, Map<String, dynamic> newData) async {
+  try {
+    // Fetch the book document
+    final bookDoc = await FirebaseFirestore.instance.collection('books').doc(bookId).get();
+
+    if (bookDoc.exists) {
+      final data = bookDoc.data();
+      if (data != null && data['bookmarks'] != null) {
+        // Find the specific bookmark with bookmarkId
+        final bookmarks = List<Map<String, dynamic>>.from(data['bookmarks']);
+        
+        if (bookmarkIndex != -1) {
+          Bookmark bookmark = Bookmark.fromMap(bookmarks[bookmarkIndex]);
+
+          // Ensure subjectIndex and questionSetIndex are within bounds
+          if (subjectIndex >= 0 && subjectIndex < bookmark.subjects.length &&
+              questionSetIndex >= 0 && questionSetIndex < bookmark.subjects[subjectIndex].questionSets!.length) {
+            
+            // Update the specific fields in the questionSet
+            QuestionSet questionSet = bookmark.subjects[subjectIndex].questionSets![questionSetIndex];
+            questionSet.point = newData['point'];
+            questionSet.status = newData['status'];
+            questionSet.selectedOption = newData['selectedOption'];
+
+            // Update the questionSets list within the subject
+            bookmark.subjects[subjectIndex].questionSets![questionSetIndex] = questionSet;
+
+            // Update the bookmarks list
+            bookmarks[bookmarkIndex] = bookmark.toMap();
+
+            // Update the document in Firestore
+            await FirebaseFirestore.instance.collection('books').doc(bookId).update({
+              'bookmarks': bookmarks,
+            });
+
+            // Update local state if needed
+            // _subjects = bookmark.subjects;
+            // notifyListeners();
+          }
+        }
+      }
+    }
+  } catch (error) {
+    print("Error updating questionSet fields: $error");
+  }
+}
+
+
 }

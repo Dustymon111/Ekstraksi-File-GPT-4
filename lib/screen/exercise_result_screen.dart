@@ -1,15 +1,18 @@
+import 'package:aplikasi_ekstraksi_file_gpt4/models/question_model.dart';
 import 'package:aplikasi_ekstraksi_file_gpt4/providers/question_provider.dart';
 import 'package:aplikasi_ekstraksi_file_gpt4/screen/answers_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 class ExerciseResultScreen extends StatelessWidget {
+  final List<Question> questions;
   final int totalQuestions;
   final int correctAnswers;
 
   ExerciseResultScreen({
     required this.totalQuestions,
     required this.correctAnswers,
+    required this.questions,
   });
 
   @override
@@ -48,7 +51,7 @@ class ExerciseResultScreen extends StatelessWidget {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => AnswersScreen(selectedOption: context.read<QuestionProvider>().selectedOption),
+                    builder: (context) => AnswersScreen(questions: questions,selectedOption: context.read<QuestionProvider>().selectedOption),
                   ),
                 );
               },
