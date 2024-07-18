@@ -7,22 +7,26 @@ import 'package:aplikasi_ekstraksi_file_gpt4/screen/home_screen.dart';
 import 'package:aplikasi_ekstraksi_file_gpt4/providers/theme_provider.dart';
 import 'package:aplikasi_ekstraksi_file_gpt4/screen/login_screen.dart';
 import 'package:aplikasi_ekstraksi_file_gpt4/screen/register_screen.dart';
+import 'package:aplikasi_ekstraksi_file_gpt4/screen/splash_screen.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
+// import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:provider/provider.dart';
+import 'firebase_options.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await dotenv.load(fileName: ".env");
-  await Firebase.initializeApp();
-  return runApp((
-    MultiProvider(providers: [
-    ChangeNotifierProvider(create: (_) => ThemeNotifier()),
-    ChangeNotifierProvider(create: (_) => QuestionProvider()),
-    ChangeNotifierProvider(create: (_) => BookmarkProvider()),
-    ChangeNotifierProvider(create: (_) => UserProvider()),
-    ChangeNotifierProvider(create: (_) => GlobalProvider()),
+  // await dotenv.load(fileName: ".env");
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
+  return runApp((MultiProvider(
+    providers: [
+      ChangeNotifierProvider(create: (_) => ThemeNotifier()),
+      ChangeNotifierProvider(create: (_) => QuestionProvider()),
+      ChangeNotifierProvider(create: (_) => BookmarkProvider()),
+      ChangeNotifierProvider(create: (_) => UserProvider()),
+      ChangeNotifierProvider(create: (_) => GlobalProvider()),
     ],
     child: const MyApp(),
   )));
@@ -38,23 +42,24 @@ class MyApp extends StatelessWidget {
       builder: (context, theme, _) => MaterialApp(
         title: 'Ekstraksi File',
         theme: ThemeData(
-              primaryColor: Colors.blue,
-              colorScheme: ColorScheme.light(
-                primary: Colors.indigo,
-                onPrimary: Colors.white,
-              ),
-            ),
-            darkTheme: ThemeData(
-              primaryColor: Colors.blueGrey,
-              colorScheme: ColorScheme.dark(
-                primary: Colors.blueGrey,
-                onPrimary: Colors.black,
-              ),
-            ),
+          primaryColor: Colors.blue,
+          colorScheme: ColorScheme.light(
+            primary: Colors.indigo,
+            onPrimary: Colors.white,
+          ),
+        ),
+        darkTheme: ThemeData(
+          primaryColor: Colors.blueGrey,
+          colorScheme: ColorScheme.dark(
+            primary: Colors.blueGrey,
+            onPrimary: Colors.black,
+          ),
+        ),
         themeMode: theme.currentTheme,
-        initialRoute: '/login',
+        initialRoute: '/',
         routes: {
-          '/': (context) => const Home(),
+          '/': (context) => const SplashScreen(),
+          '/home': (context) => const Home(),
           '/login': (context) => LoginScreen(),
           '/register': (context) => RegisterScreen(),
           '/bookmarks': (context) => BookmarkScreen(),
@@ -63,4 +68,3 @@ class MyApp extends StatelessWidget {
     );
   }
 }
-

@@ -33,9 +33,37 @@
     <link rel="icon" type="image/png" href="favicon.png" />
 
     <title>aplikasi_ekstraksi_file_gpt4</title>
+    <script
+      defer
+      src="https://www.gstatic.com/firebasejs/10.11.1/firebase-app.js"
+    ></script>
+    <script
+      defer
+      src="https://www.gstatic.com/firebasejs/10.11.1/firebase-auth.js"
+    ></script>
+    <script
+      defer
+      src="https://www.gstatic.com/firebasejs/10.11.1/firebase-firestore.js"
+    ></script>
+    <script
+      defer
+      src="https://www.gstatic.com/firebasejs/10.11.1/firebase-storage.js"
+    ></script>
     <link rel="manifest" href="manifest.json" />
   </head>
   <body>
     <script src="flutter_bootstrap.js" async></script>
+    <script>
+      const firebaseConfig = {
+        apiKey: "AIzaSyBdLxqtilOZr_FssJr7965PTORVEmNG11E",
+        appId: "1:996221582414:web:08219e0f7aff17baf6d71f",
+        messagingSenderId: "996221582414",
+        projectId: "ektraksi-file-gpt-4",
+        authDomain: "ektraksi-file-gpt-4.firebaseapp.com",
+        storageBucket: "ektraksi-file-gpt-4.appspot.com",
+        measurementId: "G-9T6CMC0JCJ",
+      };
+      firebase.initializeApp(firebaseConfig);
+    </script>
   </body>
 </html>

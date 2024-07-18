@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:aplikasi_ekstraksi_file_gpt4/components/custom_button.dart';
 import 'package:aplikasi_ekstraksi_file_gpt4/providers/theme_provider.dart';
 import 'package:aplikasi_ekstraksi_file_gpt4/screen/bookmark_screen.dart';
+import 'package:aplikasi_ekstraksi_file_gpt4/screen/create_screen.dart';
 import 'package:aplikasi_ekstraksi_file_gpt4/screen/login_screen.dart';
 import 'package:aplikasi_ekstraksi_file_gpt4/screen/profile_screen.dart';
 import 'package:file_picker/file_picker.dart';
@@ -63,40 +64,40 @@ class _HomeState extends State<Home> {
   }
 
   Future<void> pickFile() async {
-  try {
-    // Pick a file
-    final result = await FilePicker.platform.pickFiles(type: FileType.any);
-    
-    if (result != null && result.files.isNotEmpty) {
-      // Get the first file from the result
-      final pickedFile = result.files.first;
-      
-      setState(() {
-        // Update state with the picked file
-        this.pickedFile = pickedFile;
-        fileName = pickedFile.name;
-      });
-    } else {
-      // No file picked, handle as needed
+    try {
+      // Pick a file
+      final result = await FilePicker.platform.pickFiles(type: FileType.any);
+
+      if (result != null && result.files.isNotEmpty) {
+        // Get the first file from the result
+        final pickedFile = result.files.first;
+
+        setState(() {
+          // Update state with the picked file
+          this.pickedFile = pickedFile;
+          fileName = pickedFile.name;
+        });
+      } else {
+        // No file picked, handle as needed
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('No file selected!')),
+        );
+      }
+    } catch (e) {
+      // Handle any errors during file picking
+      print('Error picking file: $e');
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('No file selected!')),
+        SnackBar(content: Text('Failed to pick file: $e')),
       );
     }
-  } catch (e) {
-    // Handle any errors during file picking
-    print('Error picking file: $e');
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text('Failed to pick file: $e')),
-    );
   }
-}
-
 
   Future<void> uploadFile() async {
     if (pickedFile != null) {
       try {
         final filePath = pickedFile!.path!;
-        final fileName = filePath.split('/').last; // Extract file name from path
+        final fileName =
+            filePath.split('/').last; // Extract file name from path
 
         // Create a reference to Firebase Storage
         final storageRef = FirebaseStorage.instance
@@ -105,7 +106,7 @@ class _HomeState extends State<Home> {
 
         // Upload the file to Firebase Storage
         final uploadTask = storageRef.putFile(File(filePath));
-        
+
         // Show upload progress (optional)
         uploadTask.snapshotEvents.listen((event) {
           final progress = (event.bytesTransferred.toDouble() /
@@ -125,7 +126,6 @@ class _HomeState extends State<Home> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('File uploaded successfully!')),
         );
-
       } catch (e) {
         print('Error uploading file: $e');
         ScaffoldMessenger.of(context).showSnackBar(
@@ -166,14 +166,50 @@ class _HomeState extends State<Home> {
           ),
         ],
       ),
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: _currentIndex,
-        onTap: _onTabTapped,
-        items: [
-          BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
-          BottomNavigationBarItem(icon: Icon(Icons.book_outlined), label: 'Bookmarks'),
-          BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Profile'),
-        ],
+      bottomNavigationBar: Container(
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.only(
+            topLeft: Radius.circular(30.0),
+            topRight: Radius.circular(30.0),
+          ),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black26,
+              spreadRadius: 0,
+              blurRadius: 10,
+            ),
+          ],
+        ),
+        child: BottomNavigationBar(
+          currentIndex: _currentIndex,
+          onTap: _onTabTapped,
+          backgroundColor: Colors.transparent,
+          elevation: 0,
+          type: BottomNavigationBarType.fixed,
+          selectedItemColor: Colors.black,
+          unselectedItemColor: Colors.black,
+          showSelectedLabels: false,
+          showUnselectedLabels: false,
+          items: [
+            BottomNavigationBarItem(
+              icon: Icon(Icons.home, size: 30),
+              label: 'Home',
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.add_circle_outline, size: 30),
+              label: 'Create',
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.bookmark, size: 30),
+              label: 'Bookmarks',
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.person, size: 30),
+              label: 'Profile',
+            ),
+          ],
+        ),
       ),
       body: PageView(
         controller: _pageController,
@@ -184,6 +220,7 @@ class _HomeState extends State<Home> {
         },
         children: <Widget>[
           buildHomePage(context),
+          buildCreatePage(context),
           buildBookmarkPage(context),
           buildProfilePage(context),
         ],
@@ -245,6 +282,10 @@ class _HomeState extends State<Home> {
 
   Widget buildBookmarkPage(BuildContext context) {
     return BookmarkScreen();
+  }
+
+  Widget buildCreatePage(BuildContext context) {
+    return CreateScreen();
   }
 
   Widget buildProfilePage(BuildContext context) {

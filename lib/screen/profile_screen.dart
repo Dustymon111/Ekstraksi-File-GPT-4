@@ -2,7 +2,6 @@ import 'package:aplikasi_ekstraksi_file_gpt4/components/custom_button.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'login_screen.dart'; 
 
 class ProfileScreen extends StatelessWidget {
   @override
@@ -38,14 +37,13 @@ class ProfileScreen extends StatelessWidget {
                       (Route<dynamic> route) => false,
                     );
                     Fluttertoast.showToast(
-                      msg: "Successfully Signed Out",
-                      toastLength: Toast.LENGTH_SHORT,
-                      gravity: ToastGravity.BOTTOM,
-                      timeInSecForIosWeb: 1,
-                      backgroundColor: Colors.green,
-                      textColor: Colors.white,
-                      fontSize: 16.0
-                  );
+                        msg: "Successfully Signed Out",
+                        toastLength: Toast.LENGTH_SHORT,
+                        gravity: ToastGravity.BOTTOM,
+                        timeInSecForIosWeb: 1,
+                        backgroundColor: Colors.green,
+                        textColor: Colors.white,
+                        fontSize: 16.0);
                   }
                 },
                 label: 'Sign Out',
