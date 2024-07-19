@@ -13,7 +13,7 @@ class CustomLineChart extends StatelessWidget {
     this.maxX = 10,
     this.minX = 1,
     this.maxY = 100,
-    this.minY = 20,
+    this.minY = 0,
   });
 
   @override
