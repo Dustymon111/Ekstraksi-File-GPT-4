@@ -6,6 +6,7 @@ import 'package:aplikasi_ekstraksi_file_gpt4/providers/theme_provider.dart';
 import 'package:aplikasi_ekstraksi_file_gpt4/screen/bookmark_screen.dart';
 import 'package:aplikasi_ekstraksi_file_gpt4/screen/login_screen.dart';
 import 'package:aplikasi_ekstraksi_file_gpt4/screen/profile_screen.dart';
+import 'package:aplikasi_ekstraksi_file_gpt4/utils/openai_service.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart'; // Import Firebase Storage
@@ -101,7 +102,7 @@ class _HomeState extends State<Home> {
         // Create a reference to Firebase Storage
         final storageRef = FirebaseStorage.instance
             .ref()
-            .child('uploads/$fileName'); // Use the extracted file name
+            .child('uploads/${auth.currentUser!.uid}/$fileName'); // Use the extracted file name
 
         // Upload the file to Firebase Storage
         final uploadTask = storageRef.putFile(File(filePath));
@@ -118,8 +119,18 @@ class _HomeState extends State<Home> {
         await uploadTask;
 
         // Get the download URL
-        final downloadURL = await storageRef.getDownloadURL();
-        print('File uploaded successfully! Download URL: $downloadURL');
+        final bookUrl = await storageRef.getDownloadURL();
+        print('File uploaded successfully! Download URL: $bookUrl');
+        await FileProcessor().testFunction();
+        // await FileProcessor().listModel();
+
+
+        //  Map<String, dynamic> tableOfContents = await FileProcessor().extractTableOfContents(filePath);
+        //   print("Title: ${tableOfContents['title']}");
+        //   print("Total Pages: ${tableOfContents['totalPages']}");
+        //   print("Author: ${tableOfContents['author']}");
+        //   print("Contents: ${tableOfContents['contents']}");
+              
 
         // Optionally, show a snackbar or dialog to notify the user of the upload
         ScaffoldMessenger.of(context).showSnackBar(
@@ -161,6 +172,7 @@ class _HomeState extends State<Home> {
             inactiveThumbColor: Colors.indigo,
             value: themeprov.isDarkTheme,
             onChanged: (bool value) {
+
               themeprov.toggleTheme();
             },
           ),

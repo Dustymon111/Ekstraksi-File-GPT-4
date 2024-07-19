@@ -54,6 +54,20 @@ class BookmarkProvider extends ChangeNotifier {
     }
   }
 
+  Future<void> updateBookUrl(String bookId, String newBookUrl) async {
+  try {
+    // Reference to the specific document in the 'books' collection
+    DocumentReference bookRef = FirebaseFirestore.instance.collection('books').doc(bookId);
+    
+    // Update only the 'bookUrl' field
+    await bookRef.update({'bookUrl': newBookUrl});
+    
+    print("Book URL updated successfully");
+  } catch (error) {
+    print("Error updating book URL: $error");
+  }
+}
+
   // Function to update filtered bookmarks based on search/query
   void updateFilteredBookmarks(String query) {
     _filteredBookmarks = _bookmarks.where((bookmark) =>

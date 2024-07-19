@@ -22,7 +22,7 @@ Widget buildBookmarkCard({
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
           Text('Penulis: ${bookmark.author}', style: TextStyle(fontSize: 16), overflow: TextOverflow.ellipsis),
-          Text('Jumlah Halaman: ${bookmark.pageNumber.toString()} halaman', style: TextStyle(fontSize: 16)),
+          Text('Jumlah Halaman: ${bookmark.totalPages.toString()} halaman', style: TextStyle(fontSize: 16)),
         ],
         ),
         onTap: (){

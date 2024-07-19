@@ -61,7 +61,7 @@ void initState() {
                       bookmark: snapshot.data![index],
                       title: snapshot.data![index].title,
                       author: snapshot.data![index].author,
-                      pageNumber: snapshot.data![index].pageNumber,
+                      pageNumber: snapshot.data![index].totalPages,
                       context: context,
                       bookIdx: index
                     );

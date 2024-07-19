@@ -4,15 +4,15 @@ import 'subject_model.dart';
 class Bookmark {
   final String title;
   final String author;
-  final int pageNumber;
-  final String downloadURL;
+  final int totalPages;
+  final String bookUrl;
   final List<Subject> subjects;
 
   Bookmark({
     required this.title,
     required this.author,
-    required this.pageNumber,
-    required this.downloadURL,
+    required this.totalPages,
+    required this.bookUrl,
     required this.subjects,
   });
 
@@ -23,8 +23,8 @@ class Bookmark {
     return Bookmark(
       title: data['title'] ?? '',
       author: data['author'] ?? '',
-      pageNumber: data['pageNumber'] ?? 0,
-      downloadURL: data['downloadUrl'] ?? '',
+      totalPages: data['totalPages'] ?? 0,
+      bookUrl: data['bookUrl'] ?? '',
       subjects: (data['subjects'] as List<dynamic>? ?? []).map((subjectData) {
         return Subject.fromMap(subjectData as Map<String, dynamic>);
       }).toList(),
@@ -36,8 +36,8 @@ class Bookmark {
     return Bookmark(
       title: data['title'] ?? '',
       author: data['author'] ?? '',
-      pageNumber: data['pageNumber'] ?? 0,
-      downloadURL: data['downloadURL'] ?? '',
+      totalPages: data['totalPages'] ?? 0,
+      bookUrl: data['bookUrl'] ?? '',
       subjects: (data['subjects'] as List<dynamic>? ?? []).map((subjectData) {
         return Subject.fromMap(subjectData as Map<String, dynamic>);
       }).toList(),
@@ -49,7 +49,7 @@ class Bookmark {
     return {
       'title': title,
       'author': author,
-      'pageNumber': pageNumber,
+      'totalPages': totalPages,
       'subjects': subjects.map((subject) => subject.toMap()).toList(),
     };
   }
