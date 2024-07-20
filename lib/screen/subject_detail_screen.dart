@@ -1,9 +1,7 @@
 import 'package:aplikasi_ekstraksi_file_gpt4/components/graph_chart.dart';
 import 'package:aplikasi_ekstraksi_file_gpt4/models/question_set_model.dart';
-import 'package:aplikasi_ekstraksi_file_gpt4/providers/bookmark_provider.dart';
 import 'package:aplikasi_ekstraksi_file_gpt4/providers/global_provider.dart';
 import 'package:aplikasi_ekstraksi_file_gpt4/providers/question_provider.dart';
-import 'package:aplikasi_ekstraksi_file_gpt4/providers/subject_provider.dart';
 import 'package:aplikasi_ekstraksi_file_gpt4/providers/theme_provider.dart';
 import 'package:aplikasi_ekstraksi_file_gpt4/screen/exercise_result_screen.dart';
 import 'package:aplikasi_ekstraksi_file_gpt4/screen/question_screen.dart';
