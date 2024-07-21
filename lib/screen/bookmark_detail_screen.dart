@@ -56,7 +56,7 @@ class _BookmarkDetailScreenState extends State<BookmarkDetailScreen> {
               ),
               SizedBox(height: 8),
               Text(
-                'Jumlah Halaman: ${widget.bookmark.pageNumber.toString()}',
+                'Jumlah Halaman: ${widget.bookmark.totalPages.toString()}',
                 style: TextStyle(fontSize: 16),
               ),
               SizedBox(height: 16),

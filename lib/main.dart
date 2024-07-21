@@ -8,6 +8,7 @@ import 'package:aplikasi_ekstraksi_file_gpt4/providers/theme_provider.dart';
 import 'package:aplikasi_ekstraksi_file_gpt4/screen/login_screen.dart';
 import 'package:aplikasi_ekstraksi_file_gpt4/screen/register_screen.dart';
 import 'package:aplikasi_ekstraksi_file_gpt4/screen/splash_screen.dart';
+import 'package:dart_openai/dart_openai.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 // import 'package:flutter_dotenv/flutter_dotenv.dart';
@@ -20,6 +21,7 @@ void main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
+  // OpenAI.apiKey = dotenv.env["OPENAI_API_KEY"]!;
   return runApp((MultiProvider(
     providers: [
       ChangeNotifierProvider(create: (_) => ThemeNotifier()),
@@ -58,8 +60,8 @@ class MyApp extends StatelessWidget {
         themeMode: theme.currentTheme,
         initialRoute: '/',
         routes: {
-          '/': (context) => const SplashScreen(),
-          '/home': (context) => const Home(),
+          '/': (context) => SplashScreen(),
+          '/home': (context) => Home(),
           '/login': (context) => LoginScreen(),
           '/register': (context) => RegisterScreen(),
           '/bookmarks': (context) => BookmarkScreen(),

@@ -4,9 +4,10 @@ import 'dart:io';
 import 'package:aplikasi_ekstraksi_file_gpt4/components/custom_button.dart';
 import 'package:aplikasi_ekstraksi_file_gpt4/providers/theme_provider.dart';
 import 'package:aplikasi_ekstraksi_file_gpt4/screen/bookmark_screen.dart';
-import 'package:aplikasi_ekstraksi_file_gpt4/screen/create_screen.dart';
+import 'package:aplikasi_ekstraksi_file_gpt4/screen/create_page.dart';
 import 'package:aplikasi_ekstraksi_file_gpt4/screen/login_screen.dart';
 import 'package:aplikasi_ekstraksi_file_gpt4/screen/profile_screen.dart';
+import 'package:aplikasi_ekstraksi_file_gpt4/utils/openai_service.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart'; // Import Firebase Storage
@@ -100,9 +101,8 @@ class _HomeState extends State<Home> {
             filePath.split('/').last; // Extract file name from path
 
         // Create a reference to Firebase Storage
-        final storageRef = FirebaseStorage.instance
-            .ref()
-            .child('uploads/$fileName'); // Use the extracted file name
+        final storageRef = FirebaseStorage.instance.ref().child(
+            'uploads/${auth.currentUser!.uid}/$fileName'); // Use the extracted file name
 
         // Upload the file to Firebase Storage
         final uploadTask = storageRef.putFile(File(filePath));
@@ -119,8 +119,16 @@ class _HomeState extends State<Home> {
         await uploadTask;
 
         // Get the download URL
-        final downloadURL = await storageRef.getDownloadURL();
-        print('File uploaded successfully! Download URL: $downloadURL');
+        final bookUrl = await storageRef.getDownloadURL();
+        print('File uploaded successfully! Download URL: $bookUrl');
+        await FileProcessor().testFunction();
+        // await FileProcessor().listModel();
+
+        //  Map<String, dynamic> tableOfContents = await FileProcessor().extractTableOfContents(filePath);
+        //   print("Title: ${tableOfContents['title']}");
+        //   print("Total Pages: ${tableOfContents['totalPages']}");
+        //   print("Author: ${tableOfContents['author']}");
+        //   print("Contents: ${tableOfContents['contents']}");
 
         // Optionally, show a snackbar or dialog to notify the user of the upload
         ScaffoldMessenger.of(context).showSnackBar(
@@ -152,6 +160,7 @@ class _HomeState extends State<Home> {
     var themeprov = Provider.of<ThemeNotifier>(context);
     return Scaffold(
       appBar: AppBar(
+        backgroundColor : Color(0xFF1C88BF),
         actions: [
           Switch(
             thumbIcon: themeprov.isDarkTheme
@@ -187,7 +196,7 @@ class _HomeState extends State<Home> {
           backgroundColor: Colors.transparent,
           elevation: 0,
           type: BottomNavigationBarType.fixed,
-          selectedItemColor: Colors.black,
+          selectedItemColor: Color(0xFF1C88BF),
           unselectedItemColor: Colors.black,
           showSelectedLabels: false,
           showUnselectedLabels: false,
@@ -229,6 +238,139 @@ class _HomeState extends State<Home> {
   }
 
   Widget buildHomePage(BuildContext context) {
+    return Scaffold(
+      body: SingleChildScrollView(
+        child: Column(
+          children: [
+            Container(
+              decoration: const BoxDecoration(
+                  color: Color(0xFF1C88BF),
+                  borderRadius:
+                      BorderRadius.only(bottomRight: Radius.circular(50.0))),
+              padding: const EdgeInsets.all(16.0),
+              child: Column(
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      CircleAvatar(
+                        radius: 45,
+                        backgroundColor: Colors.white,
+                        child: const Icon(Icons.school,
+                            color: Color(0xFF1C88BF), size: 40),
+                      ),
+                      SizedBox(
+                        width: 20,
+                      ),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: const [
+                          Text(
+                            "Welcome to Liquiz..",
+                            style: TextStyle(color: Colors.white, fontSize: 18),
+                          ),
+                          Text(
+                            "Peter Fomas Hia",
+                            style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 28,
+                                fontWeight: FontWeight.bold),
+                          ),
+                          Text(
+                            "Where Knowledge Flows Freely",
+                            style: TextStyle(color: Colors.white, fontSize: 14),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 30),
+                ],
+              ),
+            ),
+            const SizedBox(height: 20),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: [
+                Column(
+                  children: const [
+                    Icon(Icons.subject, size: 30),
+                    Text(
+                      "1 Subjects",
+                    ),
+                  ],
+                ),
+                Column(
+                  children: const [
+                    Icon(Icons.topic, size: 30),
+                    Text(
+                      "3 Topics",
+                    ),
+                  ],
+                ),
+              ],
+            ),
+            const SizedBox(height: 20),
+            ElevatedButton(
+              onPressed: () {
+                _onTabTapped(1);
+              },
+              child: const Text("Create New"),
+              style: ElevatedButton.styleFrom(
+                  foregroundColor: Color(0xFF1C88BF),
+                  backgroundColor: Colors.white),
+            ),
+            const SizedBox(
+              height: 20,
+            ),
+            Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text("Instructions",
+                      style:
+                          TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                  const Text("For new users, please follow these steps"),
+                  const SizedBox(height: 20),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Container(
+                        width: MediaQuery.of(context).size.width / 2.5,
+                        height: 150,
+                        decoration: BoxDecoration(
+                            color: Color(0xFF1C88BF),
+                            borderRadius: BorderRadius.circular(10)),
+                      ),
+                      Container(
+                        width: MediaQuery.of(context).size.width / 2.5,
+                        height: 150,
+                        decoration: BoxDecoration(
+                            color: Color(0xFF1C88BF),
+                            borderRadius: BorderRadius.circular(10)),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 10),
+                  Align(
+                    alignment: Alignment.centerRight,
+                    child: TextButton(
+                      onPressed: () {},
+                      child: const Text("See all",
+                          style: TextStyle(color: Colors.blue)),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget buildSubjectPage(BuildContext context) {
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,

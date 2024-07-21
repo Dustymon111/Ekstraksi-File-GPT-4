@@ -71,7 +71,7 @@ class _QuestionScreenState extends State<QuestionScreen> {
                     };
                   context.read<QuestionProvider>().updateQuestionSetFields(bookmarkId, bookmarkIndex, subjectIndex, questionSetIndex, newData);
                 Navigator.of(context).pop();
-                Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => ExerciseResultScreen(questions: widget.questions ,totalQuestions: totalQuestions, correctAnswers: correctAnswers)));
+                Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => ExerciseResultScreen(questions: widget.questions ,totalQuestions: totalQuestions, correctAnswers: correctAnswers, selectedOptions: context.read<QuestionProvider>().selectedOption,)));
               },
             ),
             TextButton(
