@@ -1,7 +1,5 @@
 import 'package:docx_template/docx_template.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:path_provider/path_provider.dart';
 import 'dart:io';
 
 void generateDocx(List<Map<String, dynamic>> questions) async {
@@ -12,11 +10,6 @@ void generateDocx(List<Map<String, dynamic>> questions) async {
 
     // Create a DocxTemplate from bytes
     var docx = await DocxTemplate.fromBytes(bytes);
-
-    if (docx == null) {
-      print('Failed to load DOCX template.');
-      return;
-    }
 
     // Create a simple Content object
     Content c = Content();
@@ -45,38 +38,5 @@ void generateDocx(List<Map<String, dynamic>> questions) async {
     print('Document saved at: $appDocPath/sample.docx');
   } catch (e) {
     print('Error generating DOCX file: $e');
-  }
-}
-
-
-class TestScreen extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      home: Scaffold(
-        appBar: AppBar(
-          title: Text('Generate DOCX File'),
-        ),
-        body: Center(
-          child: ElevatedButton(
-            onPressed: () {
-              List<Map<String, dynamic>> questions = [
-                {
-                  'question': 'What is the capital of France?',
-                  'options': ['A) Paris', 'B) London', 'C) Rome', 'D) Madrid'],
-                },
-                {
-                  'question': 'What is 2 + 2?',
-                  'options': ['A) 3', 'B) 4', 'C) 5', 'D) 6'],
-                },
-              ];
-
-              generateDocx(questions);
-            },
-            child: Text('Generate DOCX'),
-          ),
-        ),
-      ),
-    );
   }
 }

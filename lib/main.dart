@@ -8,6 +8,7 @@ import 'package:aplikasi_ekstraksi_file_gpt4/screen/home_screen.dart';
 import 'package:aplikasi_ekstraksi_file_gpt4/providers/theme_provider.dart';
 import 'package:aplikasi_ekstraksi_file_gpt4/screen/login_screen.dart';
 import 'package:aplikasi_ekstraksi_file_gpt4/screen/register_screen.dart';
+import 'package:aplikasi_ekstraksi_file_gpt4/screen/test_screen.dart';
 import 'package:dart_openai/dart_openai.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
@@ -56,12 +57,13 @@ class MyApp extends StatelessWidget {
               ),
             ),
         themeMode: theme.currentTheme,
-        initialRoute: '/login',
+        initialRoute: '/test',
         routes: {
           '/': (context) => const Home(),
           '/login': (context) => LoginScreen(),
           '/register': (context) => RegisterScreen(),
           '/bookmarks': (context) => BookmarkScreen(),
+          '/test': (context) => TestScreen(),
         },
       ),
     );
