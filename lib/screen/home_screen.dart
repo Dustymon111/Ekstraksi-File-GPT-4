@@ -111,8 +111,6 @@ class _HomeState extends State<Home> {
 
         // Upload the file to Firebase Storage
         final uploadTask = storageRef.putFile(File(filePath));
-        
-       
 
         // Wait for the upload to complete
         await uploadTask;
@@ -120,14 +118,24 @@ class _HomeState extends State<Home> {
         // Get the download URL
         final bookUrl = await storageRef.getDownloadURL();
         print('File uploaded successfully! Download URL: $bookUrl');
-        PdfDocument document = PdfDocument(inputBytes: File(filePath).readAsBytesSync());
-        if (mounted){
-          context.read<BookmarkProvider>().addBookmark("book_${auth.currentUser?.uid}", Bookmark(title: fileName, bookUrl: bookUrl, author: "author", totalPages: document.pages.count, subjects: [], localFilePath: filePath));
+        PdfDocument document =
+            PdfDocument(inputBytes: File(filePath).readAsBytesSync());
+        if (mounted) {
+          context.read<BookmarkProvider>().addBookmark(
+              "book_${auth.currentUser?.uid}",
+              Bookmark(
+                  title: fileName,
+                  bookUrl: bookUrl,
+                  author: "author",
+                  totalPages: document.pages.count,
+                  subjects: [],
+                  localFilePath: filePath));
         }
 
-         showDialog(
+        showDialog(
           context: context,
-          barrierDismissible: false, // Prevent dialog from being dismissed by tapping outside
+          barrierDismissible:
+              false, // Prevent dialog from being dismissed by tapping outside
           builder: (context) {
             return UploadProgressDialog(
               progressStream: uploadTask.snapshotEvents,
@@ -149,13 +157,12 @@ class _HomeState extends State<Home> {
         // Optionally, show a snackbar or dialog to notify the user of the upload
       } catch (e) {
         Fluttertoast.showToast(
-          msg: "Upload failed, error: $e",
-          toastLength: Toast.LENGTH_LONG,
-          gravity: ToastGravity.BOTTOM,
-          backgroundColor: Colors.black,
-          textColor: Colors.white,
-          fontSize: 16.0
-        );
+            msg: "Upload failed, error: $e",
+            toastLength: Toast.LENGTH_LONG,
+            gravity: ToastGravity.BOTTOM,
+            backgroundColor: Colors.black,
+            textColor: Colors.white,
+            fontSize: 16.0);
       }
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -177,7 +184,7 @@ class _HomeState extends State<Home> {
     var themeprov = Provider.of<ThemeNotifier>(context);
     return Scaffold(
       appBar: AppBar(
-        backgroundColor : Color(0xFF1C88BF),
+        backgroundColor: Color(0xFF1C88BF),
         actions: [
           Switch(
             thumbIcon: themeprov.isDarkTheme
@@ -283,7 +290,7 @@ class _HomeState extends State<Home> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: const [
                           Text(
-                            "Welcome to Liquiz..",
+                            "Welcome to ExamEase..",
                             style: TextStyle(color: Colors.white, fontSize: 18),
                           ),
                           Text(

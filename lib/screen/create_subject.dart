@@ -1,7 +1,10 @@
 import 'dart:async';
 import 'dart:io';
 
+import 'package:aplikasi_ekstraksi_file_gpt4/components/circular_progress.dart';
 import 'package:aplikasi_ekstraksi_file_gpt4/components/custom_button.dart';
+import 'package:aplikasi_ekstraksi_file_gpt4/models/bookmark_model.dart';
+import 'package:aplikasi_ekstraksi_file_gpt4/providers/bookmark_provider.dart';
 import 'package:aplikasi_ekstraksi_file_gpt4/providers/theme_provider.dart';
 import 'package:aplikasi_ekstraksi_file_gpt4/screen/login_screen.dart';
 import 'package:aplikasi_ekstraksi_file_gpt4/utils/openai_service.dart';
@@ -9,9 +12,12 @@ import 'package:file_picker/file_picker.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart'; // Import Firebase Storage
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/provider.dart';
+import 'package:syncfusion_flutter_pdf/pdf.dart';
 import 'package:syncfusion_flutter_pdfviewer/pdfviewer.dart';
 
+// Halaman ini adalah halaman membuat subject / halaman upload file yang akan di ekstrak ( sebelumnya halaman ini  berada di dihalaman utama yg Bang Dustin Buat )
 class CreateSubject extends StatefulWidget {
   const CreateSubject({super.key});
 
@@ -28,6 +34,7 @@ class _CreateSubjectState extends State<CreateSubject> {
   String? userEmail;
   String? userName;
   late final StreamSubscription<User?> _authSubscription;
+  double progress = 0.0;
 
   @override
   void initState() {
@@ -103,21 +110,40 @@ class _CreateSubjectState extends State<CreateSubject> {
         // Upload the file to Firebase Storage
         final uploadTask = storageRef.putFile(File(filePath));
 
-        // Show upload progress (optional)
-        uploadTask.snapshotEvents.listen((event) {
-          final progress = (event.bytesTransferred.toDouble() /
-                  event.totalBytes.toDouble()) *
-              100;
-          print('Upload progress: $progress%');
-        });
-
         // Wait for the upload to complete
         await uploadTask;
 
         // Get the download URL
         final bookUrl = await storageRef.getDownloadURL();
         print('File uploaded successfully! Download URL: $bookUrl');
-        await FileProcessor().testFunction();
+        PdfDocument document =
+            PdfDocument(inputBytes: File(filePath).readAsBytesSync());
+        if (mounted) {
+          context.read<BookmarkProvider>().addBookmark(
+              "book_${auth.currentUser?.uid}",
+              Bookmark(
+                  title: fileName,
+                  bookUrl: bookUrl,
+                  author: "author",
+                  totalPages: document.pages.count,
+                  subjects: [],
+                  localFilePath: filePath));
+        }
+
+        showDialog(
+          context: context,
+          barrierDismissible:
+              false, // Prevent dialog from being dismissed by tapping outside
+          builder: (context) {
+            return UploadProgressDialog(
+              progressStream: uploadTask.snapshotEvents,
+              onClose: () {
+                Navigator.of(context).pop();
+              },
+            );
+          },
+        );
+        // await FileProcessor().testFunction();
         // await FileProcessor().listModel();
 
         //  Map<String, dynamic> tableOfContents = await FileProcessor().extractTableOfContents(filePath);
@@ -127,14 +153,14 @@ class _CreateSubjectState extends State<CreateSubject> {
         //   print("Contents: ${tableOfContents['contents']}");
 
         // Optionally, show a snackbar or dialog to notify the user of the upload
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('File uploaded successfully!')),
-        );
       } catch (e) {
-        print('Error uploading file: $e');
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Failed to upload file: $e')),
-        );
+        Fluttertoast.showToast(
+            msg: "Upload failed, error: $e",
+            toastLength: Toast.LENGTH_LONG,
+            gravity: ToastGravity.BOTTOM,
+            backgroundColor: Colors.black,
+            textColor: Colors.white,
+            fontSize: 16.0);
       }
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
