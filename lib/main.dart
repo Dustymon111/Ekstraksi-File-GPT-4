@@ -1,6 +1,7 @@
 import 'package:aplikasi_ekstraksi_file_gpt4/providers/bookmark_provider.dart';
 import 'package:aplikasi_ekstraksi_file_gpt4/providers/global_provider.dart';
 import 'package:aplikasi_ekstraksi_file_gpt4/providers/question_provider.dart';
+import 'package:aplikasi_ekstraksi_file_gpt4/providers/subject_provider.dart';
 import 'package:aplikasi_ekstraksi_file_gpt4/providers/user_provider.dart';
 import 'package:aplikasi_ekstraksi_file_gpt4/screen/bookmark_screen.dart';
 import 'package:aplikasi_ekstraksi_file_gpt4/screen/home_screen.dart';
@@ -8,6 +9,7 @@ import 'package:aplikasi_ekstraksi_file_gpt4/providers/theme_provider.dart';
 import 'package:aplikasi_ekstraksi_file_gpt4/screen/login_screen.dart';
 import 'package:aplikasi_ekstraksi_file_gpt4/screen/register_screen.dart';
 import 'package:aplikasi_ekstraksi_file_gpt4/screen/splash_screen.dart';
+import 'package:aplikasi_ekstraksi_file_gpt4/screen/test_screen.dart';
 import 'package:dart_openai/dart_openai.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
@@ -27,6 +29,7 @@ void main() async {
       ChangeNotifierProvider(create: (_) => ThemeNotifier()),
       ChangeNotifierProvider(create: (_) => QuestionProvider()),
       ChangeNotifierProvider(create: (_) => BookmarkProvider()),
+      ChangeNotifierProvider(create: (_) => SubjectProvider()),
       ChangeNotifierProvider(create: (_) => UserProvider()),
       ChangeNotifierProvider(create: (_) => GlobalProvider()),
     ],
@@ -65,6 +68,7 @@ class MyApp extends StatelessWidget {
           '/login': (context) => LoginScreen(),
           '/register': (context) => RegisterScreen(),
           '/bookmarks': (context) => BookmarkScreen(),
+          '/test': (context) => TestScreen(),
         },
       ),
     );

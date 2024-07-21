@@ -5,8 +5,14 @@ import 'package:aplikasi_ekstraksi_file_gpt4/models/bookmark_model.dart';
 
 class SubjectProvider with ChangeNotifier {
   List<Subject> _subjects = [];
-
+  List<double> _points = [];
   List<Subject> get subjects => _subjects;
+  List<double> get points => _points;
+
+  void setPoints(List<double> points) {
+    _points = points;
+    notifyListeners();
+  }
 
   Future<void> fetchSubjects(String bookId, String bookmarkId) async {
     try {
@@ -71,6 +77,46 @@ class SubjectProvider with ChangeNotifier {
   } catch (error) {
     print("Error adding subjects: $error");
   }
+}
+
+Future<void> fetchPoints(String bookId, int bookmarkIndex, int subjectIndex) async {
+
+  try {
+    // Fetch the book document
+    final bookDoc = await FirebaseFirestore.instance.collection('books').doc(bookId).get();
+
+    if (bookDoc.exists) {
+      final data = bookDoc.data();
+      if (data != null && data['bookmarks'] != null) {
+        final bookmarks = List<Map<String, dynamic>>.from(data['bookmarks']);
+        
+        // Ensure the bookmarkIndex is within bounds
+        if (bookmarks.length > bookmarkIndex) {
+          final bookmark = bookmarks[bookmarkIndex];
+          if (bookmark['subjects'] != null) {
+            final subjects = List<Map<String, dynamic>>.from(bookmark['subjects']);
+            
+            // Ensure the subjectIndex is within bounds
+            if (subjects.length > subjectIndex) {
+              final subject = subjects[subjectIndex];
+              if (subject['questionSets'] != null) {
+                final questionSets = List<Map<String, dynamic>>.from(subject['questionSets']);
+                
+                for (var questionSet in questionSets) {
+                  if (questionSet.containsKey('point')) {
+                    points.add(questionSet['point'].toDouble());
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  } catch (error) {
+    print("Error fetching points: $error");
+  }
+
 }
 
 

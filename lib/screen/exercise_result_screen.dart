@@ -1,5 +1,7 @@
+import 'package:aplikasi_ekstraksi_file_gpt4/components/custom_button.dart';
 import 'package:aplikasi_ekstraksi_file_gpt4/models/question_model.dart';
 import 'package:aplikasi_ekstraksi_file_gpt4/screen/answers_screen.dart';
+import 'package:aplikasi_ekstraksi_file_gpt4/utils/docx_generator.dart';
 import 'package:flutter/material.dart';
 
 class ExerciseResultScreen extends StatelessWidget {
@@ -46,7 +48,7 @@ class ExerciseResultScreen extends StatelessWidget {
               style: TextStyle(fontSize: 18),
             ),
             SizedBox(height: 16),
-            ElevatedButton(
+            CustomElevatedButton(
               onPressed: () {
                 Navigator.push(
                   context,
@@ -55,7 +57,13 @@ class ExerciseResultScreen extends StatelessWidget {
                   ),
                 );
               },
-              child: Text('Check Answers'),
+              label: 'Check Answers',
+            ),
+            CustomElevatedButton(
+              onPressed: () {
+                // generateDocx();
+              },
+              label: 'Generate Docx',
             ),
           ],
         ),

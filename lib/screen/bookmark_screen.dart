@@ -20,6 +20,7 @@ void initState() {
   String bookmarkId = "book_${_auth.currentUser!.uid}";
   WidgetsBinding.instance.addPostFrameCallback((_) {
     context.read<BookmarkProvider>().fetchBookmarks(bookmarkId);
+    context.read<BookmarkProvider>().initiateBookmark();
   });
   super.initState();
 }

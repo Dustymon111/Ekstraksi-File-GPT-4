@@ -7,6 +7,7 @@ class Bookmark {
   final int totalPages;
   final String bookUrl;
   final List<Subject> subjects;
+  final String localFilePath;
 
   Bookmark({
     required this.title,
@@ -14,6 +15,7 @@ class Bookmark {
     required this.totalPages,
     required this.bookUrl,
     required this.subjects,
+    required this.localFilePath,
   });
 
   // Convert Firestore document to Bookmark
@@ -25,6 +27,7 @@ class Bookmark {
       author: data['author'] ?? '',
       totalPages: data['totalPages'] ?? 0,
       bookUrl: data['bookUrl'] ?? '',
+      localFilePath: data['localFilePath'] ?? '',
       subjects: (data['subjects'] as List<dynamic>? ?? []).map((subjectData) {
         return Subject.fromMap(subjectData as Map<String, dynamic>);
       }).toList(),
@@ -38,6 +41,7 @@ class Bookmark {
       author: data['author'] ?? '',
       totalPages: data['totalPages'] ?? 0,
       bookUrl: data['bookUrl'] ?? '',
+      localFilePath: data['localFilePath'] ?? '',
       subjects: (data['subjects'] as List<dynamic>? ?? []).map((subjectData) {
         return Subject.fromMap(subjectData as Map<String, dynamic>);
       }).toList(),
@@ -50,6 +54,8 @@ class Bookmark {
       'title': title,
       'author': author,
       'totalPages': totalPages,
+      'bookUrl' :  bookUrl,
+      'localFilePath': localFilePath,
       'subjects': subjects.map((subject) => subject.toMap()).toList(),
     };
   }
