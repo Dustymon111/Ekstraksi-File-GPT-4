@@ -1,42 +1,59 @@
 import 'package:docx_template/docx_template.dart';
-import 'package:flutter/services.dart';
 import 'dart:io';
+import 'package:flutter/services.dart';
 
-void generateDocx(List<Map<String, dynamic>> questions) async {
+
+Future<void> generateQuestionsDocx() async {
   try {
-    // Load the template
-    ByteData data = await rootBundle.load('assets/templates.docx');
-    var bytes = data.buffer.asUint8List();
+    // Load the DOCX template file
+    final data = await rootBundle.load('assets/templates.docx');
+    final bytes = data.buffer.asUint8List();
 
-    // Create a DocxTemplate from bytes
-    var docx = await DocxTemplate.fromBytes(bytes);
+    final docx = await DocxTemplate.fromBytes(bytes);
 
-    // Create a simple Content object
-    Content c = Content();
-    // Add questions and options
+    List<Map<String, dynamic>> questions = [
+      {
+        'question': 'What is the capital of France?',
+        'options': ['Berlin', 'Madrid', 'Paris', 'Rome'],
+      },
+      {
+        'question': 'Which planet is known as the Red Planet?',
+        'options': ['Earth', 'Mars', 'Jupiter', 'Saturn'],
+      },
+      {
+        'question': 'What is the largest ocean on Earth?',
+        'options': ['Atlantic Ocean', 'Indian Ocean', 'Arctic Ocean', 'Pacific Ocean'],
+      }
+    ];
+
+
+    List<List<Content>> contentList = List.generate(questions.length, (_) => []);
     for (int i = 0; i < questions.length; i++) {
-      var question = questions[i];
-      c.add(TextContent('question${i + 1}', question['question']));
-      for (int j = 0; j < question['options'].length; j++) {
-        // Ensure options are modifiable before adding
-        c.add(TextContent('option${i + 1}${j + 1}', question['options'][j]));
+      for (var n in questions[i]["options"]) {
+        final c = PlainContent("value")
+          ..add(TextContent("normal", n));
+        contentList[i].add(c);
       }
     }
-    // Generate the document
-    final docGenerated = await docx.generate(c);
 
-    // Get the application documents directory
-    final directory = Directory('/storage/emulated/0/Documents');
-    String appDocPath = directory.path;
+    final content = Content();
+    for (int i = 0; i < questions.length; i++) {
+      content
+          .add(ListContent("list", [
+          TextContent("value", questions[i]["question"])
+            ..add(ListContent("listnested", contentList[i])),
+        ]));
+    }
 
-    // Create a file for the DOCX document
-    final file = File('$appDocPath/sample.docx');
+    final generatedBytes = await docx.generate(content);
+    final outputFile = File('/storage/emulated/0/Documents/ExerciseSample.docx');
+    if (generatedBytes != null) {
+      await outputFile.writeAsBytes(generatedBytes);
+    }
 
-    // Write the document to the file
-    await file.writeAsBytes(docGenerated!);
-
-    print('Document saved at: $appDocPath/sample.docx');
+    print('DOCX file generated and saved successfully.');
   } catch (e) {
     print('Error generating DOCX file: $e');
   }
 }
+

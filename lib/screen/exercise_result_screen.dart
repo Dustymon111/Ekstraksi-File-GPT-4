@@ -61,7 +61,7 @@ class ExerciseResultScreen extends StatelessWidget {
             ),
             CustomElevatedButton(
               onPressed: () {
-                // generateDocx();
+                  generateQuestionsDocx();
               },
               label: 'Generate Docx',
             ),
