@@ -134,6 +134,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
               email: email,
               password: password,
             );
+            User? user = userCredential.user;
+            user?.updateDisplayName(nama);
             String uid = userCredential.user!.uid;
 
             UserModel userModel = UserModel(

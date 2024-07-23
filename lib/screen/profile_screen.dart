@@ -14,15 +14,35 @@ class ProfileScreen extends StatelessWidget {
           padding: const EdgeInsets.all(16.0),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
             children: <Widget>[
-              Text(
-                'User Email:',
-                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                Text(
+                  'User Email:',
+                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                ),
+                SizedBox(width: 8),
+                Text(
+                  user?.displayName ?? 'No name available',
+                  style: TextStyle(fontSize: 18),
+                ),
+              ],
               ),
-              SizedBox(height: 8),
-              Text(
-                user?.email ?? 'No email available',
-                style: TextStyle(fontSize: 18),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                Text(
+                  'User Email:',
+                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                ),
+                SizedBox(width: 8),
+                Text(
+                  user?.email ?? 'No email available',
+                  style: TextStyle(fontSize: 18),
+                ),
+              ],
               ),
               SizedBox(height: 24),
               CustomElevatedButton(

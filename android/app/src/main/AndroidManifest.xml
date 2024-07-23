@@ -1,4 +1,5 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
+
     <application
         android:label="aplikasi_ekstraksi_file_gpt4"
         android:name="${applicationName}"

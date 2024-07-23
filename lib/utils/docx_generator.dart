@@ -39,7 +39,7 @@ Future<void> generateQuestionsDocx() async {
     final content = Content();
     for (int i = 0; i < questions.length; i++) {
       content
-          .add(ListContent("list", [
+          .add(ListContent("list$i", [
           TextContent("value", questions[i]["question"])
             ..add(ListContent("listnested", contentList[i])),
         ]));
