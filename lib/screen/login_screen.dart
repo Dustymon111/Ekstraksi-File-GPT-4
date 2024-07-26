@@ -47,7 +47,7 @@ class _LoginScreenState extends State<LoginScreen> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Text(
+            const Text(
               "Welcome Back",
               style: TextStyle(
                   fontSize: 38,
@@ -128,7 +128,9 @@ class _LoginScreenState extends State<LoginScreen> {
                           textColor: Colors.white,
                           fontSize: 16.0);
                       // Navigate to the home screen or any other screen after successful login
-                      Navigator.pushReplacementNamed(context, '/home');
+                      if (mounted){
+                        Navigator.pushReplacementNamed(context, '/home');
+                      }
                     } catch (e) {
                       // Handle errors (e.g., show error message)
                       Fluttertoast.showToast(
