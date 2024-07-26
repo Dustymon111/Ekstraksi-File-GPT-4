@@ -27,68 +27,69 @@ class _AnswersScreenState extends State<AnswersScreen> {
     super.dispose();
   }
 
-
   @override
   Widget build(BuildContext context) {
     var themeprov = Provider.of<ThemeNotifier>(context);
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Hasil Akhir'),
-        actions: [
-          Switch(
-            thumbIcon: themeprov.isDarkTheme? WidgetStateProperty.all(const Icon(Icons.nights_stay)) :WidgetStateProperty.all(const Icon(Icons.sunny)) ,
-            activeColor: Colors.white,
-            inactiveThumbColor: Colors.indigo,
-            value: themeprov.isDarkTheme, 
-            onChanged: (bool value) {
-              themeprov.toggleTheme();
-            },
-          ),
-        ],  
-      ),
-      body: Column(
-        children: [        
-            Expanded(
-              child: 
-              SizedBox(
-                child: ListView.builder(
-                  controller: _scrollController,
-                  itemCount: widget.questions.length,
-                  itemBuilder: (context, index) {
-                    return Card(
-                      margin: EdgeInsets.all(8),
-                      child: Padding(
-                        padding: EdgeInsets.all(16),  
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: <Widget>[
-                            Text('${index+1}. ${widget.questions[index].text}', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-                            SizedBox(height: 12),
-                            Column(
-                              children: widget.questions[index].options.map((option) {
-                                return RadioListTile<String>(
-                                  title: Text(option),
-                                  value: option,
-                                  groupValue: widget.selectedOption[index] ?? "", // Provide the selected answer here if implementing selection logic
-                                  onChanged: (value){}, // Handling the selected option
-                                  secondary: widget.questions[index].correctOption == option
-                                    ? Icon(Icons.check) // Correct answer selected
-                                    : widget.selectedOption[index] == option // Check if an option is selected
-                                        ? Icon(Icons.close) // Incorrect answer selected
-                                        : SizedBox.shrink(), // Render nothing for unselected options,
-                                );
-                              }).toList(),
-                            ),
-                          ],
-                        ),
+        appBar: AppBar(
+          foregroundColor: Colors.white,
+          backgroundColor: Color(0xFF1C88BF),
+          title: const Text('Hasil Akhir'),
+        ),
+        body: Column(children: [
+          Expanded(
+            child: SizedBox(
+              child: ListView.builder(
+                controller: _scrollController,
+                itemCount: widget.questions.length,
+                itemBuilder: (context, index) {
+                  return Card(
+                    elevation: 5,
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.all(Radius.circular(6)),
+                        side: BorderSide(width: 3, color: Color(0xFF1C88BF))),
+                    margin: EdgeInsets.all(10),
+                    child: Padding(
+                      padding: EdgeInsets.all(16),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: <Widget>[
+                          Text('${index + 1}. ${widget.questions[index].text}',
+                              style: TextStyle(
+                                  fontSize: 18, fontWeight: FontWeight.bold)),
+                          SizedBox(height: 12),
+                          Column(
+                            children:
+                                widget.questions[index].options.map((option) {
+                              return RadioListTile<String>(
+                                title: Text(option),
+                                value: option,
+                                groupValue: widget.selectedOption[index] ??
+                                    "", // Provide the selected answer here if implementing selection logic
+                                onChanged:
+                                    (value) {}, // Handling the selected option
+                                secondary: widget
+                                            .questions[index].correctOption ==
+                                        option
+                                    ? Icon(
+                                        Icons.check) // Correct answer selected
+                                    : widget.selectedOption[index] ==
+                                            option // Check if an option is selected
+                                        ? Icon(Icons
+                                            .close) // Incorrect answer selected
+                                        : SizedBox
+                                            .shrink(), // Render nothing for unselected options,
+                              );
+                            }).toList(),
+                          ),
+                        ],
                       ),
-                    );
-                    },
-                  ),
+                    ),
+                  );
+                },
               ),
-              )
-        ]
-      ));
-  
+            ),
+          )
+        ]));
   }
 }

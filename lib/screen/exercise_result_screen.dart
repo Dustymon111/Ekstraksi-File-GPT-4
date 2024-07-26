@@ -19,53 +19,80 @@ class ExerciseResultScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final double score = (correctAnswers / totalQuestions * 100).ceilToDouble();
+
     return Scaffold(
       appBar: AppBar(
+        foregroundColor: Colors.white,
+        backgroundColor: Color(0xFF1C88BF),
         title: Text('Exercise Result'),
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              'Your Result',
-              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-            ),
-            SizedBox(height: 16),
-            Text(
-              'Total Questions: $totalQuestions',
-              style: TextStyle(fontSize: 18),
-            ),
-            SizedBox(height: 8),
-            Text(
-              'Correct Answers: $correctAnswers',
-              style: TextStyle(fontSize: 18),
-            ),
-            SizedBox(height: 8),
-            Text(
-              'Score: ${(correctAnswers/totalQuestions * 100).ceil()}',
-              style: TextStyle(fontSize: 18),
-            ),
-            SizedBox(height: 16),
-            CustomElevatedButton(
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => AnswersScreen(questions: questions,selectedOption: selectedOptions),
+      body: Card(
+        child: Center(
+          child: Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Text(
+                  'Your Result',
+                  style: TextStyle(
+                    fontSize: 28,
+                    fontWeight: FontWeight.bold,
+                    color: Color(0xFF1C88BF),
                   ),
-                );
-              },
-              label: 'Check Answers',
+                ),
+                SizedBox(height: 24),
+                Text(
+                  'Total Questions: $totalQuestions',
+                  style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+                SizedBox(height: 8),
+                Text(
+                  'Correct Answers: $correctAnswers',
+                  style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+                SizedBox(height: 8),
+                Text(
+                  'Score: $score',
+                  style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+                SizedBox(height: 24),
+                CustomElevatedButton(
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => AnswersScreen(
+                          questions: questions,
+                          selectedOption: selectedOptions,
+                        ),
+                      ),
+                    );
+                  },
+                  label: 'Check Answers',
+                ),
+                SizedBox(height: 16),
+                CustomElevatedButton(
+                  onPressed: () {
+                    generateQuestionsDocx();
+                  },
+                  label: 'Generate Docx',
+                ),
+                SizedBox(height: 16),
+              ],
             ),
-            CustomElevatedButton(
-              onPressed: () {
-                  generateQuestionsDocx();
-              },
-              label: 'Generate Docx',
-            ),
-          ],
+          ),
         ),
       ),
     );
