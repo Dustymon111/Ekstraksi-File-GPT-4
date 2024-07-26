@@ -184,6 +184,7 @@ class _HomeState extends State<Home> {
     var themeprov = Provider.of<ThemeNotifier>(context);
     return Scaffold(
       appBar: AppBar(
+        automaticallyImplyLeading: false,
         backgroundColor: Color(0xFF1C88BF),
         actions: [
           Switch(

@@ -8,26 +8,52 @@ Widget buildBookmarkCard({
   required Bookmark bookmark,
   required String title,
   required String author,
-  required int pageNumber, 
+  required int pageNumber,
   required BuildContext context,
-  required int bookIdx
+  required int bookIdx,
 }) {
   return Card(
-    margin: EdgeInsets.all(8),
+    shape: RoundedRectangleBorder(
+      borderRadius: BorderRadius.circular(20),
+      side: BorderSide(color: Color(0xFF1C88BF)),
+    ),
+    margin: EdgeInsets.symmetric(vertical: 8),
     child: Padding(
-      padding: EdgeInsets.all(16),
+      padding: const EdgeInsets.all(16.0),
       child: ListTile(
-        title: Text(bookmark.title, style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
-        subtitle: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          Text('Penulis: ${bookmark.author}', style: TextStyle(fontSize: 16), overflow: TextOverflow.ellipsis),
-          Text('Jumlah Halaman: ${bookmark.totalPages.toString()} halaman', style: TextStyle(fontSize: 16)),
-        ],
+        contentPadding: EdgeInsets.zero,
+        title: Text(
+          bookmark.title,
+          style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
         ),
-        onTap: (){
+        subtitle: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            Text(
+              'Author: ${bookmark.author}',
+              style: TextStyle(fontSize: 16, color: Colors.black54),
+              overflow: TextOverflow.ellipsis,
+            ),
+            Text(
+              'Number Of Pages: ${bookmark.totalPages.toString()} Pages',
+              style: TextStyle(fontSize: 16, color: Colors.black54),
+            ),
+          ],
+        ),
+        trailing: IconButton(
+          icon: Icon(Icons.delete, color: Colors.red),
+          onPressed: () {
+            print("Item telah dihapus!");
+          },
+        ),
+        onTap: () {
           context.read<GlobalProvider>().setBookmarkIndex(bookIdx);
-          Navigator.push(context, MaterialPageRoute(builder: (context) => BookmarkDetailScreen(bookmark: bookmark)));
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => BookmarkDetailScreen(bookmark: bookmark),
+            ),
+          );
         },
       ),
     ),

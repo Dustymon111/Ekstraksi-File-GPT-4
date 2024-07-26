@@ -31,7 +31,7 @@ class _CreateTopicScreenState extends State<CreateTopicScreen> {
                 Text(
                   "Create quizzes based on content Topics",
                   style: TextStyle(
-                    color: Colors.white,
+                    color: Colors.black,
                     fontSize: 22,
                     fontWeight: FontWeight.bold,
                   ),
@@ -40,7 +40,7 @@ class _CreateTopicScreenState extends State<CreateTopicScreen> {
                 Text(
                   "A topic about the questions you want!",
                   style: TextStyle(
-                    color: Colors.white,
+                    color: Colors.black,
                     fontSize: 14,
                   ),
                 ),
