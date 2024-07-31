@@ -1,5 +1,4 @@
 import 'package:aplikasi_ekstraksi_file_gpt4/screen/login_screen.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 
@@ -19,8 +18,7 @@ class _SplashScreenState extends State<SplashScreen> {
 
   _navigateToLogin() async {
     await Future.delayed(Duration(seconds: 3), () {});
-    Navigator.pushReplacementNamed(
-        context, '/login');
+    Navigator.pushReplacementNamed(context, '/login');
   }
 
   @override

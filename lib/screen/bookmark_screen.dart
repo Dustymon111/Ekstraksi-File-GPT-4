@@ -37,7 +37,7 @@ class _BookmarkScreenState extends State<BookmarkScreen> {
           Padding(
             padding: const EdgeInsets.all(8.0),
             child: Text(
-              "Your Bokmark !",
+              "Your Bookmark !",
               style: TextStyle(
                 fontSize: 24,
                 fontWeight: FontWeight.bold,

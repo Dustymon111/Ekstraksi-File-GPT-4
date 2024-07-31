@@ -1,4 +1,5 @@
-import 'package:aplikasi_ekstraksi_file_gpt4/utils/docx_generator.dart';
+// import 'package:aplikasi_ekstraksi_file_gpt4/utils/docx_generator.dart';
+import 'package:aplikasi_ekstraksi_file_gpt4/utils/openai_service.dart';
 import 'package:flutter/material.dart';
 
 class TestScreen extends StatelessWidget {
@@ -9,8 +10,8 @@ class TestScreen extends StatelessWidget {
         appBar: AppBar(title: Text('Generate DOCX with Python')),
         body: Center(
           child: ElevatedButton(
-            onPressed: ()async {
-              generateQuestionsDocx();
+            onPressed: () async {
+              await LLM().testFunction();
             },
             child: Text('Generate Document'),
           ),
