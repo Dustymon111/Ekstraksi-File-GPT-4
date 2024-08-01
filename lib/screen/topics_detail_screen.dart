@@ -2,11 +2,8 @@ import 'package:aplikasi_ekstraksi_file_gpt4/components/graph_chart.dart';
 import 'package:aplikasi_ekstraksi_file_gpt4/models/question_set_model.dart';
 import 'package:aplikasi_ekstraksi_file_gpt4/providers/global_provider.dart';
 import 'package:aplikasi_ekstraksi_file_gpt4/providers/question_provider.dart';
-import 'package:aplikasi_ekstraksi_file_gpt4/providers/theme_provider.dart';
 import 'package:aplikasi_ekstraksi_file_gpt4/screen/answers_screen.dart';
 import 'package:aplikasi_ekstraksi_file_gpt4/screen/question_screen.dart';
-import 'package:aplikasi_ekstraksi_file_gpt4/utils/docx_generator.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:aplikasi_ekstraksi_file_gpt4/models/subject_model.dart';
 import 'package:provider/provider.dart';
@@ -22,7 +19,6 @@ class SubjectDetailScreen extends StatefulWidget {
 
 class _SubjectDetailScreenState extends State<SubjectDetailScreen> {
   bool _isChartVisible = false; // State variable to manage chart visibility
-  final FirebaseAuth _auth = FirebaseAuth.instance;
 
   @override
   void initState() {
@@ -31,17 +27,14 @@ class _SubjectDetailScreenState extends State<SubjectDetailScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final themeprov = Provider.of<ThemeNotifier>(context);
+    final questionProvider = context.watch<QuestionProvider>();
+    final questionSetIds =
+        widget.subject.questionSetIds; // Ensure this is a List<String>
 
     // Get the stream from the provider
     final questionSetsStream =
-        context.watch<QuestionProvider>().getQuestionSetsStream(
-              "book_${_auth.currentUser!.uid}", // bookmarkId
-              context.watch<GlobalProvider>().bookmarkIndex,
-              context.watch<GlobalProvider>().subjectIndex,
-            );
+        questionProvider.getQuestionSetsStream(widget.subject.id!);
 
-    // Stream to convert questionSets to points
     Stream<List<double>> getPointsStream() {
       return questionSetsStream.map((questionSets) {
         final points = <double>[];
@@ -161,7 +154,7 @@ class _SubjectDetailScreenState extends State<SubjectDetailScreen> {
                 style: TextStyle(fontSize: 16),
               ),
               Text(
-                'Count of Exercise: ${widget.subject.questionSets?.length ?? 0}',
+                'Count of Exercise: ${widget.subject.questionSetIds.length}',
                 style: TextStyle(fontSize: 16),
               ),
               SizedBox(height: 16),
@@ -270,7 +263,8 @@ class _SubjectDetailScreenState extends State<SubjectDetailScreen> {
                                     context,
                                     MaterialPageRoute(
                                       builder: (context) => QuestionScreen(
-                                          questions: questionSet.questions),
+                                        questions: questionSet.questions,
+                                      ),
                                     ),
                                   );
                                 }

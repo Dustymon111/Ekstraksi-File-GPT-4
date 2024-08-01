@@ -1,21 +1,20 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'subject_model.dart';
 
 class Bookmark {
+  String? id;
   final String title;
   final String author;
   final int totalPages;
   final String bookUrl;
-  final List<Subject> subjects;
-  final String localFilePath;
+  final String userId;
 
   Bookmark({
+    this.id,
     required this.title,
     required this.author,
     required this.totalPages,
     required this.bookUrl,
-    required this.subjects,
-    required this.localFilePath,
+    required this.userId,
   });
 
   // Convert Firestore document to Bookmark
@@ -23,28 +22,24 @@ class Bookmark {
     final data = doc.data() as Map<String, dynamic>;
 
     return Bookmark(
+      id: data['id'] ?? '',
       title: data['title'] ?? '',
       author: data['author'] ?? '',
       totalPages: data['totalPages'] ?? 0,
       bookUrl: data['bookUrl'] ?? '',
-      localFilePath: data['localFilePath'] ?? '',
-      subjects: (data['subjects'] as List<dynamic>? ?? []).map((subjectData) {
-        return Subject.fromMap(subjectData as Map<String, dynamic>);
-      }).toList(),
+      userId: data['userId'] ?? '',
     );
   }
 
   // Convert Firestore document map to Bookmark
   factory Bookmark.fromMap(Map<String, dynamic> data) {
     return Bookmark(
+      id: data['id'] ?? '',
       title: data['title'] ?? '',
       author: data['author'] ?? '',
       totalPages: data['totalPages'] ?? 0,
       bookUrl: data['bookUrl'] ?? '',
-      localFilePath: data['localFilePath'] ?? '',
-      subjects: (data['subjects'] as List<dynamic>? ?? []).map((subjectData) {
-        return Subject.fromMap(subjectData as Map<String, dynamic>);
-      }).toList(),
+      userId: data['userId'] ?? '',
     );
   }
 
@@ -54,9 +49,8 @@ class Bookmark {
       'title': title,
       'author': author,
       'totalPages': totalPages,
-      'bookUrl' :  bookUrl,
-      'localFilePath': localFilePath,
-      'subjects': subjects.map((subject) => subject.toMap()).toList(),
+      'bookUrl': bookUrl,
+      'userId': userId,
     };
   }
 }

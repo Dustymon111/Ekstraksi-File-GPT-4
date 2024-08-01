@@ -7,8 +7,8 @@ import 'package:aplikasi_ekstraksi_file_gpt4/models/bookmark_model.dart';
 import 'package:aplikasi_ekstraksi_file_gpt4/providers/bookmark_provider.dart';
 import 'package:aplikasi_ekstraksi_file_gpt4/providers/theme_provider.dart';
 import 'package:aplikasi_ekstraksi_file_gpt4/screen/login_screen.dart';
-import 'package:aplikasi_ekstraksi_file_gpt4/utils/openai_service.dart';
 import 'package:aplikasi_ekstraksi_file_gpt4/utils/pdf_to_text.dart';
+import 'package:aplikasi_ekstraksi_file_gpt4/utils/random_string_generator.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart'; // Import Firebase Storage
@@ -121,30 +121,28 @@ class _CreateSubjectState extends State<CreateSubject> {
             PdfDocument(inputBytes: File(filePath).readAsBytesSync());
         pdfToText(filePath);
         if (mounted) {
-          context.read<BookmarkProvider>().addBookmark(
-              "book_${auth.currentUser?.uid}",
-              Bookmark(
-                  title: fileName,
-                  bookUrl: bookUrl,
-                  author: "author",
-                  totalPages: document.pages.count,
-                  subjects: [],
-                  localFilePath: filePath));
+          context.read<BookmarkProvider>().addBookmark(Bookmark(
+              id: generateRandomString(20),
+              title: fileName,
+              bookUrl: bookUrl,
+              author: "author",
+              totalPages: document.pages.count,
+              userId: auth.currentUser!.uid));
+          showDialog(
+            context: context,
+            barrierDismissible:
+                false, // Prevent dialog from being dismissed by tapping outside
+            builder: (context) {
+              return UploadProgressDialog(
+                progressStream: uploadTask.snapshotEvents,
+                onClose: () {
+                  Navigator.of(context).pop();
+                },
+              );
+            },
+          );
         }
 
-        showDialog(
-          context: context,
-          barrierDismissible:
-              false, // Prevent dialog from being dismissed by tapping outside
-          builder: (context) {
-            return UploadProgressDialog(
-              progressStream: uploadTask.snapshotEvents,
-              onClose: () {
-                Navigator.of(context).pop();
-              },
-            );
-          },
-        );
         // await FileProcessor().testFunction();
         // await FileProcessor().listModel();
 

@@ -1,7 +1,5 @@
 import 'package:aplikasi_ekstraksi_file_gpt4/models/question_model.dart';
-import 'package:aplikasi_ekstraksi_file_gpt4/providers/theme_provider.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 
 class AnswersScreen extends StatefulWidget {
   final Map<int, String> selectedOption;
@@ -29,7 +27,6 @@ class _AnswersScreenState extends State<AnswersScreen> {
 
   @override
   Widget build(BuildContext context) {
-    var themeprov = Provider.of<ThemeNotifier>(context);
     return Scaffold(
         appBar: AppBar(
           foregroundColor: Colors.white,

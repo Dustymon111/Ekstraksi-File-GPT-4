@@ -10,7 +10,7 @@ Widget buildBookmarkCard({
   required String author,
   required int pageNumber,
   required BuildContext context,
-  required int bookIdx,
+  required String bookmarkId,
 }) {
   return Card(
     shape: RoundedRectangleBorder(
@@ -47,11 +47,11 @@ Widget buildBookmarkCard({
           },
         ),
         onTap: () {
-          context.read<GlobalProvider>().setBookmarkIndex(bookIdx);
           Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) => BookmarkDetailScreen(bookmark: bookmark),
+              builder: (context) => BookmarkDetailScreen(
+                  bookmarkId: bookmarkId, bookmark: bookmark),
             ),
           );
         },

@@ -18,10 +18,8 @@ class _BookmarkScreenState extends State<BookmarkScreen> {
 
   @override
   void initState() {
-    String bookmarkId = "book_${_auth.currentUser!.uid}";
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      context.read<BookmarkProvider>().fetchBookmarks(bookmarkId);
-      context.read<BookmarkProvider>().initiateBookmark();
+      context.read<BookmarkProvider>().fetchBookmarks(_auth.currentUser!.uid);
     });
     super.initState();
   }
@@ -84,13 +82,14 @@ class _BookmarkScreenState extends State<BookmarkScreen> {
                       const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
                   itemCount: snapshot.data!.length,
                   itemBuilder: (context, index) {
+                    print(snapshot.data![0].id);
                     return buildBookmarkCard(
                       bookmark: snapshot.data![index],
                       title: snapshot.data![index].title,
                       author: snapshot.data![index].author,
                       pageNumber: snapshot.data![index].totalPages,
                       context: context,
-                      bookIdx: index,
+                      bookmarkId: snapshot.data![index].id ?? "",
                     );
                   },
                 );

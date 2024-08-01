@@ -10,5 +10,6 @@ Future<List<Document>> loadAndSplit() async {
     chunkOverlap: 64,
   );
   final docs = textSplitter.splitDocuments(documents);
+  print(docs);
   return docs;
 }
