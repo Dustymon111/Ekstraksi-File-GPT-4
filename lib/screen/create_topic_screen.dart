@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:path/path.dart';
 
 class CreateTopicScreen extends StatefulWidget {
   const CreateTopicScreen({super.key});
@@ -33,11 +34,11 @@ class _CreateTopicScreenState extends State<CreateTopicScreen> {
             children: [
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
-                children: const [
+                children: [
                   Text(
                     "Buat Latihan Berdasarkan Bab di dalam Buku",
                     style: TextStyle(
-                      color: Colors.black,
+                      color: Theme.of(context).textTheme.bodyLarge?.color,
                       fontSize: 22,
                       fontWeight: FontWeight.bold,
                     ),
@@ -46,21 +47,24 @@ class _CreateTopicScreenState extends State<CreateTopicScreen> {
                   Text(
                     "Sesuaikan dengan Bab yang kamu inginkan!",
                     style: TextStyle(
-                      color: Colors.black,
+                      color: Theme.of(context).textTheme.bodyLarge?.color,
                       fontSize: 16,
                     ),
                   ),
                 ],
               ),
               SizedBox(height: 20),
-              const Text(
+              Text(
                 "Buku",
-                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                    color: Theme.of(context).textTheme.bodyLarge?.color),
               ),
               SizedBox(height: 8),
               Container(
                 decoration: BoxDecoration(
-                  color: Colors.white,
+                  color: Theme.of(context).scaffoldBackgroundColor,
                   borderRadius: BorderRadius.circular(10),
                   boxShadow: [
                     BoxShadow(
@@ -75,7 +79,12 @@ class _CreateTopicScreenState extends State<CreateTopicScreen> {
                   child: DropdownButton<String>(
                     hint: Padding(
                       padding: const EdgeInsets.all(8.0),
-                      child: Text("Pilih Buku"),
+                      child: Text(
+                        "Pilih Buku",
+                        style: TextStyle(
+                            color:
+                                Theme.of(context).textTheme.bodyLarge?.color),
+                      ),
                     ),
                     value: selectedSubject,
                     isExpanded: true,
@@ -90,7 +99,12 @@ class _CreateTopicScreenState extends State<CreateTopicScreen> {
                         value: value,
                         child: Padding(
                           padding: const EdgeInsets.all(8.0),
-                          child: Text(value),
+                          child: Text(value,
+                              style: TextStyle(
+                                  color: Theme.of(context)
+                                      .textTheme
+                                      .bodyLarge
+                                      ?.color)),
                         ),
                       );
                     }).toList(),
@@ -98,14 +112,17 @@ class _CreateTopicScreenState extends State<CreateTopicScreen> {
                 ),
               ),
               SizedBox(height: 20),
-              const Text(
-                "Bab",
-                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+              Text(
+                "Topik Pertanyaan",
+                style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                    color: Theme.of(context).textTheme.bodyLarge?.color),
               ),
               SizedBox(height: 8),
               Container(
                 decoration: BoxDecoration(
-                  color: Colors.white,
+                  color: Theme.of(context).scaffoldBackgroundColor,
                   borderRadius: BorderRadius.circular(10),
                   boxShadow: [
                     BoxShadow(
@@ -116,36 +133,29 @@ class _CreateTopicScreenState extends State<CreateTopicScreen> {
                     ),
                   ],
                 ),
-                child: DropdownButtonHideUnderline(
-                  child: DropdownButton<String>(
-                    hint: Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Text("Pilih Bab"),
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                  child: TextField(
+                    decoration: InputDecoration(
+                      hintText: "Ketik Topik yang diinginkan",
+                      fillColor: Theme.of(context).textTheme.bodyLarge?.color,
+                      border: InputBorder.none,
                     ),
-                    value: selectedTopic,
-                    isExpanded: true,
                     onChanged: (newValue) {
                       setState(() {
                         selectedTopic = newValue;
                       });
                     },
-                    items: <String>['Bab I', 'Bab II', 'Bab III']
-                        .map<DropdownMenuItem<String>>((String value) {
-                      return DropdownMenuItem<String>(
-                        value: value,
-                        child: Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Text(value),
-                        ),
-                      );
-                    }).toList(),
                   ),
                 ),
               ),
               SizedBox(height: 20),
-              const Text(
+              Text(
                 "Jumlah Soal",
-                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                    color: Theme.of(context).textTheme.bodyLarge?.color),
               ),
               const SizedBox(height: 12),
               Text(
@@ -153,7 +163,7 @@ class _CreateTopicScreenState extends State<CreateTopicScreen> {
                 style: TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.w500,
-                  color: Colors.black,
+                  color: Theme.of(context).textTheme.bodyLarge?.color,
                 ),
               ),
               const SizedBox(height: 8),
@@ -193,7 +203,7 @@ class _CreateTopicScreenState extends State<CreateTopicScreen> {
                 style: TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.w500,
-                  color: Colors.black,
+                  color: Theme.of(context).textTheme.bodyLarge?.color,
                 ),
               ),
               const SizedBox(height: 8),

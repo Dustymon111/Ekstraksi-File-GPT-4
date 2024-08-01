@@ -27,7 +27,7 @@ class CustomLineChart extends StatelessWidget {
       padding: EdgeInsets.all(10),
       height: 250,
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: Theme.of(context).scaffoldBackgroundColor,
         borderRadius: BorderRadius.circular(15),
         boxShadow: [
           BoxShadow(
@@ -60,7 +60,7 @@ class CustomLineChart extends StatelessWidget {
                   return Text(
                     value.toString(),
                     style: TextStyle(
-                      color: Colors.grey.shade600,
+                      color: Theme.of(context).textTheme.bodyLarge?.color,
                       fontSize: 12,
                     ),
                   );
@@ -78,7 +78,7 @@ class CustomLineChart extends StatelessWidget {
                     child: Text(
                       value.toInt().toString(),
                       style: TextStyle(
-                        color: Colors.grey.shade600,
+                        color: Theme.of(context).textTheme.bodyLarge?.color,
                         fontSize: 12,
                       ),
                     ),

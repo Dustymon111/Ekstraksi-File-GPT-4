@@ -36,16 +36,17 @@ class _BookmarkDetailScreenState extends State<BookmarkDetailScreen> {
             children: [
               Text(
                 widget.bookmark.title,
-                style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold,
+                color: Theme.of(context).textTheme.bodyLarge?.color),
               ),
               SizedBox(height: 8),
               Text(
                 'Author: ${widget.bookmark.author}',
-                style: TextStyle(fontSize: 16),
+                style: TextStyle(fontSize: 16, color: Theme.of(context).textTheme.bodyLarge?.color),
               ),
               Text(
                 'Number Of Pages: ${widget.bookmark.totalPages.toString()}',
-                style: TextStyle(fontSize: 16),
+                style: TextStyle(fontSize: 16, color: Theme.of(context).textTheme.bodyLarge?.color),
               ),
               SizedBox(height: 16),
               Center(
@@ -74,7 +75,7 @@ class _BookmarkDetailScreenState extends State<BookmarkDetailScreen> {
                   child: Text(
                     'See Details Book',
                     style: TextStyle(
-                      color: Color(0xFF1C88BF), // Text color
+                      color: Theme.of(context).textTheme.bodyLarge?.color, // Text color
                       fontSize: 16, // Font size
                     ),
                   ),
@@ -83,12 +84,14 @@ class _BookmarkDetailScreenState extends State<BookmarkDetailScreen> {
               SizedBox(height: 16),
               Text(
                 "Your Topics (${widget.bookmark.subjects.length})",
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold,
+                color: Theme.of(context).textTheme.bodyLarge?.color),
               ),
               Text(
                 "List of topics that you have created",
                 style: TextStyle(
                   fontSize: 16,
+                  color: Theme.of(context).textTheme.bodyLarge?.color
                 ),
               ),
               SizedBox(height: 8),

@@ -14,7 +14,7 @@ class CustomElevatedButton extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     return ElevatedButton(
-      style:ButtonStyle(
+      style: ButtonStyle(
         backgroundColor: WidgetStateProperty.resolveWith((states) {
           if (states.contains(WidgetState.disabled)) {
             return theme.colorScheme.onSurface.withOpacity(0.38);
@@ -27,7 +27,8 @@ class CustomElevatedButton extends StatelessWidget {
           }
           return theme.colorScheme.onPrimary;
         }),
-        padding: WidgetStateProperty.all(EdgeInsets.symmetric(horizontal: 24, vertical: 12)),
+        padding: WidgetStateProperty.all(
+            EdgeInsets.symmetric(horizontal: 24, vertical: 12)),
         textStyle: WidgetStateProperty.all(TextStyle(fontSize: 16)),
       ),
       onPressed: onPressed,
@@ -35,8 +36,8 @@ class CustomElevatedButton extends StatelessWidget {
         label,
         style: TextStyle(
           fontSize: 16,
-          color: Colors.white
-          ),
+          color: Theme.of(context).scaffoldBackgroundColor,
+        ),
       ),
     );
   }

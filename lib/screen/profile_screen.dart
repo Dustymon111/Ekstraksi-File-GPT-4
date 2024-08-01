@@ -80,7 +80,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
               margin: EdgeInsets.symmetric(horizontal: 20),
               padding: const EdgeInsets.all(16.0),
               decoration: BoxDecoration(
-                color: Colors.white,
+                color: Theme.of(context).scaffoldBackgroundColor,
                 borderRadius: BorderRadius.circular(10),
                 boxShadow: [
                   BoxShadow(
@@ -112,7 +112,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       Text(
                         _userName,
                         style: TextStyle(
-                          color: Colors.black,
+                          color: Theme.of(context).textTheme.bodyLarge?.color,
                           fontSize: 22,
                           fontWeight: FontWeight.bold,
                         ),
@@ -120,7 +120,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       Text(
                         user_mail?.email ?? 'tonohua@gmail.com',
                         style: TextStyle(
-                          color: Colors.black,
+                          color: Theme.of(context).textTheme.bodyLarge?.color,
                           fontSize: 16,
                         ),
                       ),
@@ -138,16 +138,16 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   Text(
                     "Pengaturan",
                     style: TextStyle(
-                      fontSize: 22,
-                      fontWeight: FontWeight.bold,
-                    ),
+                        fontSize: 22,
+                        fontWeight: FontWeight.bold,
+                        color: Theme.of(context).textTheme.bodyMedium?.color),
                   ),
                   SizedBox(height: 8),
                   Text(
                     "Ubah Email",
                     style: TextStyle(
                       fontSize: 18,
-                      color: Colors.black,
+                      color: Theme.of(context).textTheme.bodyLarge?.color,
                     ),
                   ),
                   SizedBox(height: 4),
@@ -155,15 +155,18 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     "Ubah Password",
                     style: TextStyle(
                       fontSize: 18,
-                      color: Colors.black,
+                      color: Theme.of(context).textTheme.bodyLarge?.color,
                     ),
                   ),
                   SizedBox(height: 24),
                   const Divider(thickness: 2),
                   const SizedBox(height: 20),
-                  const Text(
+                  Text(
                     "Bantuan & Informasi",
-                    style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
+                    style: TextStyle(
+                        fontSize: 25,
+                        fontWeight: FontWeight.bold,
+                        color: Theme.of(context).textTheme.bodyLarge?.color),
                   ),
                   const SizedBox(height: 10),
                   TextButton(
@@ -211,7 +214,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   TextButton(
                     onPressed: () {
                       _showDialog(context, "Contact Person",
-                          "Berikut adalah informasi kontak kami untuk pertanyaan lebih lanjut:\n\nNama: TIM L\nEmail: MahasiswaSmster4@mikroskil.ac.id\nTelepon: 082234548960\n\nJangan ragu untuk menghubungi kami jika Anda memiliki pertanyaan atau membutuhkan bantuan lebih lanjut.\n\nTerima kasih.");
+                          "Berikut adalah informasi kontak kami untuk pertanyaan lebih lanjut:\n\nNama: TIM L\nEmail: informatika@mikroskil.ac.id\nTelepon: 082362246172\n\nJangan ragu untuk menghubungi kami jika Anda memiliki pertanyaan atau membutuhkan bantuan lebih lanjut.\n\nTerima kasih.");
                     },
                     child: const Text(
                       "Contact Person",
@@ -237,8 +240,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               toastLength: Toast.LENGTH_SHORT,
                               gravity: ToastGravity.BOTTOM,
                               timeInSecForIosWeb: 1,
-                              backgroundColor: Colors.green,
-                              textColor: Colors.white,
+                              backgroundColor: Colors.white,
+                              textColor: Colors.black,
                               fontSize: 16.0);
                         }
                       },

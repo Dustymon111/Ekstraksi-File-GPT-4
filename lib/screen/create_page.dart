@@ -18,7 +18,7 @@ class _CreateScreenState extends State<CreateScreen> {
           children: [
             Container(
               decoration: BoxDecoration(
-                color: Color(0xFF1C88BF),
+                color: Theme.of(context).appBarTheme.backgroundColor,
                 borderRadius: BorderRadius.only(
                   bottomRight: Radius.circular(50.0),
                 ),
