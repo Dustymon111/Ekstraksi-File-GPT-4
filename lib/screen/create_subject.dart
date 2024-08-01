@@ -8,6 +8,7 @@ import 'package:aplikasi_ekstraksi_file_gpt4/providers/bookmark_provider.dart';
 import 'package:aplikasi_ekstraksi_file_gpt4/providers/theme_provider.dart';
 import 'package:aplikasi_ekstraksi_file_gpt4/screen/login_screen.dart';
 import 'package:aplikasi_ekstraksi_file_gpt4/utils/openai_service.dart';
+import 'package:aplikasi_ekstraksi_file_gpt4/utils/pdf_to_text.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart'; // Import Firebase Storage
@@ -118,6 +119,7 @@ class _CreateSubjectState extends State<CreateSubject> {
         print('File uploaded successfully! Download URL: $bookUrl');
         PdfDocument document =
             PdfDocument(inputBytes: File(filePath).readAsBytesSync());
+        pdfToText(filePath);
         if (mounted) {
           context.read<BookmarkProvider>().addBookmark(
               "book_${auth.currentUser?.uid}",
@@ -145,12 +147,6 @@ class _CreateSubjectState extends State<CreateSubject> {
         );
         // await FileProcessor().testFunction();
         // await FileProcessor().listModel();
-
-        //  Map<String, dynamic> tableOfContents = await FileProcessor().extractTableOfContents(filePath);
-        //   print("Title: ${tableOfContents['title']}");
-        //   print("Total Pages: ${tableOfContents['totalPages']}");
-        //   print("Author: ${tableOfContents['author']}");
-        //   print("Contents: ${tableOfContents['contents']}");
 
         // Optionally, show a snackbar or dialog to notify the user of the upload
       } catch (e) {

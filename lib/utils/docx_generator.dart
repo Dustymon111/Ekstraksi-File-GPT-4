@@ -2,7 +2,6 @@ import 'package:docx_template/docx_template.dart';
 import 'dart:io';
 import 'package:flutter/services.dart';
 
-
 Future<void> generateQuestionsDocx() async {
   try {
     // Load the DOCX template file
@@ -22,31 +21,35 @@ Future<void> generateQuestionsDocx() async {
       },
       {
         'question': 'What is the largest ocean on Earth?',
-        'options': ['Atlantic Ocean', 'Indian Ocean', 'Arctic Ocean', 'Pacific Ocean'],
+        'options': [
+          'Atlantic Ocean',
+          'Indian Ocean',
+          'Arctic Ocean',
+          'Pacific Ocean'
+        ],
       }
     ];
 
-
-    List<List<Content>> contentList = List.generate(questions.length, (_) => []);
+    List<List<Content>> contentList =
+        List.generate(questions.length, (_) => []);
     for (int i = 0; i < questions.length; i++) {
       for (var n in questions[i]["options"]) {
-        final c = PlainContent("value")
-          ..add(TextContent("normal", n));
+        final c = PlainContent("value")..add(TextContent("normal", n));
         contentList[i].add(c);
       }
     }
 
     final content = Content();
     for (int i = 0; i < questions.length; i++) {
-      content
-          .add(ListContent("list$i", [
-          TextContent("value", questions[i]["question"])
-            ..add(ListContent("listnested", contentList[i])),
-        ]));
+      content.add(ListContent("list$i", [
+        TextContent("value", questions[i]["question"])
+          ..add(ListContent("listnested", contentList[i])),
+      ]));
     }
 
     final generatedBytes = await docx.generate(content);
-    final outputFile = File('/storage/emulated/0/Documents/ExerciseSample.docx');
+    final outputFile =
+        File('/storage/emulated/0/Documents/ExerciseSample.docx');
     if (generatedBytes != null) {
       await outputFile.writeAsBytes(generatedBytes);
     }
@@ -56,4 +59,3 @@ Future<void> generateQuestionsDocx() async {
     print('Error generating DOCX file: $e');
   }
 }
-
