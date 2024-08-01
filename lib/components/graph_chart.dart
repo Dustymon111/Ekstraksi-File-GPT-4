@@ -24,51 +24,108 @@ class CustomLineChart extends StatelessWidget {
     );
 
     return Container(
-      padding: EdgeInsetsDirectional.all(10),
+      padding: EdgeInsets.all(10),
       height: 250,
+      decoration: BoxDecoration(
+        color: Theme.of(context).scaffoldBackgroundColor,
+        borderRadius: BorderRadius.circular(15),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey.withOpacity(0.2),
+            spreadRadius: 5,
+            blurRadius: 7,
+            offset: Offset(0, 3),
+          ),
+        ],
+      ),
       child: LineChart(
         LineChartData(
-          gridData: const FlGridData(show: true, drawVerticalLine: false),
+          gridData: FlGridData(
+            show: false, // Menonaktifkan grid lines
+          ),
           borderData: FlBorderData(
-            show: true,
-            border: Border.all(color: Colors.black),
+            show: false,
           ),
           maxX: maxX,
           minX: minX,
           maxY: maxY,
           minY: minY,
-          titlesData: const FlTitlesData(
-            show: true,
-            topTitles: AxisTitles(
-              sideTitles: SideTitles(reservedSize: 0, showTitles: false),
-            ),
-            rightTitles: AxisTitles(
-              sideTitles: SideTitles(reservedSize: 0, showTitles: false),
-            ),
+          titlesData: FlTitlesData(
             leftTitles: AxisTitles(
               sideTitles: SideTitles(
-                interval: 20,
-                reservedSize: 35,
                 showTitles: true,
+                reservedSize: 35,
+                interval: 20,
+                getTitlesWidget: (value, meta) {
+                  return Text(
+                    value.toString(),
+                    style: TextStyle(
+                      color: Theme.of(context).textTheme.bodyLarge?.color,
+                      fontSize: 12,
+                    ),
+                  );
+                },
               ),
             ),
             bottomTitles: AxisTitles(
               sideTitles: SideTitles(
-                interval: 1,
-                reservedSize: 24,
                 showTitles: true,
+                reservedSize: 24,
+                interval: 1,
+                getTitlesWidget: (value, meta) {
+                  return Padding(
+                    padding: const EdgeInsets.only(top: 8.0),
+                    child: Text(
+                      value.toInt().toString(),
+                      style: TextStyle(
+                        color: Theme.of(context).textTheme.bodyLarge?.color,
+                        fontSize: 12,
+                      ),
+                    ),
+                  );
+                },
               ),
+            ),
+            topTitles: AxisTitles(
+              sideTitles: SideTitles(showTitles: false),
+            ),
+            rightTitles: AxisTitles(
+              sideTitles: SideTitles(showTitles: false),
             ),
           ),
           lineBarsData: [
             LineChartBarData(
               spots: spots,
-              isCurved: false,
-              color: Colors.blue,
-              barWidth: 3,
+              isCurved: true,
+              // colors: [Colors.blue.shade300, Colors.blue.shade800],
+              gradient: LinearGradient(
+                colors: [Colors.blue.shade300, Colors.blue.shade800],
+                begin: Alignment.centerLeft,
+                end: Alignment.centerRight,
+              ),
+              barWidth: 4,
               isStrokeCapRound: true,
-              belowBarData: BarAreaData(show: false),
-              dotData: FlDotData(show: true),
+              belowBarData: BarAreaData(
+                show: true,
+                gradient: LinearGradient(
+                  colors: [
+                    Colors.blue.withOpacity(0.3),
+                    Colors.blue.withOpacity(0.0)
+                  ],
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                ),
+              ),
+              dotData: FlDotData(
+                show: true,
+                getDotPainter: (spot, percent, barData, index) =>
+                    FlDotCirclePainter(
+                  radius: 4,
+                  color: Colors.blue.shade800,
+                  strokeWidth: 1,
+                  strokeColor: Colors.white,
+                ),
+              ),
             ),
           ],
         ),

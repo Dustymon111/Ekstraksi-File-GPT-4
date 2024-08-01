@@ -37,7 +37,6 @@ class BookmarkDetailScreen extends StatelessWidget {
           if (!snapshot.hasData || snapshot.data!.isEmpty) {
             return Center(child: Text('No subjects found.'));
           }
-
           final subjects = snapshot.data!;
 
           return SingleChildScrollView(

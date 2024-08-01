@@ -20,6 +20,7 @@ class _BookmarkScreenState extends State<BookmarkScreen> {
   void initState() {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       context.read<BookmarkProvider>().fetchBookmarks(_auth.currentUser!.uid);
+      context.read<BookmarkProvider>().initiateBookmark();
     });
     super.initState();
   }
@@ -37,9 +38,9 @@ class _BookmarkScreenState extends State<BookmarkScreen> {
             child: Text(
               "Your Bookmark !",
               style: TextStyle(
-                fontSize: 24,
-                fontWeight: FontWeight.bold,
-              ),
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold,
+                  color: Theme.of(context).textTheme.bodyLarge?.color),
             ),
           ),
           Padding(

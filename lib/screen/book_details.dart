@@ -27,22 +27,22 @@ class BookDetailScreen extends StatelessWidget {
             children: [
               Text(
                 title,
-                style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Theme.of(context).textTheme.bodyLarge?.color),
               ),
               SizedBox(height: 8),
               Text(
                 'Author : $author',
-                style: TextStyle(fontSize: 16),
+                style: TextStyle(fontSize: 16, color: Theme.of(context).textTheme.bodyLarge?.color),
               ),
               SizedBox(height: 8),
               Text(
                 'Number Of Pages : $totalPages Pages',
-                style: TextStyle(fontSize: 16),
+                style: TextStyle(fontSize: 16, color: Theme.of(context).textTheme.bodyLarge?.color),
               ),
               SizedBox(height: 16),
               Text(
                 'Table Of Contents',
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Theme.of(context).textTheme.bodyLarge?.color),
               ),
               SizedBox(height: 8),
               ListView(
@@ -78,13 +78,13 @@ class BookDetailScreen extends StatelessWidget {
               SizedBox(height: 16),
               Text(
                 'Bibliography',
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Theme.of(context).textTheme.bodyLarge?.color),
               ),
               SizedBox(height: 8),
               Text(
                 'Aini, N., Sinurat, S., & Hutabarat, S. A. (2018). '
                 'Penerapan metode simple moving average untuk memprediksi hasil laba laundry karpet pada CV Homecare. J. Ris. Komput., vol. 5, no. 2, 167-175.',
-                style: TextStyle(fontSize: 16),
+                style: TextStyle(fontSize: 16, color: Theme.of(context).textTheme.bodyLarge?.color),
               ),
             ],
           ),

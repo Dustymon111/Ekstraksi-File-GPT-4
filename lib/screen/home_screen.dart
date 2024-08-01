@@ -6,11 +6,12 @@ import 'package:aplikasi_ekstraksi_file_gpt4/screen/bookmark_screen.dart';
 import 'package:aplikasi_ekstraksi_file_gpt4/screen/create_page.dart';
 import 'package:aplikasi_ekstraksi_file_gpt4/screen/login_screen.dart';
 import 'package:aplikasi_ekstraksi_file_gpt4/screen/profile_screen.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:path/path.dart';
 import 'package:provider/provider.dart';
-import 'package:syncfusion_flutter_pdfviewer/pdfviewer.dart';
 
 class Home extends StatefulWidget {
   const Home({super.key});
@@ -31,12 +32,22 @@ class _HomeState extends State<Home> {
   late final StreamSubscription<User?> _authSubscription;
   double progress = 0.0;
 
+  final color = [Colors.red, Colors.yellow, Colors.blue];
+  List<String> assets = [
+    'assets/carousel1.png',
+    'assets/carousel2.png',
+    'assets/carousel3.png',
+  ];
+
+  String _userName = "Loading...";
+
   @override
   void initState() {
     super.initState();
+    _getUserName();
     _authSubscription = auth.authStateChanges().listen((User? user) {
       if (user == null) {
-        Navigator.of(context).pushAndRemoveUntil(
+        Navigator.of(context as BuildContext).pushAndRemoveUntil(
           MaterialPageRoute(builder: (context) => LoginScreen()),
           (route) => false,
         );
@@ -44,6 +55,33 @@ class _HomeState extends State<Home> {
         print('User is signed in!');
       }
     });
+  }
+
+  Future<void> _getUserName() async {
+    User? user = FirebaseAuth.instance.currentUser;
+
+    if (user != null) {
+      try {
+        DocumentSnapshot userDoc = await FirebaseFirestore.instance
+            .collection('users')
+            .doc(user.uid)
+            .get();
+        if (userDoc.exists && userDoc.data() != null) {
+          setState(() {
+            _userName = userDoc.get('nama') ?? "Unknown";
+          });
+        } else {
+          setState(() {
+            _userName = "Unknown";
+          });
+        }
+      } catch (e) {
+        print("Error fetching user data: $e");
+        setState(() {
+          _userName = "Unknown";
+        });
+      }
+    }
   }
 
   @override
@@ -67,7 +105,7 @@ class _HomeState extends State<Home> {
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false,
-        backgroundColor: Color(0xFF1C88BF),
+        backgroundColor: Theme.of(context).appBarTheme.backgroundColor,
         actions: [
           Switch(
             thumbIcon: themeprov.isDarkTheme
@@ -83,11 +121,11 @@ class _HomeState extends State<Home> {
         ],
       ),
       bottomNavigationBar: Container(
+        margin: EdgeInsets.all(10),
         decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.only(
-            topLeft: Radius.circular(30.0),
-            topRight: Radius.circular(30.0),
+          border: Border.all(color: Color(0xFF1C88BF), width: 2),
+          borderRadius: BorderRadius.all(
+            Radius.circular(30.0),
           ),
           boxShadow: [
             BoxShadow(
@@ -97,34 +135,40 @@ class _HomeState extends State<Home> {
             ),
           ],
         ),
-        child: BottomNavigationBar(
-          currentIndex: _currentIndex,
-          onTap: _onTabTapped,
-          backgroundColor: Colors.transparent,
-          elevation: 0,
-          type: BottomNavigationBarType.fixed,
-          selectedItemColor: Color(0xFF1C88BF),
-          unselectedItemColor: Colors.black,
-          showSelectedLabels: false,
-          showUnselectedLabels: false,
-          items: [
-            BottomNavigationBarItem(
-              icon: Icon(Icons.home, size: 30),
-              label: 'Home',
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.add_circle_outline, size: 30),
-              label: 'Create',
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.bookmark, size: 30),
-              label: 'Bookmarks',
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.person, size: 30),
-              label: 'Profile',
-            ),
-          ],
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(35.0),
+          child: BottomNavigationBar(
+            currentIndex: _currentIndex,
+            onTap: _onTabTapped,
+            backgroundColor:
+                Theme.of(context).bottomNavigationBarTheme.backgroundColor,
+            elevation: 0,
+            type: BottomNavigationBarType.fixed,
+            selectedItemColor:
+                Theme.of(context).bottomNavigationBarTheme.selectedItemColor,
+            unselectedItemColor:
+                Theme.of(context).bottomNavigationBarTheme.unselectedItemColor,
+            showSelectedLabels: false,
+            showUnselectedLabels: false,
+            items: [
+              BottomNavigationBarItem(
+                icon: Icon(Icons.home, size: 30),
+                label: 'Home',
+              ),
+              BottomNavigationBarItem(
+                icon: Icon(Icons.add_circle_outline, size: 30),
+                label: 'Create',
+              ),
+              BottomNavigationBarItem(
+                icon: Icon(Icons.bookmark, size: 30),
+                label: 'Bookmarks',
+              ),
+              BottomNavigationBarItem(
+                icon: Icon(Icons.person, size: 30),
+                label: 'Profile',
+              ),
+            ],
+          ),
         ),
       ),
       body: PageView(
@@ -150,11 +194,15 @@ class _HomeState extends State<Home> {
         child: Column(
           children: [
             Container(
-              decoration: const BoxDecoration(
-                  color: Color(0xFF1C88BF),
+              decoration: BoxDecoration(
+                  color: Theme.of(context).appBarTheme.backgroundColor,
                   borderRadius:
                       BorderRadius.only(bottomRight: Radius.circular(50.0))),
-              padding: const EdgeInsets.all(16.0),
+              padding: EdgeInsets.symmetric(
+                vertical: 16.0,
+                horizontal:
+                    MediaQuery.of(context).size.width * 0.05, // Dynamic padding
+              ),
               child: Column(
                 children: [
                   Row(
@@ -166,32 +214,34 @@ class _HomeState extends State<Home> {
                         child: const Icon(Icons.school,
                             color: Color(0xFF1C88BF), size: 40),
                       ),
-                      SizedBox(
-                        width: 20,
-                      ),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: const [
-                          Text(
-                            "Welcome to ExamEase..",
-                            style: TextStyle(color: Colors.white, fontSize: 18),
-                          ),
-                          Text(
-                            "Peter Fomas Hia",
-                            style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 28,
-                                fontWeight: FontWeight.bold),
-                          ),
-                          Text(
-                            "Where Knowledge Flows Freely",
-                            style: TextStyle(color: Colors.white, fontSize: 14),
-                          ),
-                        ],
+                      SizedBox(width: 20),
+                      Flexible(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              "Welcome to Examqz..",
+                              style:
+                                  TextStyle(color: Colors.white, fontSize: 18),
+                            ),
+                            Text(
+                              _userName,
+                              style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 28,
+                                  fontWeight: FontWeight.bold),
+                            ),
+                            Text(
+                              "Pengetahuan Mengalir Bebas dengan Latihan",
+                              style:
+                                  TextStyle(color: Colors.white, fontSize: 14),
+                            ),
+                          ],
+                        ),
                       ),
                     ],
                   ),
-                  const SizedBox(height: 30),
+                  const SizedBox(height: 20),
                 ],
               ),
             ),
@@ -199,20 +249,26 @@ class _HomeState extends State<Home> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
-                Column(
-                  children: const [
+                Row(
+                  children: [
                     Icon(Icons.subject, size: 30),
-                    Text(
-                      "1 Subjects",
-                    ),
+                    SizedBox(height: 5),
+                    Text("1 Buku",
+                        style: TextStyle(
+                          fontSize: 18,
+                          color: Theme.of(context).textTheme.bodyLarge?.color,
+                        )),
                   ],
                 ),
-                Column(
-                  children: const [
+                Row(
+                  children: [
                     Icon(Icons.topic, size: 30),
-                    Text(
-                      "3 Topics",
-                    ),
+                    SizedBox(height: 5),
+                    Text("3 Latihan",
+                        style: TextStyle(
+                          fontSize: 18,
+                          color: Theme.of(context).textTheme.bodyLarge?.color,
+                        )),
                   ],
                 ),
               ],
@@ -222,10 +278,19 @@ class _HomeState extends State<Home> {
               onPressed: () {
                 _onTabTapped(1);
               },
-              child: const Text("Create New"),
+              child: Text("Buat Baru",
+                  style: TextStyle(
+                    fontSize: 18,
+                    color: Theme.of(context).textTheme.bodyLarge?.color,
+                  )),
               style: ElevatedButton.styleFrom(
+                  side: BorderSide(
+                    color: Color(0xFF1C88BF),
+                    width: 3,
+                  ),
+                  padding: EdgeInsets.symmetric(horizontal: 150, vertical: 15),
                   foregroundColor: Color(0xFF1C88BF),
-                  backgroundColor: Colors.white),
+                  backgroundColor: Theme.of(context).scaffoldBackgroundColor),
             ),
             const SizedBox(
               height: 20,
@@ -235,29 +300,42 @@ class _HomeState extends State<Home> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text("Instructions",
-                      style:
-                          TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-                  const Text("For new users, please follow these steps"),
+                  Text("Instruksi",
+                      style: TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                          color: Theme.of(context).textTheme.bodyLarge?.color)),
+                  Text("Untuk pengguna baru, ikuti langkah-langkah berikut!",
+                      style: TextStyle(
+                          fontSize: 16,
+                          color: Theme.of(context).textTheme.bodyLarge?.color)),
                   const SizedBox(height: 20),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Container(
-                        width: MediaQuery.of(context).size.width / 2.5,
-                        height: 150,
-                        decoration: BoxDecoration(
-                            color: Color(0xFF1C88BF),
-                            borderRadius: BorderRadius.circular(10)),
-                      ),
-                      Container(
-                        width: MediaQuery.of(context).size.width / 2.5,
-                        height: 150,
-                        decoration: BoxDecoration(
-                            color: Color(0xFF1C88BF),
-                            borderRadius: BorderRadius.circular(10)),
-                      ),
-                    ],
+                  SizedBox(
+                    height: 200,
+                    width: MediaQuery.of(context).size.width,
+                    child: PageView.builder(
+                      itemCount: assets.length,
+                      padEnds: false,
+                      pageSnapping: false,
+                      reverse: true,
+                      controller:
+                          PageController(initialPage: 1, viewportFraction: 0.7),
+                      itemBuilder: (context, index) {
+                        return Container(
+                          height: 500,
+                          margin: EdgeInsets.all(8),
+                          clipBehavior: Clip.antiAlias,
+                          decoration: BoxDecoration(
+                            color: color[index],
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          child: Image.asset(
+                            assets[index],
+                            fit: BoxFit.cover,
+                          ),
+                        );
+                      },
+                    ),
                   ),
                   const SizedBox(height: 10),
                   Align(
@@ -273,45 +351,6 @@ class _HomeState extends State<Home> {
             ),
           ],
         ),
-      ),
-    );
-  }
-
-  Widget buildSubjectPage(BuildContext context) {
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: <Widget>[
-          pickedFile != null
-              ? Container(
-                  width: MediaQuery.of(context).size.width / 1.5,
-                  height: MediaQuery.of(context).size.height / 1.5,
-                  alignment: Alignment.center,
-                  child: SfPdfViewer.file(
-                    scrollDirection: PdfScrollDirection.horizontal,
-                    pageLayoutMode: PdfPageLayoutMode.single,
-                    File(pickedFile!.path!),
-                  ),
-                )
-              : Container(
-                  child: const Text(
-                    "Unggah file anda",
-                    style: TextStyle(
-                      fontSize: 24,
-                    ),
-                  ),
-                ),
-          Container(
-            padding: const EdgeInsets.only(right: 10, left: 10),
-            child: Text(
-              fileName,
-              overflow: TextOverflow.ellipsis,
-              style: const TextStyle(
-                fontSize: 18,
-              ),
-            ),
-          ),
-        ],
       ),
     );
   }

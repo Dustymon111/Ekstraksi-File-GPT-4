@@ -69,17 +69,26 @@ class _SubjectDetailScreenState extends State<SubjectDetailScreen> {
                   SizedBox(height: 24),
                   Text(
                     'Total Questions: ${questionSet.questions.length}',
-                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500),
+                    style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.w500,
+                        color: Theme.of(context).textTheme.bodyLarge?.color),
                   ),
                   SizedBox(height: 8),
                   Text(
                     'Correct Answers: ${(questionSet.point / 100 * questionSet.questions.length).toInt()}',
-                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500),
+                    style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.w500,
+                        color: Theme.of(context).textTheme.bodyLarge?.color),
                   ),
                   SizedBox(height: 8),
                   Text(
                     'Score: ${(questionSet.point).ceil()}',
-                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500),
+                    style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.w500,
+                        color: Theme.of(context).textTheme.bodyLarge?.color),
                   ),
                   SizedBox(height: 24),
                   Row(
@@ -146,12 +155,17 @@ class _SubjectDetailScreenState extends State<SubjectDetailScreen> {
               // Display the title and description of the subject
               Text(
                 widget.subject.title,
-                style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                style: TextStyle(
+                    fontSize: 24,
+                    fontWeight: FontWeight.bold,
+                    color: Theme.of(context).textTheme.bodyLarge?.color),
               ),
               SizedBox(height: 8),
               Text(
                 'Book: ${widget.subject.title}, Bab I',
-                style: TextStyle(fontSize: 16),
+                style: TextStyle(
+                    fontSize: 16,
+                    color: Theme.of(context).textTheme.bodyLarge?.color),
               ),
               Text(
                 'Count of Exercise: ${widget.subject.questionSetIds.length}',
@@ -198,7 +212,10 @@ class _SubjectDetailScreenState extends State<SubjectDetailScreen> {
               SizedBox(height: 20),
               Text(
                 "Question List",
-                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                    color: Theme.of(context).textTheme.bodyLarge?.color),
               ),
               StreamBuilder<List<QuestionSet>>(
                 stream: questionSetsStream,

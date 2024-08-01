@@ -27,6 +27,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
+            SizedBox(
+              height: 70,
+            ),
             Text(
               "Create Account",
               style: TextStyle(

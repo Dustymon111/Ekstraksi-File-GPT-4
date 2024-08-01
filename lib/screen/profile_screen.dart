@@ -1,9 +1,17 @@
 import 'package:aplikasi_ekstraksi_file_gpt4/components/custom_button.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
-class ProfileScreen extends StatelessWidget {
+class ProfileScreen extends StatefulWidget {
+  @override
+  State<ProfileScreen> createState() => _ProfileScreenState();
+}
+
+class _ProfileScreenState extends State<ProfileScreen> {
   void _showDialog(BuildContext context, String title, String content) {
     showDialog(
       context: context,
@@ -24,9 +32,44 @@ class ProfileScreen extends StatelessWidget {
     );
   }
 
+  String _userName = "Loading...";
+
+  @override
+  void initState() {
+    super.initState();
+    _getUserName();
+  }
+
+  Future<void> _getUserName() async {
+    User? user = FirebaseAuth.instance.currentUser;
+
+    if (user != null) {
+      try {
+        DocumentSnapshot userDoc = await FirebaseFirestore.instance
+            .collection('users')
+            .doc(user.uid)
+            .get();
+        if (userDoc.exists && userDoc.data() != null) {
+          setState(() {
+            _userName = userDoc.get('nama') ?? "Unknown";
+          });
+        } else {
+          setState(() {
+            _userName = "Unknown";
+          });
+        }
+      } catch (e) {
+        print("Error fetching user data: $e");
+        setState(() {
+          _userName = "Unknown";
+        });
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    User? user = FirebaseAuth.instance.currentUser;
+    User? user_mail = FirebaseAuth.instance.currentUser;
 
     return Scaffold(
       body: SingleChildScrollView(
@@ -37,7 +80,7 @@ class ProfileScreen extends StatelessWidget {
               margin: EdgeInsets.symmetric(horizontal: 20),
               padding: const EdgeInsets.all(16.0),
               decoration: BoxDecoration(
-                color: Colors.white,
+                color: Theme.of(context).scaffoldBackgroundColor,
                 borderRadius: BorderRadius.circular(10),
                 boxShadow: [
                   BoxShadow(
@@ -54,7 +97,7 @@ class ProfileScreen extends StatelessWidget {
                     radius: 40,
                     backgroundColor: Color(0xFF1C88BF),
                     child: Text(
-                      user?.displayName?.substring(0, 2) ?? "TS",
+                      "TS",
                       style: TextStyle(
                         color: Colors.white,
                         fontSize: 24,
@@ -67,17 +110,17 @@ class ProfileScreen extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        user?.displayName ?? "Tono Surotjoyo",
+                        _userName,
                         style: TextStyle(
-                          color: Colors.black,
+                          color: Theme.of(context).textTheme.bodyLarge?.color,
                           fontSize: 22,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
                       Text(
-                        user?.email ?? 'tonohua@gmail.com',
+                        user_mail?.email ?? 'tonohua@gmail.com',
                         style: TextStyle(
-                          color: Colors.black,
+                          color: Theme.of(context).textTheme.bodyLarge?.color,
                           fontSize: 16,
                         ),
                       ),
@@ -95,16 +138,16 @@ class ProfileScreen extends StatelessWidget {
                   Text(
                     "Pengaturan",
                     style: TextStyle(
-                      fontSize: 22,
-                      fontWeight: FontWeight.bold,
-                    ),
+                        fontSize: 22,
+                        fontWeight: FontWeight.bold,
+                        color: Theme.of(context).textTheme.bodyMedium?.color),
                   ),
                   SizedBox(height: 8),
                   Text(
                     "Ubah Email",
                     style: TextStyle(
                       fontSize: 18,
-                      color: Colors.black,
+                      color: Theme.of(context).textTheme.bodyLarge?.color,
                     ),
                   ),
                   SizedBox(height: 4),
@@ -112,15 +155,18 @@ class ProfileScreen extends StatelessWidget {
                     "Ubah Password",
                     style: TextStyle(
                       fontSize: 18,
-                      color: Colors.black,
+                      color: Theme.of(context).textTheme.bodyLarge?.color,
                     ),
                   ),
                   SizedBox(height: 24),
                   const Divider(thickness: 2),
                   const SizedBox(height: 20),
-                  const Text(
+                  Text(
                     "Bantuan & Informasi",
-                    style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
+                    style: TextStyle(
+                        fontSize: 25,
+                        fontWeight: FontWeight.bold,
+                        color: Theme.of(context).textTheme.bodyLarge?.color),
                   ),
                   const SizedBox(height: 10),
                   TextButton(
@@ -168,7 +214,7 @@ class ProfileScreen extends StatelessWidget {
                   TextButton(
                     onPressed: () {
                       _showDialog(context, "Contact Person",
-                          "Berikut adalah informasi kontak kami untuk pertanyaan lebih lanjut:\n\nNama: TIM L\nEmail: MahasiswaSmster4@mikroskil.ac.id\nTelepon: 082234548960\n\nJangan ragu untuk menghubungi kami jika Anda memiliki pertanyaan atau membutuhkan bantuan lebih lanjut.\n\nTerima kasih.");
+                          "Berikut adalah informasi kontak kami untuk pertanyaan lebih lanjut:\n\nNama: TIM L\nEmail: informatika@mikroskil.ac.id\nTelepon: 082362246172\n\nJangan ragu untuk menghubungi kami jika Anda memiliki pertanyaan atau membutuhkan bantuan lebih lanjut.\n\nTerima kasih.");
                     },
                     child: const Text(
                       "Contact Person",
@@ -181,25 +227,24 @@ class ProfileScreen extends StatelessWidget {
                   SizedBox(height: 24),
                   Align(
                     alignment: Alignment.centerRight,
-                    child: CustomElevatedButton(
+                    child: ElevatedButton(
                       onPressed: () async {
                         await FirebaseAuth.instance.signOut();
-                        if (Navigator.canPop(context)) {
-                          Navigator.of(context).pushNamedAndRemoveUntil(
-                            '/login',
-                            (Route<dynamic> route) => false,
-                          );
-                          Fluttertoast.showToast(
-                              msg: "Successfully Signed Out",
-                              toastLength: Toast.LENGTH_SHORT,
-                              gravity: ToastGravity.BOTTOM,
-                              timeInSecForIosWeb: 1,
-                              backgroundColor: Colors.green,
-                              textColor: Colors.white,
-                              fontSize: 16.0);
-                        }
+                        Navigator.of(context).pushNamedAndRemoveUntil(
+                          '/login',
+                          (Route<dynamic> route) => false,
+                        );
+                        Fluttertoast.showToast(
+                          msg: "Successfully Signed Out",
+                          toastLength: Toast.LENGTH_SHORT,
+                          gravity: ToastGravity.BOTTOM,
+                          timeInSecForIosWeb: 1,
+                          backgroundColor: Colors.white,
+                          textColor: Colors.black,
+                          fontSize: 16.0,
+                        );
                       },
-                      label: 'Keluar',
+                      child: Text('Keluar'),
                     ),
                   ),
                 ],

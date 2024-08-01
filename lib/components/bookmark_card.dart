@@ -31,12 +31,17 @@ Widget buildBookmarkCard({
           children: <Widget>[
             Text(
               'Author: ${bookmark.author}',
-              style: TextStyle(fontSize: 16, color: Colors.black),
+              style: TextStyle(
+                fontSize: 16,
+                color: Theme.of(context).textTheme.bodyLarge?.color,
+              ),
               overflow: TextOverflow.ellipsis,
             ),
             Text(
               'Number Of Pages: ${bookmark.totalPages.toString()} Pages',
-              style: TextStyle(fontSize: 16, color: Colors.black),
+              style: TextStyle(
+                  fontSize: 16,
+                  color: Theme.of(context).textTheme.bodyLarge?.color),
             ),
           ],
         ),
