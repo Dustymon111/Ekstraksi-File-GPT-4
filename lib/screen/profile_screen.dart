@@ -1,9 +1,17 @@
 import 'package:aplikasi_ekstraksi_file_gpt4/components/custom_button.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
-class ProfileScreen extends StatelessWidget {
+class ProfileScreen extends StatefulWidget {
+  @override
+  State<ProfileScreen> createState() => _ProfileScreenState();
+}
+
+class _ProfileScreenState extends State<ProfileScreen> {
   void _showDialog(BuildContext context, String title, String content) {
     showDialog(
       context: context,
@@ -24,9 +32,44 @@ class ProfileScreen extends StatelessWidget {
     );
   }
 
+  String _userName = "Loading...";
+
+  @override
+  void initState() {
+    super.initState();
+    _getUserName();
+  }
+
+  Future<void> _getUserName() async {
+    User? user = FirebaseAuth.instance.currentUser;
+
+    if (user != null) {
+      try {
+        DocumentSnapshot userDoc = await FirebaseFirestore.instance
+            .collection('users')
+            .doc(user.uid)
+            .get();
+        if (userDoc.exists && userDoc.data() != null) {
+          setState(() {
+            _userName = userDoc.get('nama') ?? "Unknown";
+          });
+        } else {
+          setState(() {
+            _userName = "Unknown";
+          });
+        }
+      } catch (e) {
+        print("Error fetching user data: $e");
+        setState(() {
+          _userName = "Unknown";
+        });
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    User? user = FirebaseAuth.instance.currentUser;
+    User? user_mail = FirebaseAuth.instance.currentUser;
 
     return Scaffold(
       body: SingleChildScrollView(
@@ -54,7 +97,7 @@ class ProfileScreen extends StatelessWidget {
                     radius: 40,
                     backgroundColor: Color(0xFF1C88BF),
                     child: Text(
-                      user?.displayName?.substring(0, 2) ?? "TS",
+                      "TS",
                       style: TextStyle(
                         color: Colors.white,
                         fontSize: 24,
@@ -67,7 +110,7 @@ class ProfileScreen extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        user?.displayName ?? "Tono Surotjoyo",
+                        _userName,
                         style: TextStyle(
                           color: Colors.black,
                           fontSize: 22,
@@ -75,7 +118,7 @@ class ProfileScreen extends StatelessWidget {
                         ),
                       ),
                       Text(
-                        user?.email ?? 'tonohua@gmail.com',
+                        user_mail?.email ?? 'tonohua@gmail.com',
                         style: TextStyle(
                           color: Colors.black,
                           fontSize: 16,

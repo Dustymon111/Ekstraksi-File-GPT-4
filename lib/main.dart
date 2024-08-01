@@ -45,6 +45,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return Consumer<ThemeNotifier>(
       builder: (context, theme, _) => MaterialApp(
+        debugShowCheckedModeBanner: false,
         title: 'Ekstraksi File',
         theme: ThemeData(
           primaryColor: Colors.blue,

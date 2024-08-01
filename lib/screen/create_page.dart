@@ -13,10 +13,6 @@ class _CreateScreenState extends State<CreateScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // appBar: AppBar(
-      //   backgroundColor: Color(0xFF1C88BF),
-      //   elevation: 0,
-      // ),
       body: SingleChildScrollView(
         child: Column(
           children: [
@@ -44,7 +40,7 @@ class _CreateScreenState extends State<CreateScreen> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: const [
                           Text(
-                            "ExamEase..",
+                            "Examqz..",
                             style: TextStyle(
                               color: Colors.white,
                               fontSize: 24,
@@ -52,7 +48,7 @@ class _CreateScreenState extends State<CreateScreen> {
                             ),
                           ),
                           Text(
-                            "Where Knowledge Flows Freely",
+                            "Pengetahuan Mengalir Bebas dengan Latihan",
                             style: TextStyle(
                               color: Colors.white,
                               fontSize: 14,
@@ -66,47 +62,61 @@ class _CreateScreenState extends State<CreateScreen> {
                 ],
               ),
             ),
-            SizedBox(height: 50),
-            OutlinedButton.icon(
+            SizedBox(height: 80),
+            // Updated Button Design for "Ekstrak Buku"
+            _buildActionButton(
               onPressed: () {
                 Navigator.of(context)
                     .push(MaterialPageRoute(builder: (context) {
                   return CreateSubject();
                 }));
               },
-              icon: Icon(Icons.folder_open, color: Color(0xFF1C88BF)),
-              label: Text(
-                "Create New Subject",
-                style: TextStyle(color: Color(0xFF1C88BF), fontSize: 16),
-              ),
-              style: OutlinedButton.styleFrom(
-                padding: EdgeInsets.symmetric(vertical: 50.0, horizontal: 50.0),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10.0),
-                ),
-                side: BorderSide(color: Color(0xFF1C88BF)),
-              ),
+              icon: Icons.folder_open,
+              label: "Extract New Book",
             ),
-            SizedBox(height: 20),
-            OutlinedButton.icon(
+            SizedBox(height: 30),
+            // Updated Button Design for "Buat Latihan Baru"
+            _buildActionButton(
               onPressed: () {
                 Navigator.of(context)
                     .push(MaterialPageRoute(builder: (context) {
                   return CreateTopicScreen();
                 }));
               },
-              icon: Icon(Icons.create_new_folder, color: Color(0xFF1C88BF)),
-              label: Text(
-                "Create New Topics",
-                style: TextStyle(color: Color(0xFF1C88BF), fontSize: 16),
-              ),
-              style: OutlinedButton.styleFrom(
-                padding: EdgeInsets.symmetric(vertical: 50.0, horizontal: 50.0),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10.0),
-                ),
-                side: BorderSide(color: Color(0xFF1C88BF)),
-              ),
+              icon: Icons.library_add,
+              label: "Create New Exercise",
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildActionButton({
+    required VoidCallback onPressed,
+    required IconData icon,
+    required String label,
+  }) {
+    return Container(
+      width: MediaQuery.of(context).size.width * 0.85,
+      margin: const EdgeInsets.symmetric(horizontal: 20.0),
+      child: OutlinedButton(
+        onPressed: onPressed,
+        style: OutlinedButton.styleFrom(
+          padding: const EdgeInsets.symmetric(vertical: 30.0),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10.0),
+          ),
+          side: BorderSide(color: Color(0xFF1C88BF)),
+        ),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(icon, color: Color(0xFF1C88BF), size: 30), //
+            SizedBox(height: 8.0),
+            Text(
+              label,
+              style: TextStyle(color: Color(0xFF1C88BF), fontSize: 16),
             ),
           ],
         ),

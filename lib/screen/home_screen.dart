@@ -10,6 +10,7 @@ import 'package:aplikasi_ekstraksi_file_gpt4/screen/bookmark_screen.dart';
 import 'package:aplikasi_ekstraksi_file_gpt4/screen/create_page.dart';
 import 'package:aplikasi_ekstraksi_file_gpt4/screen/login_screen.dart';
 import 'package:aplikasi_ekstraksi_file_gpt4/screen/profile_screen.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart'; // Import Firebase Storage
@@ -38,9 +39,19 @@ class _HomeState extends State<Home> {
   late final StreamSubscription<User?> _authSubscription;
   double progress = 0.0;
 
+  final color = [Colors.red, Colors.yellow, Colors.blue];
+  List<String> assets = [
+    '/carousel1.png',
+    '/carousel2.png',
+    '/carousel3.png',
+  ];
+
+  String _userName = "Loading...";
+
   @override
   void initState() {
     super.initState();
+    _getUserName();
     _authSubscription = auth.authStateChanges().listen((User? user) {
       if (user == null) {
         Navigator.of(context).pushAndRemoveUntil(
@@ -51,16 +62,58 @@ class _HomeState extends State<Home> {
         print('User is signed in!');
       }
     });
-
-    // getCurrentUser().then((user) {
-    //   if (mounted) {
-    //     setState(() {
-    //       userEmail = user?.email;
-    //       userName = user?.displayName;
-    //     });
-    //   }
-    // });
   }
+
+  Future<void> _getUserName() async {
+    User? user = FirebaseAuth.instance.currentUser;
+
+    if (user != null) {
+      try {
+        DocumentSnapshot userDoc = await FirebaseFirestore.instance
+            .collection('users')
+            .doc(user.uid)
+            .get();
+        if (userDoc.exists && userDoc.data() != null) {
+          setState(() {
+            _userName = userDoc.get('nama') ?? "Unknown";
+          });
+        } else {
+          setState(() {
+            _userName = "Unknown";
+          });
+        }
+      } catch (e) {
+        print("Error fetching user data: $e");
+        setState(() {
+          _userName = "Unknown";
+        });
+      }
+    }
+  }
+
+  // @override
+  // void initState() {
+  //   super.initState();
+  //   _authSubscription = auth.authStateChanges().listen((User? user) {
+  //     if (user == null) {
+  //       Navigator.of(context).pushAndRemoveUntil(
+  //         MaterialPageRoute(builder: (context) => LoginScreen()),
+  //         (route) => false,
+  //       );
+  //     } else {
+  //       print('User is signed in!');
+  //     }
+  //   });
+
+  //   // getCurrentUser().then((user) {
+  //   //   if (mounted) {
+  //   //     setState(() {
+  //   //       userEmail = user?.email;
+  //   //       userName = user?.displayName;
+  //   //     });
+  //   //   }
+  //   // });
+  // }
 
   @override
   void dispose() {
@@ -201,11 +254,14 @@ class _HomeState extends State<Home> {
         ],
       ),
       bottomNavigationBar: Container(
+        margin: EdgeInsets.all(5),
         decoration: BoxDecoration(
           color: Colors.white,
-          borderRadius: BorderRadius.only(
-            topLeft: Radius.circular(30.0),
-            topRight: Radius.circular(30.0),
+          border: Border.all(
+            color: Color(0xFF1C88BF),
+          ),
+          borderRadius: BorderRadius.all(
+            Radius.circular(30.0),
           ),
           boxShadow: [
             BoxShadow(
@@ -289,20 +345,20 @@ class _HomeState extends State<Home> {
                       ),
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
-                        children: const [
+                        children: [
                           Text(
-                            "Welcome to ExamEase..",
+                            "Welcome to Examqz..",
                             style: TextStyle(color: Colors.white, fontSize: 18),
                           ),
                           Text(
-                            "Peter Fomas Hia",
+                            _userName,
                             style: TextStyle(
                                 color: Colors.white,
                                 fontSize: 28,
                                 fontWeight: FontWeight.bold),
                           ),
                           Text(
-                            "Where Knowledge Flows Freely",
+                            "Pengetahuan Mengalir Bebas dengan Latihan",
                             style: TextStyle(color: Colors.white, fontSize: 14),
                           ),
                         ],
@@ -317,19 +373,19 @@ class _HomeState extends State<Home> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
-                Column(
+                Row(
                   children: const [
                     Icon(Icons.subject, size: 30),
                     Text(
-                      "1 Subjects",
+                      "1 Buku",
                     ),
                   ],
                 ),
-                Column(
+                Row(
                   children: const [
                     Icon(Icons.topic, size: 30),
                     Text(
-                      "3 Topics",
+                      "3 Latihan",
                     ),
                   ],
                 ),
@@ -340,8 +396,12 @@ class _HomeState extends State<Home> {
               onPressed: () {
                 _onTabTapped(1);
               },
-              child: const Text("Create New"),
+              child: const Text("Buat Baru"),
               style: ElevatedButton.styleFrom(
+                  side: BorderSide(
+                    color: Color(0xFF1C88BF),
+                  ),
+                  padding: EdgeInsets.symmetric(horizontal: 150),
                   foregroundColor: Color(0xFF1C88BF),
                   backgroundColor: Colors.white),
             ),
@@ -353,30 +413,59 @@ class _HomeState extends State<Home> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text("Instructions",
+                  const Text("Instruksi",
                       style:
-                          TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-                  const Text("For new users, please follow these steps"),
+                          TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+                  const Text(
+                      "Untuk pengguna baru, ikuti langkah-langkah berikut!",
+                      style: TextStyle(fontSize: 16)),
                   const SizedBox(height: 20),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Container(
-                        width: MediaQuery.of(context).size.width / 2.5,
-                        height: 150,
-                        decoration: BoxDecoration(
-                            color: Color(0xFF1C88BF),
-                            borderRadius: BorderRadius.circular(10)),
-                      ),
-                      Container(
-                        width: MediaQuery.of(context).size.width / 2.5,
-                        height: 150,
-                        decoration: BoxDecoration(
-                            color: Color(0xFF1C88BF),
-                            borderRadius: BorderRadius.circular(10)),
-                      ),
-                    ],
+                  SizedBox(
+                    height: 200,
+                    width: MediaQuery.of(context).size.width,
+                    child: PageView.builder(
+                      itemCount: assets.length,
+                      padEnds: false,
+                      pageSnapping: false,
+                      reverse: true,
+                      controller:
+                          PageController(initialPage: 1, viewportFraction: 0.7),
+                      itemBuilder: (context, index) {
+                        return Container(
+                          height: 500,
+                          margin: EdgeInsets.all(8),
+                          clipBehavior: Clip.antiAlias,
+                          decoration: BoxDecoration(
+                            color: color[index],
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          child: Image.asset(
+                            assets[index],
+                            fit: BoxFit.cover,
+                          ),
+                        );
+                      },
+                    ),
                   ),
+                  // Row(
+                  //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  //   children: [
+                  //     Container(
+                  //       width: MediaQuery.of(context).size.width / 2.5,
+                  //       height: 150,
+                  //       decoration: BoxDecoration(
+                  //           color: Color(0xFF1C88BF),
+                  //           borderRadius: BorderRadius.circular(10)),
+                  //     ),
+                  //     Container(
+                  //       width: MediaQuery.of(context).size.width / 2.5,
+                  //       height: 150,
+                  //       decoration: BoxDecoration(
+                  //           color: Color(0xFF1C88BF),
+                  //           borderRadius: BorderRadius.circular(10)),
+                  //     ),
+                  //   ],
+                  // ),
                   const SizedBox(height: 10),
                   Align(
                     alignment: Alignment.centerRight,

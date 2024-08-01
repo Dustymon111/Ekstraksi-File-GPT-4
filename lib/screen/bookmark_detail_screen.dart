@@ -69,7 +69,7 @@ class _BookmarkDetailScreenState extends State<BookmarkDetailScreen> {
                     ),
                     padding: EdgeInsets.symmetric(
                         vertical: 12,
-                        horizontal: 24), // Padding inside the button
+                        horizontal: 120), // Padding inside the button
                   ),
                   child: Text(
                     'See Details Book',
