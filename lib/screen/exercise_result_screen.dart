@@ -1,6 +1,8 @@
 import 'package:aplikasi_ekstraksi_file_gpt4/components/custom_button.dart';
 import 'package:aplikasi_ekstraksi_file_gpt4/models/question_model.dart';
+import 'package:aplikasi_ekstraksi_file_gpt4/models/subject_model.dart';
 import 'package:aplikasi_ekstraksi_file_gpt4/screen/answers_screen.dart';
+import 'package:aplikasi_ekstraksi_file_gpt4/screen/topics_detail_screen.dart';
 import 'package:aplikasi_ekstraksi_file_gpt4/utils/docx_generator.dart';
 import 'package:flutter/material.dart';
 
@@ -9,12 +11,14 @@ class ExerciseResultScreen extends StatelessWidget {
   final int totalQuestions;
   final int correctAnswers;
   final Map<int, String> selectedOptions;
+  final Subject subject;
 
   ExerciseResultScreen({
     required this.totalQuestions,
     required this.correctAnswers,
     required this.questions,
     required this.selectedOptions,
+    required this.subject,
   });
 
   @override
@@ -26,6 +30,7 @@ class ExerciseResultScreen extends StatelessWidget {
         foregroundColor: Colors.white,
         backgroundColor: Color(0xFF1C88BF),
         title: Text('Exercise Result'),
+        leading: Container(),
       ),
       body: Card(
         child: Center(
@@ -88,6 +93,17 @@ class ExerciseResultScreen extends StatelessWidget {
                     generateQuestionsDocx();
                   },
                   label: 'Generate Docx',
+                ),
+                SizedBox(height: 16),
+                CustomElevatedButton(
+                  onPressed: () {
+                    Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) =>
+                                SubjectDetailScreen(subject: subject)));
+                  },
+                  label: 'Selesai',
                 ),
                 SizedBox(height: 16),
               ],

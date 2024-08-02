@@ -36,10 +36,12 @@ class _CreateSubjectState extends State<CreateSubject> {
   String? userName;
   late final StreamSubscription<User?> _authSubscription;
   double progress = 0.0;
+  late final String id;
 
   @override
   void initState() {
     super.initState();
+    id = generateRandomString(20);
     _authSubscription = auth.authStateChanges().listen((User? user) {
       if (user == null) {
         Navigator.of(context).pushAndRemoveUntil(
@@ -122,12 +124,13 @@ class _CreateSubjectState extends State<CreateSubject> {
         pdfToText(filePath);
         if (mounted) {
           context.read<BookmarkProvider>().addBookmark(Bookmark(
-              id: generateRandomString(20),
+              id: id,
               title: fileName,
               bookUrl: bookUrl,
               author: "author",
               totalPages: document.pages.count,
               userId: auth.currentUser!.uid));
+
           showDialog(
             context: context,
             barrierDismissible:

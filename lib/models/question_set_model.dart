@@ -1,13 +1,15 @@
 import 'package:aplikasi_ekstraksi_file_gpt4/models/question_model.dart';
 
 class QuestionSet {
+  String? id;
   late int point;
   late String status;
-  final List<Question> questions;
+  List<Question> questions;
   late Map<int, String> selectedOption;
   final String subjectId; // Reference to the Subject document
 
   QuestionSet({
+    this.id,
     required this.point,
     required this.status,
     required this.questions,
@@ -17,6 +19,7 @@ class QuestionSet {
 
   factory QuestionSet.fromMap(Map<String, dynamic> data) {
     return QuestionSet(
+      id: data['id'] ?? "",
       point: data['point'] ?? 0,
       status: data['status'] ?? '',
       questions:
@@ -33,6 +36,7 @@ class QuestionSet {
 
   Map<String, dynamic> toMap() {
     return {
+      'id': id ?? "",
       'point': point,
       'status': status,
       'questions': questions.map((question) => question.toMap()).toList(),

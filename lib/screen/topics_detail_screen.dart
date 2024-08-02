@@ -1,4 +1,5 @@
 import 'package:aplikasi_ekstraksi_file_gpt4/components/graph_chart.dart';
+import 'package:aplikasi_ekstraksi_file_gpt4/models/question_model.dart';
 import 'package:aplikasi_ekstraksi_file_gpt4/models/question_set_model.dart';
 import 'package:aplikasi_ekstraksi_file_gpt4/providers/global_provider.dart';
 import 'package:aplikasi_ekstraksi_file_gpt4/providers/question_provider.dart';
@@ -22,30 +23,19 @@ class _SubjectDetailScreenState extends State<SubjectDetailScreen> {
 
   @override
   void initState() {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      context.read<QuestionProvider>().fetchQuestionSets(widget.subject.id!);
+    });
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
-    final questionProvider = context.watch<QuestionProvider>();
-    final questionSetIds =
-        widget.subject.questionSetIds; // Ensure this is a List<String>
-
+    final questionProvider = Provider.of<QuestionProvider>(context);
     // Get the stream from the provider
-    final questionSetsStream =
-        questionProvider.getQuestionSetsStream(widget.subject.id!);
 
-    Stream<List<double>> getPointsStream() {
-      return questionSetsStream.map((questionSets) {
-        final points = <double>[];
-        questionSets.forEach((data) {
-          points.add(data.point.toDouble());
-        });
-        return points;
-      });
-    }
-
-    void _showResultDialog(BuildContext context, QuestionSet questionSet) {
+    void _showResultDialog(BuildContext context, QuestionSet questionSet,
+        List<Question> questions) {
       showDialog(
         context: context,
         builder: (context) {
@@ -68,7 +58,7 @@ class _SubjectDetailScreenState extends State<SubjectDetailScreen> {
                   ),
                   SizedBox(height: 24),
                   Text(
-                    'Total Questions: ${questionSet.questions.length}',
+                    'Total Questions: ${questions.length}',
                     style: TextStyle(
                         fontSize: 20,
                         fontWeight: FontWeight.w500,
@@ -76,7 +66,7 @@ class _SubjectDetailScreenState extends State<SubjectDetailScreen> {
                   ),
                   SizedBox(height: 8),
                   Text(
-                    'Correct Answers: ${(questionSet.point / 100 * questionSet.questions.length).toInt()}',
+                    'Correct Answers: ${(questionSet.point / 100 * questions.length).toInt()}',
                     style: TextStyle(
                         fontSize: 20,
                         fontWeight: FontWeight.w500,
@@ -104,7 +94,7 @@ class _SubjectDetailScreenState extends State<SubjectDetailScreen> {
                             context,
                             MaterialPageRoute(
                               builder: (context) => AnswersScreen(
-                                questions: questionSet.questions,
+                                questions: questions,
                                 selectedOption: questionSet.selectedOption,
                               ),
                             ),
@@ -162,7 +152,7 @@ class _SubjectDetailScreenState extends State<SubjectDetailScreen> {
               ),
               SizedBox(height: 8),
               Text(
-                'Book: ${widget.subject.title}, Bab I',
+                'Book: ${widget.subject.title}',
                 style: TextStyle(
                     fontSize: 16,
                     color: Theme.of(context).textTheme.bodyLarge?.color),
@@ -196,7 +186,8 @@ class _SubjectDetailScreenState extends State<SubjectDetailScreen> {
               ),
               if (_isChartVisible)
                 StreamBuilder<List<double>>(
-                  stream: getPointsStream(),
+                  stream: questionProvider
+                      .getPointsStreamFromFirestore(widget.subject.id!),
                   builder: (context, snapshot) {
                     if (snapshot.connectionState == ConnectionState.waiting) {
                       return Center(child: CircularProgressIndicator());
@@ -218,7 +209,7 @@ class _SubjectDetailScreenState extends State<SubjectDetailScreen> {
                     color: Theme.of(context).textTheme.bodyLarge?.color),
               ),
               StreamBuilder<List<QuestionSet>>(
-                stream: questionSetsStream,
+                stream: questionProvider.questionSetsStream,
                 builder: (context, snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting) {
                     return Center(child: CircularProgressIndicator());
@@ -226,7 +217,6 @@ class _SubjectDetailScreenState extends State<SubjectDetailScreen> {
                     return Center(child: Text('Error: ${snapshot.error}'));
                   } else if (snapshot.hasData && snapshot.data != null) {
                     final questionSets = snapshot.data!;
-
                     return ListView.builder(
                       shrinkWrap: true,
                       physics: NeverScrollableScrollPhysics(),
@@ -274,14 +264,16 @@ class _SubjectDetailScreenState extends State<SubjectDetailScreen> {
                                     .read<GlobalProvider>()
                                     .setQuestionSetIndex(index);
                                 if (questionSet.status == "Selesai") {
-                                  _showResultDialog(context, questionSet);
+                                  _showResultDialog(context, questionSet,
+                                      questionSet.questions);
                                 } else {
-                                  Navigator.push(
+                                  Navigator.pushReplacement(
                                     context,
                                     MaterialPageRoute(
                                       builder: (context) => QuestionScreen(
-                                        questions: questionSet.questions,
-                                      ),
+                                          questions: questionSet.questions,
+                                          questionSetId: questionSet.id!,
+                                          subject: widget.subject),
                                     ),
                                   );
                                 }

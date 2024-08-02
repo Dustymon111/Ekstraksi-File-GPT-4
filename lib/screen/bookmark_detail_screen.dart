@@ -15,8 +15,6 @@ class BookmarkDetailScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final subjectProvider = Provider.of<SubjectProvider>(context);
-
-    print(bookmarkId);
     return Scaffold(
       appBar: AppBar(
         foregroundColor: Colors.white,
@@ -26,18 +24,7 @@ class BookmarkDetailScreen extends StatelessWidget {
       body: StreamBuilder<List<Subject>>(
         stream: subjectProvider.getSubjectsStream(bookmarkId),
         builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return Center(child: CircularProgressIndicator());
-          }
-
-          if (snapshot.hasError) {
-            return Center(child: Text('Error: ${snapshot.error}'));
-          }
-
-          if (!snapshot.hasData || snapshot.data!.isEmpty) {
-            return Center(child: Text('No subjects found.'));
-          }
-          final subjects = snapshot.data!;
+          List<Subject> subjects = snapshot.data ?? [];
 
           return SingleChildScrollView(
             child: Padding(
@@ -97,108 +84,113 @@ class BookmarkDetailScreen extends StatelessWidget {
                     style: TextStyle(fontSize: 16),
                   ),
                   SizedBox(height: 8),
-                  GridView.builder(
-                    shrinkWrap: true,
-                    physics: NeverScrollableScrollPhysics(),
-                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: 2,
-                      crossAxisSpacing: 10,
-                      mainAxisSpacing: 10,
-                      childAspectRatio: 3 / 2,
-                    ),
-                    itemCount: subjects.length + 1,
-                    itemBuilder: (context, index) {
-                      if (index == subjects.length) {
-                        return GestureDetector(
-                          onTap: () {
-                            Navigator.of(context).push(
-                              MaterialPageRoute(
-                                  builder: (context) => CreateTopicScreen()),
-                            );
-                          },
-                          child: Container(
-                            decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: BorderRadius.circular(8),
-                              boxShadow: [
-                                BoxShadow(
-                                  color: Colors.grey.withOpacity(0.5),
-                                  spreadRadius: 2,
-                                  blurRadius: 5,
-                                  offset: Offset(0, 3),
-                                ),
-                              ],
-                              border: Border.all(color: Color(0xFF1C88BF)),
-                            ),
-                            child: Center(
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Icon(Icons.add,
-                                      size: 40, color: Color(0xFF1C88BF)),
-                                  Text('Create New Topics',
-                                      style:
-                                          TextStyle(color: Color(0xFF1C88BF))),
+                  if (snapshot.connectionState == ConnectionState.waiting)
+                    Center(child: CircularProgressIndicator())
+                  else if (snapshot.hasError)
+                    Center(child: Text('Error: ${snapshot.error}'))
+                  else
+                    GridView.builder(
+                      shrinkWrap: true,
+                      physics: NeverScrollableScrollPhysics(),
+                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: 2,
+                        crossAxisSpacing: 10,
+                        mainAxisSpacing: 10,
+                        childAspectRatio: 3 / 2,
+                      ),
+                      itemCount: subjects.length + 1,
+                      itemBuilder: (context, index) {
+                        if (index == subjects.length) {
+                          return GestureDetector(
+                            onTap: () {
+                              Navigator.of(context).push(
+                                MaterialPageRoute(
+                                    builder: (context) => CreateTopicScreen()),
+                              );
+                            },
+                            child: Container(
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(8),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.grey.withOpacity(0.5),
+                                    spreadRadius: 2,
+                                    blurRadius: 5,
+                                    offset: Offset(0, 3),
+                                  ),
                                 ],
+                                border: Border.all(color: Color(0xFF1C88BF)),
                               ),
-                            ),
-                          ),
-                        );
-                      } else {
-                        Subject subject = subjects[index];
-                        return GestureDetector(
-                          onTap: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) =>
-                                    SubjectDetailScreen(subject: subject),
-                              ),
-                            );
-                          },
-                          child: Container(
-                            decoration: BoxDecoration(
-                              color: Color(0xFF1C88BF),
-                              borderRadius: BorderRadius.circular(8),
-                              boxShadow: [
-                                BoxShadow(
-                                  color: Colors.grey.withOpacity(0.5),
-                                  spreadRadius: 2,
-                                  blurRadius: 5,
-                                  offset: Offset(0, 3),
-                                ),
-                              ],
-                            ),
-                            child: Center(
-                              child: Padding(
-                                padding: const EdgeInsets.all(8.0),
+                              child: Center(
                                 child: Column(
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
-                                    Text(
-                                      subject.title,
-                                      style: TextStyle(
-                                          color: Colors.white,
-                                          fontSize: 16,
-                                          fontWeight: FontWeight.bold),
-                                      textAlign: TextAlign.center,
-                                      overflow: TextOverflow.ellipsis,
-                                      maxLines: 2,
-                                    ),
-                                    SizedBox(height: 8),
-                                    Text(
-                                      '${subject.questionSetIds.length} latihan',
-                                      style: TextStyle(color: Colors.white),
-                                    ),
+                                    Icon(Icons.add,
+                                        size: 40, color: Color(0xFF1C88BF)),
+                                    Text('Create New Topics',
+                                        style: TextStyle(
+                                            color: Color(0xFF1C88BF))),
                                   ],
                                 ),
                               ),
                             ),
-                          ),
-                        );
-                      }
-                    },
-                  ),
+                          );
+                        } else {
+                          Subject subject = subjects[index];
+                          return GestureDetector(
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) =>
+                                      SubjectDetailScreen(subject: subject),
+                                ),
+                              );
+                            },
+                            child: Container(
+                              decoration: BoxDecoration(
+                                color: Color(0xFF1C88BF),
+                                borderRadius: BorderRadius.circular(8),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.grey.withOpacity(0.5),
+                                    spreadRadius: 2,
+                                    blurRadius: 5,
+                                    offset: Offset(0, 3),
+                                  ),
+                                ],
+                              ),
+                              child: Center(
+                                child: Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Text(
+                                        subject.title,
+                                        style: TextStyle(
+                                            color: Colors.white,
+                                            fontSize: 16,
+                                            fontWeight: FontWeight.bold),
+                                        textAlign: TextAlign.center,
+                                        overflow: TextOverflow.ellipsis,
+                                        maxLines: 2,
+                                      ),
+                                      SizedBox(height: 8),
+                                      Text(
+                                        '${subject.questionSetIds.length} latihan',
+                                        style: TextStyle(color: Colors.white),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ),
+                          );
+                        }
+                      },
+                    ),
                 ],
               ),
             ),

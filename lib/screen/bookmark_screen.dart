@@ -14,12 +14,10 @@ class BookmarkScreen extends StatefulWidget {
 
 class _BookmarkScreenState extends State<BookmarkScreen> {
   TextEditingController searchController = TextEditingController();
-  final FirebaseAuth _auth = FirebaseAuth.instance;
 
   @override
   void initState() {
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      context.read<BookmarkProvider>().fetchBookmarks(_auth.currentUser!.uid);
       context.read<BookmarkProvider>().initiateBookmark();
     });
     super.initState();
@@ -83,7 +81,6 @@ class _BookmarkScreenState extends State<BookmarkScreen> {
                       const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
                   itemCount: snapshot.data!.length,
                   itemBuilder: (context, index) {
-                    print(snapshot.data![0].id);
                     return buildBookmarkCard(
                       bookmark: snapshot.data![index],
                       title: snapshot.data![index].title,
