@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:aplikasi_ekstraksi_file_gpt4/providers/theme_provider.dart';
+import 'package:aplikasi_ekstraksi_file_gpt4/providers/user_provider.dart';
 import 'package:aplikasi_ekstraksi_file_gpt4/screen/bookmark_screen.dart';
 import 'package:aplikasi_ekstraksi_file_gpt4/screen/create_page.dart';
 import 'package:aplikasi_ekstraksi_file_gpt4/screen/login_screen.dart';
@@ -12,6 +13,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:path/path.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class Home extends StatefulWidget {
   const Home({super.key});
@@ -44,7 +46,7 @@ class _HomeState extends State<Home> {
   @override
   void initState() {
     super.initState();
-    _getUserName();
+    _initSharedPref();
     _authSubscription = auth.authStateChanges().listen((User? user) {
       if (user == null) {
         Navigator.of(context as BuildContext).pushAndRemoveUntil(
@@ -57,31 +59,14 @@ class _HomeState extends State<Home> {
     });
   }
 
-  Future<void> _getUserName() async {
-    User? user = FirebaseAuth.instance.currentUser;
-
-    if (user != null) {
-      try {
-        DocumentSnapshot userDoc = await FirebaseFirestore.instance
-            .collection('users')
-            .doc(user.uid)
-            .get();
-        if (userDoc.exists && userDoc.data() != null) {
-          setState(() {
-            _userName = userDoc.get('nama') ?? "Unknown";
-          });
-        } else {
-          setState(() {
-            _userName = "Unknown";
-          });
-        }
-      } catch (e) {
-        print("Error fetching user data: $e");
-        setState(() {
-          _userName = "Unknown";
-        });
+  _initSharedPref() async {
+    SharedPreferencesAsync pref = SharedPreferencesAsync();
+    List<String>? userinfo = await pref.getStringList('userinfo');
+    setState(() {
+      if (userinfo != null) {
+        _userName = userinfo[0];
       }
-    }
+    });
   }
 
   @override

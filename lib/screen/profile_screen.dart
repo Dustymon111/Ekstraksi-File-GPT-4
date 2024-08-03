@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class ProfileScreen extends StatefulWidget {
   @override
@@ -31,44 +32,27 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   String _userName = "Loading...";
+  String _email = "Loading...";
 
   @override
   void initState() {
     super.initState();
-    _getUserName();
+    _initSharedPref();
   }
 
-  Future<void> _getUserName() async {
-    User? user = FirebaseAuth.instance.currentUser;
-
-    if (user != null) {
-      try {
-        DocumentSnapshot userDoc = await FirebaseFirestore.instance
-            .collection('users')
-            .doc(user.uid)
-            .get();
-        if (userDoc.exists && userDoc.data() != null) {
-          setState(() {
-            _userName = userDoc.get('nama') ?? "Unknown";
-          });
-        } else {
-          setState(() {
-            _userName = "Unknown";
-          });
-        }
-      } catch (e) {
-        print("Error fetching user data: $e");
-        setState(() {
-          _userName = "Unknown";
-        });
+  _initSharedPref() async {
+    SharedPreferencesAsync pref = SharedPreferencesAsync();
+    List<String>? userinfo = await pref.getStringList('userinfo');
+    setState(() {
+      if (userinfo != null) {
+        _userName = userinfo[0];
+        _email = userinfo[1];
       }
-    }
+    });
   }
 
   @override
   Widget build(BuildContext context) {
-    User? user_mail = FirebaseAuth.instance.currentUser;
-
     return Scaffold(
       body: SingleChildScrollView(
         child: Column(
@@ -116,7 +100,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         ),
                       ),
                       Text(
-                        user_mail?.email ?? 'tonohua@gmail.com',
+                        _email ?? 'tonohua@gmail.com',
                         style: TextStyle(
                           color: Theme.of(context).textTheme.bodyLarge?.color,
                           fontSize: 16,

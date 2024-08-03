@@ -1,8 +1,10 @@
 import 'package:aplikasi_ekstraksi_file_gpt4/providers/bookmark_provider.dart';
+import 'package:aplikasi_ekstraksi_file_gpt4/providers/user_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart'; // Ensure you have Firebase Auth set up
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class LoginScreen extends StatefulWidget {
   @override
@@ -99,7 +101,8 @@ class _LoginScreenState extends State<LoginScreen> {
                     try {
                       await _auth.signInWithEmailAndPassword(
                           email: email, password: password);
-
+                      final SharedPreferencesAsync prefs =
+                          SharedPreferencesAsync();
                       // Show success message
                       Fluttertoast.showToast(
                           msg: "Successfully Signed In",
@@ -111,6 +114,10 @@ class _LoginScreenState extends State<LoginScreen> {
                           fontSize: 16.0);
                       // Navigate to the home screen or any other screen after successful login
                       if (mounted) {
+                        await prefs.setStringList('userinfo', [
+                          _auth.currentUser?.displayName as String,
+                          _auth.currentUser?.email as String
+                        ]);
                         context
                             .read<BookmarkProvider>()
                             .fetchBookmarks(_auth.currentUser!.uid);

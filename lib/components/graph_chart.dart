@@ -13,8 +13,7 @@ class CustomLineChart extends StatelessWidget {
   })  : maxX = (yValues.isNotEmpty) ? yValues.length.toDouble() : 10,
         minX = 1,
         maxY = 100,
-        minY =
-            (yValues.isNotEmpty) ? yValues.reduce((a, b) => a < b ? a : b) : 0;
+        minY = 0;
 
   @override
   Widget build(BuildContext context) {

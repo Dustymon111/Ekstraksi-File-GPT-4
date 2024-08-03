@@ -1,9 +1,11 @@
+import 'package:aplikasi_ekstraksi_file_gpt4/components/Custom_Button.dart';
 import 'package:aplikasi_ekstraksi_file_gpt4/components/graph_chart.dart';
 import 'package:aplikasi_ekstraksi_file_gpt4/models/question_model.dart';
 import 'package:aplikasi_ekstraksi_file_gpt4/models/question_set_model.dart';
 import 'package:aplikasi_ekstraksi_file_gpt4/providers/global_provider.dart';
 import 'package:aplikasi_ekstraksi_file_gpt4/providers/question_provider.dart';
 import 'package:aplikasi_ekstraksi_file_gpt4/screen/answers_screen.dart';
+import 'package:aplikasi_ekstraksi_file_gpt4/screen/create_topic_screen.dart';
 import 'package:aplikasi_ekstraksi_file_gpt4/screen/question_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:aplikasi_ekstraksi_file_gpt4/models/subject_model.dart';
@@ -288,6 +290,20 @@ class _SubjectDetailScreenState extends State<SubjectDetailScreen> {
                   }
                 },
               ),
+              SizedBox(
+                height: 10,
+              ),
+              Align(
+                alignment: Alignment.center,
+                child: CustomElevatedButton(
+                    onPressed: () {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => CreateTopicScreen()));
+                    },
+                    label: "Buat Latihan Baru"),
+              )
             ],
           ),
         ),
