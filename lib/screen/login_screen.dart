@@ -1,5 +1,4 @@
 import 'package:aplikasi_ekstraksi_file_gpt4/providers/bookmark_provider.dart';
-import 'package:aplikasi_ekstraksi_file_gpt4/providers/user_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart'; // Ensure you have Firebase Auth set up
 import 'package:fluttertoast/fluttertoast.dart';

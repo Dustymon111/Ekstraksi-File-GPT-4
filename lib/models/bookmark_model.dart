@@ -3,7 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 class Bookmark {
   String? id;
   final String title;
-  final String author;
+  final List<String> author;
   final int totalPages;
   final String bookUrl;
   final String userId;
@@ -17,26 +17,34 @@ class Bookmark {
     required this.userId,
   });
 
-  // Convert Firestore document to Bookmark
   factory Bookmark.fromFirestore(DocumentSnapshot doc) {
     final data = doc.data() as Map<String, dynamic>;
+
+    // Ensure that 'author' is a list of strings
+    List<String> authors = (data['author'] as List<dynamic>)
+        .map((item) => item as String)
+        .toList();
 
     return Bookmark(
       id: data['id'] ?? '',
       title: data['title'] ?? '',
-      author: data['author'] ?? '',
+      author: authors,
       totalPages: data['totalPages'] ?? 0,
       bookUrl: data['bookUrl'] ?? '',
       userId: data['userId'] ?? '',
     );
   }
 
-  // Convert Firestore document map to Bookmark
   factory Bookmark.fromMap(Map<String, dynamic> data) {
+    // Ensure that 'author' is a list of strings
+    List<String> authors = (data['author'] as List<dynamic>)
+        .map((item) => item as String)
+        .toList();
+
     return Bookmark(
       id: data['id'] ?? '',
       title: data['title'] ?? '',
-      author: data['author'] ?? '',
+      author: authors,
       totalPages: data['totalPages'] ?? 0,
       bookUrl: data['bookUrl'] ?? '',
       userId: data['userId'] ?? '',

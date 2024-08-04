@@ -8,6 +8,7 @@ class SubjectProvider with ChangeNotifier {
         .collection('books')
         .doc(bookId)
         .collection('subjects')
+        .orderBy('sortIndex')
         .snapshots()
         .map((querySnapshot) {
       return querySnapshot.docs.map((doc) {

@@ -1,13 +1,11 @@
 import 'package:aplikasi_ekstraksi_file_gpt4/models/bookmark_model.dart';
-import 'package:aplikasi_ekstraksi_file_gpt4/providers/global_provider.dart';
 import 'package:aplikasi_ekstraksi_file_gpt4/screen/bookmark_detail_screen.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 
 Widget buildBookmarkCard({
   required Bookmark bookmark,
   required String title,
-  required String author,
+  required List<String> author,
   required int pageNumber,
   required BuildContext context,
   required String bookmarkId,
@@ -30,7 +28,7 @@ Widget buildBookmarkCard({
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
             Text(
-              'Author: ${bookmark.author}',
+              'Author(s): ${bookmark.author.join(', ')}',
               style: TextStyle(
                 fontSize: 16,
                 color: Theme.of(context).textTheme.bodyLarge?.color,

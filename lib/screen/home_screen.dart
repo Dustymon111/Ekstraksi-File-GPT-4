@@ -1,13 +1,10 @@
 import 'dart:async';
-import 'dart:io';
 
 import 'package:aplikasi_ekstraksi_file_gpt4/providers/theme_provider.dart';
-import 'package:aplikasi_ekstraksi_file_gpt4/providers/user_provider.dart';
 import 'package:aplikasi_ekstraksi_file_gpt4/screen/bookmark_screen.dart';
 import 'package:aplikasi_ekstraksi_file_gpt4/screen/create_page.dart';
 import 'package:aplikasi_ekstraksi_file_gpt4/screen/login_screen.dart';
 import 'package:aplikasi_ekstraksi_file_gpt4/screen/profile_screen.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';

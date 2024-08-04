@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:aplikasi_ekstraksi_file_gpt4/models/bookmark_model.dart';
+import 'package:aplikasi_ekstraksi_file_gpt4/models/subject_model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -58,10 +59,14 @@ class BookmarkProvider extends ChangeNotifier {
     }
   }
 
-  Future<void> addBookmark(Bookmark bookmark) async {
+  Future<void> addBookmarkAndSubjects(
+      Bookmark bookmark, List<Subject> newSubjects) async {
     try {
+      // Create a WriteBatch
+      WriteBatch batch = FirebaseFirestore.instance.batch();
+
       // Fetch books for the current user
-      QuerySnapshot bookSnapshot = await _firestore
+      QuerySnapshot bookSnapshot = await FirebaseFirestore.instance
           .collection('books')
           .where('userId', isEqualTo: bookmark.userId)
           .get();
@@ -76,8 +81,31 @@ class BookmarkProvider extends ChangeNotifier {
 
       if (!isDuplicate) {
         // Add the new book as a new document in the 'books' collection
-        await _firestore.collection('books').add(bookmark.toMap());
-        print("Bookmark Added");
+        DocumentReference newBookRef = FirebaseFirestore.instance
+            .collection('books')
+            .doc(); // Create a new document reference
+        batch.set(newBookRef, bookmark.toMap());
+
+        // Add a new document in the 'subjects' subcollection
+        for (int i = 0; i < newSubjects.length; i++) {
+          final subject = newSubjects[i];
+          final updatedSubject = Subject(
+            title: subject.title,
+            description: subject.description,
+            questionSetIds: subject.questionSetIds,
+            bookmarkId: newBookRef.id,
+            sortIndex: i, // Set sortIndex based on position
+          );
+          final subjectRef = newBookRef
+              .collection('subjects')
+              .doc(); // Generate a new document ID
+          batch.set(subjectRef, updatedSubject.toMap());
+        }
+
+        // Commit the batch
+        await batch.commit();
+
+        print("Bookmark and subjects added successfully");
         Fluttertoast.showToast(
             msg: "Book successfully uploaded",
             toastLength: Toast.LENGTH_LONG,
@@ -115,7 +143,7 @@ class BookmarkProvider extends ChangeNotifier {
     _filteredBookmarks = _bookmarks
         .where((bookmark) =>
             bookmark.title.toLowerCase().contains(query.toLowerCase()) ||
-            bookmark.author.toLowerCase().contains(query.toLowerCase()))
+            bookmark.author.contains(query))
         .toList();
     _notifyChanges();
   }

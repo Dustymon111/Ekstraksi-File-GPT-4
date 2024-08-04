@@ -139,7 +139,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
               nama: nama,
               password: password,
               role: _role,
-              bookmark: [],
+              bookmarkIds: [],
             );
 
             await Provider.of<UserProvider>(context, listen: false)

@@ -4,6 +4,7 @@ class Subject {
   final String description;
   final List<String> questionSetIds; // List of QuestionSet document IDs
   final String bookmarkId; // Reference to the Bookmark document
+  final int sortIndex;
 
   Subject({
     this.id,
@@ -11,6 +12,7 @@ class Subject {
     required this.description,
     required this.questionSetIds,
     required this.bookmarkId,
+    required this.sortIndex,
   });
 
   factory Subject.fromMap(Map<String, dynamic> data) {
@@ -23,6 +25,7 @@ class Subject {
           data['questionSetIds'] ?? []), // Provide a default empty list if null
       bookmarkId:
           data['bookmarkId'] ?? '', // Provide a default empty string if null
+      sortIndex: data['sortIndex'] ?? 0,
     );
   }
 
@@ -33,6 +36,7 @@ class Subject {
       'description': description,
       'questionSetIds': questionSetIds,
       'bookmarkId': bookmarkId,
+      'sortIndex': sortIndex,
     };
   }
 }

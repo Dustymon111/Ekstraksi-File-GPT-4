@@ -6,14 +6,14 @@ class UserModel {
   String nama;
   String password;
   String role;
-  List<Bookmark> bookmark;
+  List<Bookmark> bookmarkIds;
 
   UserModel({
     required this.email,
     required this.nama,
     required this.password,
     required this.role,
-    required this.bookmark,
+    required this.bookmarkIds,
   });
 
   // Factory constructor to create a UserModel object from a Firestore document
@@ -25,7 +25,7 @@ class UserModel {
       nama: data['nama'] ?? '',
       password: data['password'] ?? '',
       role: data['role'] ?? '',
-      bookmark: data['bookmark'] ?? [],
+      bookmarkIds: data['bookmarkIds'] ?? [],
     );
   }
 
@@ -36,7 +36,7 @@ class UserModel {
       'nama': nama,
       'password': password,
       'role': role,
-      'bookmarkId': bookmark,
+      'bookmarkIds': bookmarkIds,
     };
   }
 
@@ -47,7 +47,7 @@ class UserModel {
       nama: map['nama'] ?? '',
       password: map['password'] ?? '',
       role: map['role'] ?? '',
-      bookmark: map['bookmark'] ?? [],
+      bookmarkIds: map['bookmarkIds'] ?? [],
     );
   }
 }

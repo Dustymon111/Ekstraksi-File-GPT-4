@@ -1,7 +1,6 @@
 import 'package:aplikasi_ekstraksi_file_gpt4/components/bookmark_card.dart';
 import 'package:aplikasi_ekstraksi_file_gpt4/models/bookmark_model.dart';
 import 'package:aplikasi_ekstraksi_file_gpt4/providers/bookmark_provider.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 

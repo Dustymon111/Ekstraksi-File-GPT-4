@@ -1,4 +1,3 @@
-import 'package:aplikasi_ekstraksi_file_gpt4/components/custom_button.dart';
 import 'package:aplikasi_ekstraksi_file_gpt4/providers/bookmark_provider.dart';
 import 'package:aplikasi_ekstraksi_file_gpt4/providers/global_provider.dart';
 import 'package:aplikasi_ekstraksi_file_gpt4/providers/question_provider.dart';

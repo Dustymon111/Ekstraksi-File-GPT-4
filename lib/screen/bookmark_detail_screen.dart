@@ -39,7 +39,7 @@ class BookmarkDetailScreen extends StatelessWidget {
                   ),
                   SizedBox(height: 8),
                   Text(
-                    'Author: ${bookmark.author}',
+                    'Author(s): ${bookmark.author.join(', ')}',
                     style: TextStyle(fontSize: 16),
                   ),
                   Text(
