@@ -36,25 +36,27 @@ class _CreateScreenState extends State<CreateScreen> {
                             color: Color(0xFF1C88BF), size: 40),
                       ),
                       SizedBox(width: 16.0),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: const [
-                          Text(
-                            "Examqz..",
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 24,
-                              fontWeight: FontWeight.bold,
+                      Flexible(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: const [
+                            Text(
+                              "Examqz..",
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 24,
+                                fontWeight: FontWeight.bold,
+                              ),
                             ),
-                          ),
-                          Text(
-                            "Pengetahuan Mengalir Bebas dengan Latihan",
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 14,
+                            Text(
+                              "Pengetahuan Mengalir Bebas dengan Latihan",
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 14,
+                              ),
                             ),
-                          ),
-                        ],
+                          ],
+                        ),
                       ),
                     ],
                   ),

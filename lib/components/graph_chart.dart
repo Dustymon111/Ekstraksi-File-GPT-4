@@ -10,14 +10,17 @@ class CustomLineChart extends StatelessWidget {
 
   CustomLineChart({
     required this.yValues,
-    this.maxX = 10,
-    this.minX = 1,
-    this.maxY = 100,
-    this.minY = 0,
-  });
+  })  : maxX = (yValues.isNotEmpty) ? yValues.length.toDouble() : 10,
+        minX = 1,
+        maxY = 100,
+        minY = 0;
 
   @override
   Widget build(BuildContext context) {
+    if (yValues.isEmpty) {
+      return Center(child: Text('No data available'));
+    }
+
     List<FlSpot> spots = List.generate(
       yValues.length,
       (index) => FlSpot((index + 1).toDouble(), yValues[index]),
@@ -41,15 +44,15 @@ class CustomLineChart extends StatelessWidget {
       child: LineChart(
         LineChartData(
           gridData: FlGridData(
-            show: false, // Menonaktifkan grid lines
+            show: false,
           ),
           borderData: FlBorderData(
             show: false,
           ),
-          maxX: maxX,
           minX: minX,
-          maxY: maxY,
+          maxX: maxX,
           minY: minY,
+          maxY: maxY,
           titlesData: FlTitlesData(
             leftTitles: AxisTitles(
               sideTitles: SideTitles(
@@ -97,7 +100,6 @@ class CustomLineChart extends StatelessWidget {
             LineChartBarData(
               spots: spots,
               isCurved: true,
-              // colors: [Colors.blue.shade300, Colors.blue.shade800],
               gradient: LinearGradient(
                 colors: [Colors.blue.shade300, Colors.blue.shade800],
                 begin: Alignment.centerLeft,

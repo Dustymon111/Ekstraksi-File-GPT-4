@@ -1,10 +1,7 @@
-import 'package:aplikasi_ekstraksi_file_gpt4/components/custom_button.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -71,8 +68,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   @override
   Widget build(BuildContext context) {
-    User? user_mail = FirebaseAuth.instance.currentUser;
-
     return Scaffold(
       body: SingleChildScrollView(
         child: Column(
@@ -120,7 +115,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         ),
                       ),
                       Text(
-                        user_mail?.email ?? 'tonohua@gmail.com',
+                        _email ?? 'tonohua@gmail.com',
                         style: TextStyle(
                           color: Theme.of(context).textTheme.bodyLarge?.color,
                           fontSize: 16,
@@ -229,7 +224,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   SizedBox(height: 24),
                   Align(
                     alignment: Alignment.centerRight,
-                    child: CustomElevatedButton(
+                    child: ElevatedButton(
                       onPressed: () async {
                         try {
                           // Sign out the user
@@ -265,7 +260,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           );
                         }
                       },
-                      label: 'Keluar',
+                      child: Text('Keluar'),
                     ),
                   ),
                 ],

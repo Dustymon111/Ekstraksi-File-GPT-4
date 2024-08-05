@@ -1,8 +1,5 @@
-import 'package:aplikasi_ekstraksi_file_gpt4/components/custom_button.dart';
 import 'package:aplikasi_ekstraksi_file_gpt4/models/user_model.dart';
-import 'package:aplikasi_ekstraksi_file_gpt4/providers/theme_provider.dart';
 import 'package:aplikasi_ekstraksi_file_gpt4/providers/user_provider.dart';
-import 'package:aplikasi_ekstraksi_file_gpt4/screen/login_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -23,9 +20,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final themeprov = Provider.of<ThemeNotifier>(context);
-    final userprov = Provider.of<UserProvider>(context);
-
     return Scaffold(
       backgroundColor: Color(0xFF1C88BF),
       body: SingleChildScrollView(
@@ -139,14 +133,13 @@ class _RegisterScreenState extends State<RegisterScreen> {
             );
             User? user = userCredential.user;
             user?.updateDisplayName(nama);
-            String uid = userCredential.user!.uid;
 
             UserModel userModel = UserModel(
               email: email,
               nama: nama,
               password: password,
               role: _role,
-              bookmarkId: "book_$uid",
+              bookmarkIds: [],
             );
 
             await Provider.of<UserProvider>(context, listen: false)

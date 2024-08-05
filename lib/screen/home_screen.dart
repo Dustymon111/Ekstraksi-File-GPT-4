@@ -1,25 +1,16 @@
 import 'dart:async';
-import 'dart:io';
 
-import 'package:aplikasi_ekstraksi_file_gpt4/components/circular_progress.dart';
-import 'package:aplikasi_ekstraksi_file_gpt4/components/custom_button.dart';
-import 'package:aplikasi_ekstraksi_file_gpt4/models/bookmark_model.dart';
-import 'package:aplikasi_ekstraksi_file_gpt4/providers/bookmark_provider.dart';
 import 'package:aplikasi_ekstraksi_file_gpt4/providers/theme_provider.dart';
 import 'package:aplikasi_ekstraksi_file_gpt4/screen/bookmark_screen.dart';
 import 'package:aplikasi_ekstraksi_file_gpt4/screen/create_page.dart';
 import 'package:aplikasi_ekstraksi_file_gpt4/screen/login_screen.dart';
 import 'package:aplikasi_ekstraksi_file_gpt4/screen/profile_screen.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_storage/firebase_storage.dart'; // Import Firebase Storage
 import 'package:flutter/material.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:path/path.dart';
 import 'package:provider/provider.dart';
-import 'package:syncfusion_flutter_pdf/pdf.dart';
-import 'package:syncfusion_flutter_pdfviewer/pdfviewer.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class Home extends StatefulWidget {
   const Home({super.key});
@@ -42,9 +33,9 @@ class _HomeState extends State<Home> {
 
   final color = [Colors.red, Colors.yellow, Colors.blue];
   List<String> assets = [
-    '/carousel1.png',
-    '/carousel2.png',
-    '/carousel3.png',
+    'assets/carousel1.png',
+    'assets/carousel2.png',
+    'assets/carousel3.png',
   ];
 
   String _userName = "Loading...";
@@ -52,7 +43,7 @@ class _HomeState extends State<Home> {
   @override
   void initState() {
     super.initState();
-    _getUserName();
+    _initSharedPref();
     _authSubscription = auth.authStateChanges().listen((User? user) {
       if (user == null) {
         Navigator.of(context as BuildContext).pushAndRemoveUntil(
@@ -65,31 +56,14 @@ class _HomeState extends State<Home> {
     });
   }
 
-  Future<void> _getUserName() async {
-    User? user = FirebaseAuth.instance.currentUser;
-
-    if (user != null) {
-      try {
-        DocumentSnapshot userDoc = await FirebaseFirestore.instance
-            .collection('users')
-            .doc(user.uid)
-            .get();
-        if (userDoc.exists && userDoc.data() != null) {
-          setState(() {
-            _userName = userDoc.get('nama') ?? "Unknown";
-          });
-        } else {
-          setState(() {
-            _userName = "Unknown";
-          });
-        }
-      } catch (e) {
-        print("Error fetching user data: $e");
-        setState(() {
-          _userName = "Unknown";
-        });
+  _initSharedPref() async {
+    SharedPreferencesAsync pref = SharedPreferencesAsync();
+    List<String>? userinfo = await pref.getStringList('userinfo');
+    setState(() {
+      if (userinfo != null) {
+        _userName = userinfo[0];
       }
-    }
+    });
   }
 
   @override
@@ -206,7 +180,11 @@ class _HomeState extends State<Home> {
                   color: Theme.of(context).appBarTheme.backgroundColor,
                   borderRadius:
                       BorderRadius.only(bottomRight: Radius.circular(50.0))),
-              padding: const EdgeInsets.all(16.0),
+              padding: EdgeInsets.symmetric(
+                vertical: 16.0,
+                horizontal:
+                    MediaQuery.of(context).size.width * 0.05, // Dynamic padding
+              ),
               child: Column(
                 children: [
                   Row(
@@ -218,32 +196,34 @@ class _HomeState extends State<Home> {
                         child: const Icon(Icons.school,
                             color: Color(0xFF1C88BF), size: 40),
                       ),
-                      SizedBox(
-                        width: 20,
-                      ),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            "Welcome to Examqz..",
-                            style: TextStyle(color: Colors.white, fontSize: 18),
-                          ),
-                          Text(
-                            _userName,
-                            style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 28,
-                                fontWeight: FontWeight.bold),
-                          ),
-                          Text(
-                            "Pengetahuan Mengalir Bebas dengan Latihan",
-                            style: TextStyle(color: Colors.white, fontSize: 14),
-                          ),
-                        ],
+                      SizedBox(width: 20),
+                      Flexible(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              "Welcome to Examqz..",
+                              style:
+                                  TextStyle(color: Colors.white, fontSize: 18),
+                            ),
+                            Text(
+                              _userName,
+                              style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 28,
+                                  fontWeight: FontWeight.bold),
+                            ),
+                            Text(
+                              "Pengetahuan Mengalir Bebas dengan Latihan",
+                              style:
+                                  TextStyle(color: Colors.white, fontSize: 14),
+                            ),
+                          ],
+                        ),
                       ),
                     ],
                   ),
-                  const SizedBox(height: 30),
+                  const SizedBox(height: 20),
                 ],
               ),
             ),

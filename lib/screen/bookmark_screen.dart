@@ -18,10 +18,8 @@ class _BookmarkScreenState extends State<BookmarkScreen> {
 
   @override
   void initState() {
-    String bookmarkId = "book_${_auth.currentUser!.uid}";
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      context.read<BookmarkProvider>().fetchBookmarks(bookmarkId);
-      context.read<BookmarkProvider>().initiateBookmark();
+      context.read<BookmarkProvider>().fetchBookmarks(_auth.currentUser!.uid);
     });
     super.initState();
   }
@@ -39,10 +37,9 @@ class _BookmarkScreenState extends State<BookmarkScreen> {
             child: Text(
               "Your Bookmark !",
               style: TextStyle(
-                fontSize: 24,
-                fontWeight: FontWeight.bold,
-                color: Theme.of(context).textTheme.bodyLarge?.color
-              ),
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold,
+                  color: Theme.of(context).textTheme.bodyLarge?.color),
             ),
           ),
           Padding(
@@ -91,7 +88,7 @@ class _BookmarkScreenState extends State<BookmarkScreen> {
                       author: snapshot.data![index].author,
                       pageNumber: snapshot.data![index].totalPages,
                       context: context,
-                      bookIdx: index,
+                      bookmarkId: snapshot.data![index].id ?? "",
                     );
                   },
                 );

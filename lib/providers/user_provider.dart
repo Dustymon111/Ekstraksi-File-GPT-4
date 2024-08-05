@@ -6,8 +6,20 @@ import 'package:aplikasi_ekstraksi_file_gpt4/models/user_model.dart';
 class UserProvider extends ChangeNotifier {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  late final String _username;
+  late final String _email;
 
   User? get currentUser => _auth.currentUser;
+  String get username => _username;
+  String get email => _email;
+
+  void setUsername(value) {
+    _username = value;
+  }
+
+  void setEmail(value) {
+    _email = value;
+  }
 
   // Create or Update User
   Future<void> createOrUpdateUser(UserModel userModel) async {

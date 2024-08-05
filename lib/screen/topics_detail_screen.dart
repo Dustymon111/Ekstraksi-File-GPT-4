@@ -1,12 +1,12 @@
+import 'package:aplikasi_ekstraksi_file_gpt4/components/Custom_Button.dart';
 import 'package:aplikasi_ekstraksi_file_gpt4/components/graph_chart.dart';
+import 'package:aplikasi_ekstraksi_file_gpt4/models/question_model.dart';
 import 'package:aplikasi_ekstraksi_file_gpt4/models/question_set_model.dart';
 import 'package:aplikasi_ekstraksi_file_gpt4/providers/global_provider.dart';
 import 'package:aplikasi_ekstraksi_file_gpt4/providers/question_provider.dart';
-import 'package:aplikasi_ekstraksi_file_gpt4/providers/theme_provider.dart';
 import 'package:aplikasi_ekstraksi_file_gpt4/screen/answers_screen.dart';
+import 'package:aplikasi_ekstraksi_file_gpt4/screen/create_topic_screen.dart';
 import 'package:aplikasi_ekstraksi_file_gpt4/screen/question_screen.dart';
-import 'package:aplikasi_ekstraksi_file_gpt4/utils/docx_generator.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:aplikasi_ekstraksi_file_gpt4/models/subject_model.dart';
 import 'package:provider/provider.dart';
@@ -22,37 +22,22 @@ class SubjectDetailScreen extends StatefulWidget {
 
 class _SubjectDetailScreenState extends State<SubjectDetailScreen> {
   bool _isChartVisible = false; // State variable to manage chart visibility
-  final FirebaseAuth _auth = FirebaseAuth.instance;
 
   @override
   void initState() {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      context.read<QuestionProvider>().fetchQuestionSets(widget.subject.id!);
+    });
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
-    final themeprov = Provider.of<ThemeNotifier>(context);
-
+    final questionProvider = Provider.of<QuestionProvider>(context);
     // Get the stream from the provider
-    final questionSetsStream =
-        context.watch<QuestionProvider>().getQuestionSetsStream(
-              "book_${_auth.currentUser!.uid}", // bookmarkId
-              context.watch<GlobalProvider>().bookmarkIndex,
-              context.watch<GlobalProvider>().subjectIndex,
-            );
 
-    // Stream to convert questionSets to points
-    Stream<List<double>> getPointsStream() {
-      return questionSetsStream.map((questionSets) {
-        final points = <double>[];
-        questionSets.forEach((data) {
-          points.add(data.point.toDouble());
-        });
-        return points;
-      });
-    }
-
-    void _showResultDialog(BuildContext context, QuestionSet questionSet) {
+    void _showResultDialog(BuildContext context, QuestionSet questionSet,
+        List<Question> questions) {
       showDialog(
         context: context,
         builder: (context) {
@@ -75,18 +60,27 @@ class _SubjectDetailScreenState extends State<SubjectDetailScreen> {
                   ),
                   SizedBox(height: 24),
                   Text(
-                    'Total Questions: ${questionSet.questions.length}',
-                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500, color: Theme.of(context).textTheme.bodyLarge?.color),
+                    'Total Questions: ${questions.length}',
+                    style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.w500,
+                        color: Theme.of(context).textTheme.bodyLarge?.color),
                   ),
                   SizedBox(height: 8),
                   Text(
-                    'Correct Answers: ${(questionSet.point / 100 * questionSet.questions.length).toInt()}',
-                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500, color: Theme.of(context).textTheme.bodyLarge?.color),
+                    'Correct Answers: ${(questionSet.point / 100 * questions.length).toInt()}',
+                    style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.w500,
+                        color: Theme.of(context).textTheme.bodyLarge?.color),
                   ),
                   SizedBox(height: 8),
                   Text(
                     'Score: ${(questionSet.point).ceil()}',
-                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500, color: Theme.of(context).textTheme.bodyLarge?.color),
+                    style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.w500,
+                        color: Theme.of(context).textTheme.bodyLarge?.color),
                   ),
                   SizedBox(height: 24),
                   Row(
@@ -102,7 +96,7 @@ class _SubjectDetailScreenState extends State<SubjectDetailScreen> {
                             context,
                             MaterialPageRoute(
                               builder: (context) => AnswersScreen(
-                                questions: questionSet.questions,
+                                questions: questions,
                                 selectedOption: questionSet.selectedOption,
                               ),
                             ),
@@ -153,17 +147,21 @@ class _SubjectDetailScreenState extends State<SubjectDetailScreen> {
               // Display the title and description of the subject
               Text(
                 widget.subject.title,
-                style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold,
-                color: Theme.of(context).textTheme.bodyLarge?.color),
+                style: TextStyle(
+                    fontSize: 24,
+                    fontWeight: FontWeight.bold,
+                    color: Theme.of(context).textTheme.bodyLarge?.color),
               ),
               SizedBox(height: 8),
               Text(
-                'Book: ${widget.subject.title}, Bab I',
-                style: TextStyle(fontSize: 16, color: Theme.of(context).textTheme.bodyLarge?.color),
+                'Book: ${widget.subject.title}',
+                style: TextStyle(
+                    fontSize: 16,
+                    color: Theme.of(context).textTheme.bodyLarge?.color),
               ),
               Text(
-                'Count of Exercise: ${widget.subject.questionSets?.length ?? 0}',
-                style: TextStyle(fontSize: 16, color: Theme.of(context).textTheme.bodyLarge?.color),
+                'Count of Exercise: ${widget.subject.questionSetIds.length}',
+                style: TextStyle(fontSize: 16),
               ),
               SizedBox(height: 16),
               // Toggle chart visibility
@@ -190,7 +188,8 @@ class _SubjectDetailScreenState extends State<SubjectDetailScreen> {
               ),
               if (_isChartVisible)
                 StreamBuilder<List<double>>(
-                  stream: getPointsStream(),
+                  stream: questionProvider
+                      .getPointsStreamFromFirestore(widget.subject.id!),
                   builder: (context, snapshot) {
                     if (snapshot.connectionState == ConnectionState.waiting) {
                       return Center(child: CircularProgressIndicator());
@@ -206,10 +205,13 @@ class _SubjectDetailScreenState extends State<SubjectDetailScreen> {
               SizedBox(height: 20),
               Text(
                 "Question List",
-                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Theme.of(context).textTheme.bodyLarge?.color),
+                style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                    color: Theme.of(context).textTheme.bodyLarge?.color),
               ),
               StreamBuilder<List<QuestionSet>>(
-                stream: questionSetsStream,
+                stream: questionProvider.questionSetsStream,
                 builder: (context, snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting) {
                     return Center(child: CircularProgressIndicator());
@@ -217,7 +219,6 @@ class _SubjectDetailScreenState extends State<SubjectDetailScreen> {
                     return Center(child: Text('Error: ${snapshot.error}'));
                   } else if (snapshot.hasData && snapshot.data != null) {
                     final questionSets = snapshot.data!;
-
                     return ListView.builder(
                       shrinkWrap: true,
                       physics: NeverScrollableScrollPhysics(),
@@ -265,13 +266,16 @@ class _SubjectDetailScreenState extends State<SubjectDetailScreen> {
                                     .read<GlobalProvider>()
                                     .setQuestionSetIndex(index);
                                 if (questionSet.status == "Selesai") {
-                                  _showResultDialog(context, questionSet);
+                                  _showResultDialog(context, questionSet,
+                                      questionSet.questions);
                                 } else {
-                                  Navigator.push(
+                                  Navigator.pushReplacement(
                                     context,
                                     MaterialPageRoute(
                                       builder: (context) => QuestionScreen(
-                                          questions: questionSet.questions),
+                                          questions: questionSet.questions,
+                                          questionSetId: questionSet.id!,
+                                          subject: widget.subject),
                                     ),
                                   );
                                 }
@@ -286,6 +290,20 @@ class _SubjectDetailScreenState extends State<SubjectDetailScreen> {
                   }
                 },
               ),
+              SizedBox(
+                height: 10,
+              ),
+              Align(
+                alignment: Alignment.center,
+                child: CustomElevatedButton(
+                    onPressed: () {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => CreateTopicScreen()));
+                    },
+                    label: "Buat Latihan Baru"),
+              )
             ],
           ),
         ),
