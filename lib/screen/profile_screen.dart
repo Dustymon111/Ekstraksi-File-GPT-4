@@ -7,31 +7,13 @@ import 'package:flutter/widgets.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
 class ProfileScreen extends StatefulWidget {
+  const ProfileScreen({super.key});
+
   @override
   State<ProfileScreen> createState() => _ProfileScreenState();
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
-  void _showDialog(BuildContext context, String title, String content) {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text(title),
-          content: Text(content),
-          actions: [
-            TextButton(
-              child: const Text("OK"),
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-            ),
-          ],
-        );
-      },
-    );
-  }
-
   String _userName = "Loading...";
 
   @override
@@ -65,6 +47,26 @@ class _ProfileScreenState extends State<ProfileScreen> {
         });
       }
     }
+  }
+
+  void _showDialog(BuildContext context, String title, String content) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text(title),
+          content: Text(content),
+          actions: [
+            TextButton(
+              child: const Text("OK"),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
   }
 
   @override
@@ -229,20 +231,38 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     alignment: Alignment.centerRight,
                     child: CustomElevatedButton(
                       onPressed: () async {
-                        await FirebaseAuth.instance.signOut();
-                        if (Navigator.canPop(context)) {
+                        try {
+                          // Sign out the user
+                          await FirebaseAuth.instance.signOut();
+
+                          // Navigate to the login screen and remove all previous routes
                           Navigator.of(context).pushNamedAndRemoveUntil(
                             '/login',
                             (Route<dynamic> route) => false,
                           );
+
+                          // Show a toast message indicating successful sign out
                           Fluttertoast.showToast(
-                              msg: "Successfully Signed Out",
-                              toastLength: Toast.LENGTH_SHORT,
-                              gravity: ToastGravity.BOTTOM,
-                              timeInSecForIosWeb: 1,
-                              backgroundColor: Colors.white,
-                              textColor: Colors.black,
-                              fontSize: 16.0);
+                            msg: "Successfully Signed Out",
+                            toastLength: Toast.LENGTH_SHORT,
+                            gravity: ToastGravity.BOTTOM,
+                            timeInSecForIosWeb: 1,
+                            backgroundColor: Colors.white,
+                            textColor: Colors.black,
+                            fontSize: 16.0,
+                          );
+                        } catch (e) {
+                          // Handle any errors during sign out
+                          print("Error signing out: $e");
+                          Fluttertoast.showToast(
+                            msg: "Error signing out. Please try again.",
+                            toastLength: Toast.LENGTH_SHORT,
+                            gravity: ToastGravity.BOTTOM,
+                            timeInSecForIosWeb: 1,
+                            backgroundColor: Colors.red,
+                            textColor: Colors.white,
+                            fontSize: 16.0,
+                          );
                         }
                       },
                       label: 'Keluar',
