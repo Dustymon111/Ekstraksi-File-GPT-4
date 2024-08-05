@@ -20,33 +20,34 @@ class BookmarkProvider extends ChangeNotifier {
   List<Bookmark> get bookmarks => _bookmarks;
 
   // Fetch bookmarks from a specific book document
-  Future<void> fetchBookmarks(String userId) async {
+  void fetchBookmarks(String userId) {
     try {
-      // Fetch the books where the userId matches the current user
-      QuerySnapshot bookSnapshot = await _firestore
+      // Listen for real-time updates on books where the userId matches the current user
+      _firestore
           .collection('books')
           .where('userId', isEqualTo: userId)
-          .get();
+          .snapshots()
+          .listen((QuerySnapshot bookSnapshot) {
+        if (bookSnapshot.docs.isNotEmpty) {
+          // Clear the existing bookmarks
+          _bookmarks.clear();
 
-      if (bookSnapshot.docs.isNotEmpty) {
-        // Clear the existing bookmarks
-        _bookmarks.clear();
+          // Map each document to a Bookmark object
+          _bookmarks = bookSnapshot.docs.map((bookDoc) {
+            final data = bookDoc.data() as Map<String, dynamic>;
+            final bookmark = Bookmark.fromMap(data);
+            bookmark.id = bookDoc.id;
+            return bookmark;
+          }).toList();
 
-        // Map each document to a Bookmark object
-        _bookmarks = bookSnapshot.docs.map((bookDoc) {
-          final data = bookDoc.data() as Map<String, dynamic>;
-          final bookmark = Bookmark.fromMap(data);
-          bookmark.id = bookDoc.id;
-          return bookmark;
-        }).toList();
-
-        // Notify listeners about changes
-        initiateBookmark();
-      } else {
-        print('No book found for the current user.');
-        _bookmarks = [];
-        _notifyChanges();
-      }
+          // Notify listeners about changes
+          initiateBookmark();
+        } else {
+          print('No book found for the current user.');
+          _bookmarks = [];
+          _notifyChanges();
+        }
+      });
     } catch (e) {
       print('Error fetching bookmarks: $e');
       Fluttertoast.showToast(

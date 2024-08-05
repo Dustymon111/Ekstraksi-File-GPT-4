@@ -138,18 +138,27 @@ class _CreateSubjectState extends State<CreateSubject> {
 
         // Get the download URL
         final bookUrl = await storageRef.getDownloadURL();
+        PdfDocument document =
+            PdfDocument(inputBytes: File(filePath).readAsBytesSync());
 
         // Send file to Python backend
         var uri = Uri.parse('$localhost:$port/ekstrak-info');
+        // Create the multipart request
         var request = http.MultipartRequest('POST', uri)
+          // Add file to the request
           ..files.add(
             http.MultipartFile(
-              'file', // The name of the form field
+              'file', // The name of the form field for the file
               File(filePath).readAsBytes().asStream(),
               File(filePath).lengthSync(),
               filename: fileName,
             ),
-          );
+          )
+          // Add additional fields to the request
+          ..fields['userId'] = auth.currentUser!.uid
+          ..fields['totalPages'] =
+              document.pages.count.toString() // Convert integer to string
+          ..fields['bookUrl'] = bookUrl;
 
         var response = await request.send();
 
@@ -159,27 +168,25 @@ class _CreateSubjectState extends State<CreateSubject> {
           print('response: $responseBody');
           print('File uploaded successfully! Download URL: $bookUrl');
 
-          // Process the response data
-          final responseData = jsonDecode(responseBody);
-          final data = responseData['data'];
+          // // Process the response data
+          // final responseData = jsonDecode(responseBody);
+          // final data = responseData['data'];
 
-          PdfDocument document =
-              PdfDocument(inputBytes: File(filePath).readAsBytesSync());
-          pdfToText(filePath);
+          // pdfToText(filePath);
 
           if (mounted) {
-            List<Subject> subjects = parseSubjects(data['topics']);
-            List<String> authors = parseAuthors(data['author']);
-            context.read<BookmarkProvider>().addBookmarkAndSubjects(
-                Bookmark(
-                  id: id,
-                  title: data['title'],
-                  bookUrl: bookUrl,
-                  author: authors,
-                  totalPages: document.pages.count,
-                  userId: auth.currentUser!.uid,
-                ),
-                subjects);
+            // List<Subject> subjects = parseSubjects(data['topics']);
+            // List<String> authors = parseAuthors(data['author']);
+            // context.read<BookmarkProvider>().addBookmarkAndSubjects(
+            //     Bookmark(
+            //       id: id,
+            //       title: data['title'],
+            //       bookUrl: bookUrl,
+            //       author: authors,
+            //       totalPages:
+            //       userId:
+            //     ),
+            //     subjects);
 
             showDialog(
               context: context,
