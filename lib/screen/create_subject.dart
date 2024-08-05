@@ -33,6 +33,8 @@ class CreateSubject extends StatefulWidget {
 class _CreateSubjectState extends State<CreateSubject> {
   final String localhost = dotenv.env["LOCALHOST"]!;
   final String port = dotenv.env["PORT"]!;
+  final String serverUrl =
+      'https://ekstraksi-file-gpt-4-server-xzcbfs2fqq-et.a.run.app';
 
   final FirebaseAuth auth = FirebaseAuth.instance;
   final PageController _pageController = PageController();
@@ -142,7 +144,7 @@ class _CreateSubjectState extends State<CreateSubject> {
             PdfDocument(inputBytes: File(filePath).readAsBytesSync());
 
         // Send file to Python backend
-        var uri = Uri.parse('$localhost:$port/ekstrak-info');
+        var uri = Uri.parse('$serverUrl/ekstrak-info');
         // Create the multipart request
         var request = http.MultipartRequest('POST', uri)
           // Add file to the request
