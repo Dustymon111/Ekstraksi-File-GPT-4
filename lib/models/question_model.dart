@@ -1,7 +1,7 @@
 class Question {
   final String text;
   final List<String> options;
-  final String correctOption;
+  final dynamic? correctOption;
   final String questionSetId; // Reference to the QuestionSet document
   final String type;
 

@@ -127,6 +127,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       ),
                       Text(
                         _email,
+                        _email,
                         style: TextStyle(
                           color: Theme.of(context).textTheme.bodyLarge?.color,
                           fontSize: 16,

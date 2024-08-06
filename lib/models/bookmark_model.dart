@@ -7,6 +7,7 @@ class Bookmark {
   final int totalPages;
   final String bookUrl;
   final String userId;
+  String? filename;
 
   Bookmark({
     this.id,
@@ -15,6 +16,7 @@ class Bookmark {
     required this.totalPages,
     required this.bookUrl,
     required this.userId,
+    this.filename,
   });
 
   factory Bookmark.fromFirestore(DocumentSnapshot doc) {
@@ -32,6 +34,7 @@ class Bookmark {
       totalPages: data['totalPages'] ?? 0,
       bookUrl: data['bookUrl'] ?? '',
       userId: data['userId'] ?? '',
+      filename: data['filename'] ?? '',
     );
   }
 
@@ -48,6 +51,7 @@ class Bookmark {
       totalPages: data['totalPages'] ?? 0,
       bookUrl: data['bookUrl'] ?? '',
       userId: data['userId'] ?? '',
+      filename: data['filename'] ?? '',
     );
   }
 
@@ -59,6 +63,7 @@ class Bookmark {
       'totalPages': totalPages,
       'bookUrl': bookUrl,
       'userId': userId,
+      'filename': filename,
     };
   }
 }
