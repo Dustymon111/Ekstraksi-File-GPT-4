@@ -1,4 +1,14 @@
+import 'dart:convert';
+
+import 'package:aplikasi_ekstraksi_file_gpt4/models/bookmark_model.dart';
+import 'package:aplikasi_ekstraksi_file_gpt4/models/subject_model.dart';
+import 'package:aplikasi_ekstraksi_file_gpt4/providers/bookmark_provider.dart';
+import 'package:aplikasi_ekstraksi_file_gpt4/providers/subject_provider.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:provider/provider.dart';
+import 'package:http/http.dart' as http;
 
 class CreateTopicScreen extends StatefulWidget {
   const CreateTopicScreen({super.key});
@@ -12,9 +22,58 @@ class _CreateTopicScreenState extends State<CreateTopicScreen> {
   String? selectedTopic;
   int? selectedMultipleChoice;
   int? selectedEssay;
+  String? filename;
+  String? subjectId;
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+  final String localhost = dotenv.env["LOCALHOST"]!;
+  final String port = dotenv.env["PORT"]!;
+
+  @override
+  void initState() {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      context.read<SubjectProvider>().fetchAllSubjectsFromAllBooks();
+    });
+    super.initState();
+  }
+
+  Future<void> postData(
+      String topic,
+      String mChoiceNumber,
+      String essayNumber,
+      String difficulty,
+      String userId,
+      String filename,
+      String subjectId) async {
+    final url = Uri.parse('$localhost:$port/question-maker');
+    final response = await http.post(
+      url,
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
+      body: jsonEncode(<String, dynamic>{
+        'topic': topic,
+        'm_choice_number': mChoiceNumber,
+        'essay_number': essayNumber,
+        'difficulty': difficulty,
+        'userId': userId,
+        'filename': filename,
+        'subjectId': subjectId,
+      }),
+    );
+
+    if (response.statusCode == 200) {
+      // If the server returns a 200 OK response, parse the JSON.
+      print('Response data: ${response.body}');
+    } else {
+      // If the server did not return a 200 OK response, throw an exception.
+      print('Failed to post data. Status code: ${response.statusCode}');
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
+    final subjectProv = Provider.of<SubjectProvider>(context);
+    final bookProv = Provider.of<BookmarkProvider>(context);
     return Scaffold(
       appBar: AppBar(
         foregroundColor: Colors.white,
@@ -90,15 +149,18 @@ class _CreateTopicScreenState extends State<CreateTopicScreen> {
                     onChanged: (newValue) {
                       setState(() {
                         selectedSubject = newValue;
+                        subjectProv.filterSubjectByBookId(selectedSubject!);
+                        filename = bookProv.findFilenameById(selectedSubject!);
                       });
                     },
-                    items: <String>['Math', 'Science', 'Analyst']
-                        .map<DropdownMenuItem<String>>((String value) {
+                    items: bookProv.bookmarks
+                        .map<DropdownMenuItem<String>>((Bookmark value) {
                       return DropdownMenuItem<String>(
-                        value: value,
+                        value: value.id,
                         child: Padding(
                           padding: const EdgeInsets.all(8.0),
-                          child: Text(value,
+                          child: Text(value.title,
+                              overflow: TextOverflow.ellipsis,
                               style: TextStyle(
                                   color: Theme.of(context)
                                       .textTheme
@@ -112,7 +174,7 @@ class _CreateTopicScreenState extends State<CreateTopicScreen> {
               ),
               SizedBox(height: 20),
               Text(
-                "Topik Pertanyaan",
+                "Topik Buku",
                 style: TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.bold,
@@ -132,19 +194,44 @@ class _CreateTopicScreenState extends State<CreateTopicScreen> {
                     ),
                   ],
                 ),
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                  child: TextField(
-                    decoration: InputDecoration(
-                      hintText: "Ketik Topik yang diinginkan",
-                      fillColor: Theme.of(context).textTheme.bodyLarge?.color,
-                      border: InputBorder.none,
+                child: DropdownButtonHideUnderline(
+                  child: DropdownButton<String>(
+                    hint: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Text(
+                        "Pilih Topik",
+                        style: TextStyle(
+                          color: Theme.of(context).textTheme.bodyLarge?.color,
+                        ),
+                      ),
                     ),
-                    onChanged: (newValue) {
-                      setState(() {
-                        selectedTopic = newValue;
-                      });
-                    },
+                    value: selectedTopic,
+                    isExpanded: true,
+                    onChanged: selectedSubject == null
+                        ? null
+                        : (newValue) {
+                            setState(() {
+                              selectedTopic = newValue;
+                              subjectId = selectedTopic;
+                            });
+                          },
+                    items: subjectProv.filteredSubjects
+                        .map<DropdownMenuItem<String>>((Subject value) {
+                      return DropdownMenuItem<String>(
+                        value: value.id,
+                        child: Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Text(
+                            value.title,
+                            overflow: TextOverflow.ellipsis,
+                            style: TextStyle(
+                              color:
+                                  Theme.of(context).textTheme.bodyLarge?.color,
+                            ),
+                          ),
+                        ),
+                      );
+                    }).toList(),
                   ),
                 ),
               ),
@@ -249,7 +336,21 @@ class _CreateTopicScreenState extends State<CreateTopicScreen> {
               const SizedBox(height: 30),
               Center(
                 child: ElevatedButton.icon(
-                  onPressed: () {},
+                  onPressed: selectedSubject != null &&
+                          selectedEssay != null &&
+                          selectedMultipleChoice != null &&
+                          selectedTopic != null
+                      ? () {
+                          postData(
+                              selectedTopic!,
+                              selectedMultipleChoice.toString(),
+                              selectedEssay.toString(),
+                              "intermmediate",
+                              _auth.currentUser!.uid,
+                              filename!,
+                              subjectId!);
+                        }
+                      : null,
                   icon: Icon(Icons.arrow_forward, color: Colors.white),
                   label: Text(
                     "Generate",

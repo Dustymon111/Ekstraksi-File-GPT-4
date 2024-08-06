@@ -139,6 +139,18 @@ class BookmarkProvider extends ChangeNotifier {
     }
   }
 
+  String? findFilenameById(String id) {
+    try {
+      final bookmark = _bookmarks.firstWhere(
+        (bookmark) => bookmark.id == id,
+      );
+      return bookmark.filename;
+    } catch (e) {
+      print('Error finding filename by title: $e');
+      return null;
+    }
+  }
+
   // Function to update filtered bookmarks based on search/query
   void updateFilteredBookmarks(String query) {
     _filteredBookmarks = _bookmarks

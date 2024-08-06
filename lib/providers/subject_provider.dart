@@ -3,6 +3,35 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:aplikasi_ekstraksi_file_gpt4/models/subject_model.dart';
 
 class SubjectProvider with ChangeNotifier {
+  List<Subject> _allSubjects = [];
+  List<Subject> _filteredSubjects = [];
+
+  List<Subject> get allSubjects => _allSubjects;
+  List<Subject> get filteredSubjects => _filteredSubjects;
+
+  void fetchAllSubjectsFromAllBooks() async {
+    final querySnapshot = await FirebaseFirestore.instance
+        .collectionGroup('subjects')
+        .orderBy('sortIndex')
+        .get();
+
+    _allSubjects = querySnapshot.docs.map((doc) {
+      final subject = Subject.fromMap(doc.data() as Map<String, dynamic>);
+      subject.id = doc.id;
+      return subject;
+    }).toList();
+  }
+
+  void filterSubjectByBookId(String bookId) {
+    try {
+      _filteredSubjects = _allSubjects
+          .where((subject) => subject.bookmarkId == bookId)
+          .toList();
+    } catch (e) {
+      print("Subject not found for bookId: $bookId");
+    }
+  }
+
   Stream<List<Subject>> getSubjectsStream(String bookId) {
     return FirebaseFirestore.instance
         .collection('books')

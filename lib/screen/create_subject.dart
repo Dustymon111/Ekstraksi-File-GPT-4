@@ -1,14 +1,10 @@
 import 'dart:async';
-import 'dart:convert';
 import 'dart:io';
 import 'package:aplikasi_ekstraksi_file_gpt4/components/circular_progress.dart';
 import 'package:aplikasi_ekstraksi_file_gpt4/components/custom_button.dart';
-import 'package:aplikasi_ekstraksi_file_gpt4/models/bookmark_model.dart';
 import 'package:aplikasi_ekstraksi_file_gpt4/models/subject_model.dart';
-import 'package:aplikasi_ekstraksi_file_gpt4/providers/bookmark_provider.dart';
 import 'package:aplikasi_ekstraksi_file_gpt4/providers/theme_provider.dart';
 import 'package:aplikasi_ekstraksi_file_gpt4/screen/login_screen.dart';
-import 'package:aplikasi_ekstraksi_file_gpt4/utils/pdf_to_text.dart';
 import 'package:aplikasi_ekstraksi_file_gpt4/utils/random_string_generator.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -61,15 +57,6 @@ class _CreateSubjectState extends State<CreateSubject> {
         print('User is signed in!');
       }
     });
-
-    // getCurrentUser().then((user) {
-    //   if (mounted) {
-    //     setState(() {
-    //       userEmail = user?.email;
-    //       userName = user?.displayName;
-    //     });
-    //   }
-    // });
   }
 
   @override
@@ -144,7 +131,7 @@ class _CreateSubjectState extends State<CreateSubject> {
             PdfDocument(inputBytes: File(filePath).readAsBytesSync());
 
         // Send file to Python backend
-        var uri = Uri.parse('$serverUrl/ekstrak-info');
+        var uri = Uri.parse('$localhost:$port/ekstrak-info');
         // Create the multipart request
         var request = http.MultipartRequest('POST', uri)
           // Add file to the request
@@ -174,22 +161,7 @@ class _CreateSubjectState extends State<CreateSubject> {
           // final responseData = jsonDecode(responseBody);
           // final data = responseData['data'];
 
-          // pdfToText(filePath);
-
           if (mounted) {
-            // List<Subject> subjects = parseSubjects(data['topics']);
-            // List<String> authors = parseAuthors(data['author']);
-            // context.read<BookmarkProvider>().addBookmarkAndSubjects(
-            //     Bookmark(
-            //       id: id,
-            //       title: data['title'],
-            //       bookUrl: bookUrl,
-            //       author: authors,
-            //       totalPages:
-            //       userId:
-            //     ),
-            //     subjects);
-
             showDialog(
               context: context,
               barrierDismissible:
