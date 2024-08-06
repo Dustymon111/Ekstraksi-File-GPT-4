@@ -18,7 +18,7 @@ Widget buildQuestionCard(
               style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
           SizedBox(height: 12),
           Column(
-            children: question.options!.map((option) {
+            children: question.options.map((option) {
               return RadioListTile<String>(
                 title: Text(option),
                 value: option,

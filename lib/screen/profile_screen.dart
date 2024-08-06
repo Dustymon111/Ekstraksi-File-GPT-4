@@ -209,11 +209,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     alignment: Alignment.centerRight,
                     child: ElevatedButton(
                       onPressed: () async {
-                        await FirebaseAuth.instance.signOut();
                         Navigator.of(context).pushNamedAndRemoveUntil(
                           '/login',
                           (Route<dynamic> route) => false,
                         );
+                        await FirebaseAuth.instance.signOut();
                         Fluttertoast.showToast(
                           msg: "Successfully Signed Out",
                           toastLength: Toast.LENGTH_SHORT,

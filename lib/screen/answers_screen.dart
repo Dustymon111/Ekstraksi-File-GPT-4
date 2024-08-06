@@ -57,7 +57,7 @@ class _AnswersScreenState extends State<AnswersScreen> {
                           SizedBox(height: 12),
                           Column(
                             children:
-                                widget.questions[index].options!.map((option) {
+                                widget.questions[index].options.map((option) {
                               return RadioListTile<String>(
                                 title: Text(option),
                                 value: option,

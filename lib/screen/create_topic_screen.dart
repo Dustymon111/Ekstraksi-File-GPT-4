@@ -27,6 +27,8 @@ class _CreateTopicScreenState extends State<CreateTopicScreen> {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final String localhost = dotenv.env["LOCALHOST"]!;
   final String port = dotenv.env["PORT"]!;
+  final String serverUrl =
+      'https://ekstraksi-file-gpt-4-server-xzcbfs2fqq-et.a.run.app';
 
   @override
   void initState() {
@@ -341,6 +343,7 @@ class _CreateTopicScreenState extends State<CreateTopicScreen> {
                           selectedMultipleChoice != null &&
                           selectedTopic != null
                       ? () {
+                          // print("Button Pressed");
                           postData(
                               selectedTopic!,
                               selectedMultipleChoice.toString(),

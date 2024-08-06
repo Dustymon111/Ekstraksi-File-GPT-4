@@ -1,14 +1,14 @@
 class Question {
   final String text;
-  final List<String>? options;
-  final String? correctOption;
+  final List<String> options;
+  final dynamic? correctOption;
   final String questionSetId; // Reference to the QuestionSet document
   final String type;
 
   Question({
     required this.text,
-    this.options,
-    this.correctOption,
+    required this.options,
+    required this.correctOption,
     required this.questionSetId,
     required this.type,
   });
