@@ -19,8 +19,8 @@ import 'firebase_options.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await dotenv.load(fileName: ".env");
-  OpenAI.apiKey = dotenv.env["OPENAI_API_KEY"]!;
+  // await dotenv.load(fileName: ".env");
+  // OpenAI.apiKey = dotenv.env["OPENAI_API_KEY"]!;
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );

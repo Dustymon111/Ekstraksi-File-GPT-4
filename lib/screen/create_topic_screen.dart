@@ -10,6 +10,7 @@ class CreateTopicScreen extends StatefulWidget {
 class _CreateTopicScreenState extends State<CreateTopicScreen> {
   String? selectedSubject;
   String? selectedTopic;
+  String? selectedLevel;
   int? selectedMultipleChoice;
   int? selectedEssay;
 
@@ -93,6 +94,64 @@ class _CreateTopicScreenState extends State<CreateTopicScreen> {
                       });
                     },
                     items: <String>['Math', 'Science', 'Analyst']
+                        .map<DropdownMenuItem<String>>((String value) {
+                      return DropdownMenuItem<String>(
+                        value: value,
+                        child: Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Text(value,
+                              style: TextStyle(
+                                  color: Theme.of(context)
+                                      .textTheme
+                                      .bodyLarge
+                                      ?.color)),
+                        ),
+                      );
+                    }).toList(),
+                  ),
+                ),
+              ),
+              SizedBox(height: 20),
+              Text(
+                "Tingkat Kesulitan",
+                style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                    color: Theme.of(context).textTheme.bodyLarge?.color),
+              ),
+              SizedBox(height: 8),
+              Container(
+                decoration: BoxDecoration(
+                  color: Theme.of(context).scaffoldBackgroundColor,
+                  borderRadius: BorderRadius.circular(10),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Color(0xFF1C88BF),
+                      spreadRadius: 2,
+                      blurRadius: 2,
+                      offset: Offset(0, 1),
+                    ),
+                  ],
+                ),
+                child: DropdownButtonHideUnderline(
+                  child: DropdownButton<String>(
+                    hint: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Text(
+                        "Pilih tingkat kesulitan",
+                        style: TextStyle(
+                            color:
+                                Theme.of(context).textTheme.bodyLarge?.color),
+                      ),
+                    ),
+                    value: selectedLevel,
+                    isExpanded: true,
+                    onChanged: (newValue) {
+                      setState(() {
+                        selectedLevel = newValue;
+                      });
+                    },
+                    items: <String>['Mudah', 'Sedang', 'Sulit']
                         .map<DropdownMenuItem<String>>((String value) {
                       return DropdownMenuItem<String>(
                         value: value,

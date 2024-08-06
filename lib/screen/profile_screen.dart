@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -12,11 +13,18 @@ class ProfileScreen extends StatefulWidget {
 
 class _ProfileScreenState extends State<ProfileScreen> {
   String _userName = "Loading...";
+  String _email = "Loading...";
 
   @override
   void initState() {
     super.initState();
     _getUserName();
+    getCurrentUser();
+  }
+
+  void getCurrentUser() {
+    final user_mail = FirebaseAuth.instance.currentUser;
+    setState(() {});
   }
 
   Future<void> _getUserName() async {
@@ -31,16 +39,19 @@ class _ProfileScreenState extends State<ProfileScreen> {
         if (userDoc.exists && userDoc.data() != null) {
           setState(() {
             _userName = userDoc.get('nama') ?? "Unknown";
+            _email = userDoc.get('email') ?? "Unknown";
           });
         } else {
           setState(() {
             _userName = "Unknown";
+            _email = "Unknown";
           });
         }
       } catch (e) {
         print("Error fetching user data: $e");
         setState(() {
           _userName = "Unknown";
+          _email = "Unknown";
         });
       }
     }
@@ -115,7 +126,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         ),
                       ),
                       Text(
-                        _email ?? 'tonohua@gmail.com',
+                        _email,
                         style: TextStyle(
                           color: Theme.of(context).textTheme.bodyLarge?.color,
                           fontSize: 16,
