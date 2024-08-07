@@ -148,13 +148,24 @@ class _CreateTopicScreenState extends State<CreateTopicScreen> {
                     ),
                     value: selectedSubject,
                     isExpanded: true,
+                    // onChanged: (newValue) {
+                    //   setState(() {
+                    //     selectedSubject = newValue;
+                    //     subjectProv.filterSubjectByBookId(selectedSubject!);
+                    //     filename = bookProv.findFilenameById(selectedSubject!);
+                    //   });
+                    // },
                     onChanged: (newValue) {
                       setState(() {
                         selectedSubject = newValue;
-                        subjectProv.filterSubjectByBookId(selectedSubject!);
-                        filename = bookProv.findFilenameById(selectedSubject!);
+                        if (selectedSubject != null) {
+                          subjectProv.filterSubjectByBookId(selectedSubject!);
+                          filename =
+                              bookProv.findFilenameById(selectedSubject!);
+                        }
                       });
                     },
+
                     items: bookProv.bookmarks
                         .map<DropdownMenuItem<String>>((Bookmark value) {
                       return DropdownMenuItem<String>(
@@ -214,7 +225,9 @@ class _CreateTopicScreenState extends State<CreateTopicScreen> {
                         : (newValue) {
                             setState(() {
                               selectedTopic = newValue;
-                              subjectId = selectedTopic;
+                              if (selectedTopic != null) {
+                                subjectId = selectedTopic;
+                              }
                             });
                           },
                     items: subjectProv.filteredSubjects

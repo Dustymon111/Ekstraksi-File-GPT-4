@@ -28,8 +28,8 @@ class CreateSubject extends StatefulWidget {
 }
 
 class _CreateSubjectState extends State<CreateSubject> {
-  final String localhost = dotenv.env["LOCALHOST"]!;
-  final String port = dotenv.env["PORT"]!;
+  // final String localhost = dotenv.env["LOCALHOST"]!;
+  // final String port = dotenv.env["PORT"]!;
   final String serverUrl =
       'https://ekstraksi-file-gpt-4-server-xzcbfs2fqq-et.a.run.app';
 

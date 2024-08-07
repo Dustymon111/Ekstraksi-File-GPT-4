@@ -30,6 +30,25 @@ class _QuestionScreenState extends State<QuestionScreen> {
   int correctAnswers = 0;
   String bookmarkId = "";
 
+  Map<int, List<String>> selectedCheckboxOptions = {};
+  Map<int, String> essayAnswers = {};
+
+  void onCheckboxChanged(int index, bool? value, String option) {
+    setState(() {
+      if (value == true) {
+        selectedCheckboxOptions.putIfAbsent(index, () => []).add(option);
+      } else {
+        selectedCheckboxOptions[index]?.remove(option);
+      }
+    });
+  }
+
+  void onEssayChanged(int index, String value) {
+    setState(() {
+      essayAnswers[index] = value;
+    });
+  }
+
   @override
   void initState() {
     bookmarkId = "book_${_auth.currentUser!.uid}";
@@ -58,11 +77,29 @@ class _QuestionScreenState extends State<QuestionScreen> {
               onPressed: () async {
                 int correctAnswers = 0;
                 for (int i = 0; i < widget.questions.length; i++) {
-                  if (widget.questions[i].correctOption ==
-                      context.read<QuestionProvider>().selectedOption[i]) {
-                    correctAnswers++;
+                  if (widget.questions[i].type == 'm_choice' ||
+                      widget.questions[i].type == 'true_false') {
+                    if (widget.questions[i].correctOption ==
+                        context.read<QuestionProvider>().selectedOption[i]) {
+                      correctAnswers++;
+                    }
+                  }
+                  // Handle multiple answer questions
+                  else if (widget.questions[i].type == 'm_answer') {
+                    // mengecek nullability dari correctOptions
+                    if (selectedCheckboxOptions[i] != null &&
+                        widget.questions[i].correctOptions != null &&
+                        widget.questions[i].correctOptions!.every((option) =>
+                            selectedCheckboxOptions[i]!.contains(option))) {
+                      correctAnswers++;
+                    }
+                  }
+                  // Handle essay questions
+                  else if (widget.questions[i].type == 'essay') {
+                    // Here you could implement essay evaluation logic if required
                   }
                 }
+
                 final newData = {
                   "point":
                       (correctAnswers / widget.questions.length * 100).round(),
@@ -161,6 +198,14 @@ class _QuestionScreenState extends State<QuestionScreen> {
                         context
                             .read<QuestionProvider>()
                             .setSelectedOption(index, value!);
+                      },
+                      onCheckboxChanged: (bool? value, String option) {
+                        context
+                            .read<QuestionProvider>()
+                            .setSelectedOptionMultiple(index, option, value!);
+                      },
+                      onEssayChanged: (String value) {
+                        onEssayChanged(index, value);
                       },
                     );
                   },

@@ -300,7 +300,7 @@ class _SubjectDetailScreenState extends State<SubjectDetailScreen> {
                       Navigator.push(
                           context,
                           MaterialPageRoute(
-                              builder: (context) => CreateTopicScreen()));
+                              builder: (context) => const CreateTopicScreen()));
                     },
                     label: "Buat Latihan Baru"),
               )

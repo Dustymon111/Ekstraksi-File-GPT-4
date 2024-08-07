@@ -9,17 +9,22 @@ class SubjectProvider with ChangeNotifier {
   List<Subject> get allSubjects => _allSubjects;
   List<Subject> get filteredSubjects => _filteredSubjects;
 
-  void fetchAllSubjectsFromAllBooks() async {
-    final querySnapshot = await FirebaseFirestore.instance
-        .collectionGroup('subjects')
-        .orderBy('sortIndex')
-        .get();
+  Future<void> fetchAllSubjectsFromAllBooks() async {
+    try {
+      final querySnapshot = await FirebaseFirestore.instance
+          .collectionGroup('subjects')
+          .orderBy('sortIndex')
+          .get();
 
-    _allSubjects = querySnapshot.docs.map((doc) {
-      final subject = Subject.fromMap(doc.data() as Map<String, dynamic>);
-      subject.id = doc.id;
-      return subject;
-    }).toList();
+      _allSubjects = querySnapshot.docs.map((doc) {
+        final subject = Subject.fromMap(doc.data() as Map<String, dynamic>);
+        subject.id = doc.id;
+        return subject;
+      }).toList();
+      notifyListeners();
+    } catch (e) {
+      print("Error fetching subjects: $e");
+    }
   }
 
   void filterSubjectByBookId(String bookId) {
@@ -27,8 +32,9 @@ class SubjectProvider with ChangeNotifier {
       _filteredSubjects = _allSubjects
           .where((subject) => subject.bookmarkId == bookId)
           .toList();
+      notifyListeners();
     } catch (e) {
-      print("Subject not found for bookId: $bookId");
+      print("Error filtering subjects for bookId $bookId: $e");
     }
   }
 

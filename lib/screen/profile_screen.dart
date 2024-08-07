@@ -1,14 +1,62 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class ProfileScreen extends StatefulWidget {
+  const ProfileScreen({super.key});
+
   @override
   State<ProfileScreen> createState() => _ProfileScreenState();
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
+  String _userName = "Loading...";
+  String _email = "Loading...";
+
+  @override
+  void initState() {
+    super.initState();
+    _getUserName();
+    getCurrentUser();
+  }
+
+  void getCurrentUser() {
+    final user_mail = FirebaseAuth.instance.currentUser;
+    setState(() {});
+  }
+
+  Future<void> _getUserName() async {
+    User? user = FirebaseAuth.instance.currentUser;
+
+    if (user != null) {
+      try {
+        DocumentSnapshot userDoc = await FirebaseFirestore.instance
+            .collection('users')
+            .doc(user.uid)
+            .get();
+        if (userDoc.exists && userDoc.data() != null) {
+          setState(() {
+            _userName = userDoc.get('nama') ?? "Unknown";
+            _email = userDoc.get('email') ?? "Unknown";
+          });
+        } else {
+          setState(() {
+            _userName = "Unknown";
+            _email = "Unknown";
+          });
+        }
+      } catch (e) {
+        print("Error fetching user data: $e");
+        setState(() {
+          _userName = "Unknown";
+          _email = "Unknown";
+        });
+      }
+    }
+  }
+
   void _showDialog(BuildContext context, String title, String content) {
     showDialog(
       context: context,
@@ -27,26 +75,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
         );
       },
     );
-  }
-
-  String _userName = "Loading...";
-  String _email = "Loading...";
-
-  @override
-  void initState() {
-    super.initState();
-    _initSharedPref();
-  }
-
-  _initSharedPref() async {
-    SharedPreferencesAsync pref = SharedPreferencesAsync();
-    List<String>? userinfo = await pref.getStringList('userinfo');
-    setState(() {
-      if (userinfo != null) {
-        _userName = userinfo[0];
-        _email = userinfo[1];
-      }
-    });
   }
 
   @override
@@ -209,20 +237,39 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     alignment: Alignment.centerRight,
                     child: ElevatedButton(
                       onPressed: () async {
-                        Navigator.of(context).pushNamedAndRemoveUntil(
-                          '/login',
-                          (Route<dynamic> route) => false,
-                        );
-                        await FirebaseAuth.instance.signOut();
-                        Fluttertoast.showToast(
-                          msg: "Successfully Signed Out",
-                          toastLength: Toast.LENGTH_SHORT,
-                          gravity: ToastGravity.BOTTOM,
-                          timeInSecForIosWeb: 1,
-                          backgroundColor: Colors.white,
-                          textColor: Colors.black,
-                          fontSize: 16.0,
-                        );
+                        try {
+                          // Sign out the user
+                          await FirebaseAuth.instance.signOut();
+
+                          // Navigate to the login screen and remove all previous routes
+                          Navigator.of(context).pushNamedAndRemoveUntil(
+                            '/login',
+                            (Route<dynamic> route) => false,
+                          );
+
+                          // Show a toast message indicating successful sign out
+                          Fluttertoast.showToast(
+                            msg: "Successfully Signed Out",
+                            toastLength: Toast.LENGTH_SHORT,
+                            gravity: ToastGravity.BOTTOM,
+                            timeInSecForIosWeb: 1,
+                            backgroundColor: Colors.white,
+                            textColor: Colors.black,
+                            fontSize: 16.0,
+                          );
+                        } catch (e) {
+                          // Handle any errors during sign out
+                          print("Error signing out: $e");
+                          Fluttertoast.showToast(
+                            msg: "Error signing out. Please try again.",
+                            toastLength: Toast.LENGTH_SHORT,
+                            gravity: ToastGravity.BOTTOM,
+                            timeInSecForIosWeb: 1,
+                            backgroundColor: Colors.red,
+                            textColor: Colors.white,
+                            fontSize: 16.0,
+                          );
+                        }
                       },
                       child: Text('Keluar'),
                     ),

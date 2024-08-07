@@ -68,10 +68,8 @@ class _CreateScreenState extends State<CreateScreen> {
             // Updated Button Design for "Ekstrak Buku"
             _buildActionButton(
               onPressed: () {
-                Navigator.of(context)
-                    .push(MaterialPageRoute(builder: (context) {
-                  return CreateSubject();
-                }));
+                Navigator.of(context).push(
+                    MaterialPageRoute(builder: (context) => CreateSubject()));
               },
               icon: Icons.folder_open,
               label: "Extract New Book",

@@ -1,28 +1,46 @@
 class Question {
   final String text;
   final List<String> options;
-  final dynamic? correctOption;
-  final String questionSetId; // Reference to the QuestionSet document
+  final dynamic correctOption; // Digunakan untuk single choice question
+  final List<String>?
+      correctOptions; // Digunakan untuk multiple answer question
+  final String questionSetId; // Referensi ke dokumen QuestionSet
   final String type;
 
   Question({
     required this.text,
     required this.options,
-    required this.correctOption,
+    this.correctOption,
+    this.correctOptions,
     required this.questionSetId,
     required this.type,
   });
 
+  // factory Question.fromMap(Map<String, dynamic> data) {
+  //   return Question(
+  //     text: data['text'] ?? '', // Default ke string kosong jika null
+  //     type: data['type'] ?? '', // Default ke string kosong jika null
+  //     options: List<String>.from(
+  //         data['options'] ?? []), // Default ke list kosong jika null
+  //     correctOption:
+  //         data['correctOption'], // Tetap null jika tidak ada atau default ke string kosong jika null
+  //     correctOptions: data['correctOptions'] != null
+  //         ? List<String>.from(data['correctOptions'])
+  //         : null, // Default ke null jika tidak ada
+  //     questionSetId:
+  //         data['questionSetId'] ?? '', // Default ke string kosong jika null
+  //   );
+  // }
   factory Question.fromMap(Map<String, dynamic> data) {
     return Question(
-      text: data['text'] ?? '', // Provide a default empty string if null
-      type: data['type'] ?? '', // Provide a default empty string if null
-      options: List<String>.from(
-          data['options'] ?? []), // Provide a default empty list if null
-      correctOption:
-          data['correctOption'] ?? '', // Provide a default empty string if null
-      questionSetId:
-          data['questionSetId'] ?? '', // Provide a default empty string if null
+      text: data['text'] ?? '',
+      type: data['type'] ?? '',
+      options: List<String>.from(data['options'] ?? []),
+      correctOption: data['correctOption'],
+      correctOptions: data['correctOptions'] != null
+          ? List<String>.from(data['correctOptions'])
+          : null,
+      questionSetId: data['questionSetId'] ?? '',
     );
   }
 
@@ -31,6 +49,7 @@ class Question {
       'text': text,
       'options': options,
       'correctOption': correctOption,
+      'correctOptions': correctOptions,
       'questionSetId': questionSetId,
       'type': type,
     };

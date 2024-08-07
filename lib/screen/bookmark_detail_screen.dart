@@ -1,3 +1,4 @@
+import 'package:aplikasi_ekstraksi_file_gpt4/screen/book_details.dart';
 import 'package:aplikasi_ekstraksi_file_gpt4/screen/topics_detail_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:aplikasi_ekstraksi_file_gpt4/models/bookmark_model.dart';
@@ -50,14 +51,11 @@ class BookmarkDetailScreen extends StatelessWidget {
                   Center(
                     child: OutlinedButton(
                       onPressed: () {
-                        Navigator.of(context).push(
-                          MaterialPageRoute(
-                            builder: (context) => BookmarkDetailScreen(
-                              bookmarkId: bookmarkId,
-                              bookmark: bookmark,
-                            ),
-                          ),
-                        );
+                        Navigator.of(context).push(MaterialPageRoute(
+                            builder: (context) => BookDetailScreen(
+                                title: bookmark.title,
+                                author: bookmark.author.join(', '),
+                                totalPages: bookmark.totalPages)));
                       },
                       style: OutlinedButton.styleFrom(
                         side: BorderSide(color: Color(0xFF1C88BF), width: 2),
