@@ -3,9 +3,10 @@ import 'dart:io';
 import 'package:aplikasi_ekstraksi_file_gpt4/components/circular_progress.dart';
 import 'package:aplikasi_ekstraksi_file_gpt4/components/custom_button.dart';
 import 'package:aplikasi_ekstraksi_file_gpt4/models/subject_model.dart';
+import 'package:aplikasi_ekstraksi_file_gpt4/providers/bookmark_provider.dart';
 import 'package:aplikasi_ekstraksi_file_gpt4/providers/theme_provider.dart';
+import 'package:aplikasi_ekstraksi_file_gpt4/providers/user_provider.dart';
 import 'package:aplikasi_ekstraksi_file_gpt4/screen/login_screen.dart';
-import 'package:aplikasi_ekstraksi_file_gpt4/utils/random_string_generator.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart'; // Import Firebase Storage
@@ -39,14 +40,14 @@ class _CreateSubjectState extends State<CreateSubject> {
   User? user;
   String? userEmail;
   String? userName;
+  late String userId;
   late final StreamSubscription<User?> _authSubscription;
   double progress = 0.0;
-  late final String id;
 
   @override
   void initState() {
     super.initState();
-    id = generateRandomString(20);
+    userId = context.read<UserProvider>().userId;
     _authSubscription = auth.authStateChanges().listen((User? user) {
       if (user == null) {
         Navigator.of(context).pushAndRemoveUntil(
@@ -131,7 +132,7 @@ class _CreateSubjectState extends State<CreateSubject> {
             PdfDocument(inputBytes: File(filePath).readAsBytesSync());
 
         // Send file to Python backend
-        var uri = Uri.parse('$localhost:$port/ekstrak-info');
+        var uri = Uri.parse('$serverUrl/ekstrak-info');
         // Create the multipart request
         var request = http.MultipartRequest('POST', uri)
           // Add file to the request
@@ -156,6 +157,7 @@ class _CreateSubjectState extends State<CreateSubject> {
           final responseBody = await response.stream.bytesToString();
           print('response: $responseBody');
           print('File uploaded successfully! Download URL: $bookUrl');
+          context.read<BookmarkProvider>().fetchBookmarks(userId);
 
           // // Process the response data
           // final responseData = jsonDecode(responseBody);

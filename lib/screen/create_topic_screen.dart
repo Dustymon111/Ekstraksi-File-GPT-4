@@ -25,10 +25,10 @@ class _CreateTopicScreenState extends State<CreateTopicScreen> {
   String? filename;
   String? subjectId;
   final FirebaseAuth _auth = FirebaseAuth.instance;
-  final String localhost = dotenv.env["LOCALHOST"]!;
-  final String port = dotenv.env["PORT"]!;
   final String serverUrl =
       'https://ekstraksi-file-gpt-4-server-xzcbfs2fqq-et.a.run.app';
+  final String localhost = dotenv.env["LOCALHOST"]!;
+  final String port = dotenv.env["PORT"]!;
 
   @override
   void initState() {
@@ -46,7 +46,7 @@ class _CreateTopicScreenState extends State<CreateTopicScreen> {
       String userId,
       String filename,
       String subjectId) async {
-    final url = Uri.parse('$localhost:$port/question-maker');
+    final url = Uri.parse('$serverUrl/question-maker');
     final response = await http.post(
       url,
       headers: <String, String>{

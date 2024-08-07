@@ -18,9 +18,6 @@ class _BookmarkScreenState extends State<BookmarkScreen> {
 
   @override
   void initState() {
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      context.read<BookmarkProvider>().fetchBookmarks(_auth.currentUser!.uid);
-    });
     super.initState();
   }
 
@@ -35,7 +32,7 @@ class _BookmarkScreenState extends State<BookmarkScreen> {
           Padding(
             padding: const EdgeInsets.all(8.0),
             child: Text(
-              "Your Bookmark !",
+              "Your Bookmark!",
               style: TextStyle(
                   fontSize: 24,
                   fontWeight: FontWeight.bold,
@@ -47,7 +44,7 @@ class _BookmarkScreenState extends State<BookmarkScreen> {
             child: TextField(
               controller: searchController,
               decoration: InputDecoration(
-                labelText: 'Search your Bokmark...',
+                labelText: 'Search your Bookmark...',
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.all(Radius.circular(20)),
                   borderSide: BorderSide(color: Color(0xFF1C88BF)),
@@ -67,33 +64,35 @@ class _BookmarkScreenState extends State<BookmarkScreen> {
             ),
           ),
           Expanded(
-            child: StreamBuilder<List<Bookmark>>(
-              stream: bookmarkprov.bookmarksStream,
-              builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return const Center(child: CircularProgressIndicator());
-                } else if (snapshot.hasError) {
-                  return Center(child: Text('Error: ${snapshot.error}'));
-                } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                  return const Center(child: Text('No bookmarks available'));
-                }
-                return ListView.builder(
-                  padding:
-                      const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
-                  itemCount: snapshot.data!.length,
-                  itemBuilder: (context, index) {
-                    return buildBookmarkCard(
-                      bookmark: snapshot.data![index],
-                      title: snapshot.data![index].title,
-                      author: snapshot.data![index].author,
-                      pageNumber: snapshot.data![index].totalPages,
-                      context: context,
-                      bookmarkId: snapshot.data![index].id ?? "",
-                    );
-                  },
-                );
-              },
-            ),
+            child: bookmarkprov.bookmarks.isEmpty
+                ? Center(
+                    child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text('You don\'t have a subject yet'),
+                      ElevatedButton(
+                          onPressed: () {
+                            Navigator.pushNamed(context, '/add-bookmark');
+                          },
+                          child: Text("Add Your First Bookmark")),
+                    ],
+                  ))
+                : ListView.builder(
+                    padding:
+                        const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+                    itemCount: bookmarkprov.bookmarks.length,
+                    itemBuilder: (context, index) {
+                      Bookmark book = bookmarkprov.bookmarks[index];
+                      return buildBookmarkCard(
+                        bookmark: book,
+                        title: book.title,
+                        author: book.author,
+                        pageNumber: book.totalPages,
+                        context: context,
+                        bookmarkId: book.id ?? "",
+                      );
+                    },
+                  ),
           ),
         ],
       ),

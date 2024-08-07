@@ -31,6 +31,7 @@ class BookmarkProvider extends ChangeNotifier {
         if (bookSnapshot.docs.isNotEmpty) {
           // Clear the existing bookmarks
           _bookmarks.clear();
+          print(_bookmarks);
 
           // Map each document to a Bookmark object
           _bookmarks = bookSnapshot.docs.map((bookDoc) {

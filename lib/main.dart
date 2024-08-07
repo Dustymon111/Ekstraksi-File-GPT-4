@@ -5,12 +5,12 @@ import 'package:aplikasi_ekstraksi_file_gpt4/providers/subject_provider.dart';
 import 'package:aplikasi_ekstraksi_file_gpt4/providers/user_provider.dart';
 import 'package:aplikasi_ekstraksi_file_gpt4/providers/theme_provider.dart';
 import 'package:aplikasi_ekstraksi_file_gpt4/screen/bookmark_screen.dart';
+import 'package:aplikasi_ekstraksi_file_gpt4/screen/create_subject.dart';
 import 'package:aplikasi_ekstraksi_file_gpt4/screen/home_screen.dart';
 import 'package:aplikasi_ekstraksi_file_gpt4/screen/login_screen.dart';
 import 'package:aplikasi_ekstraksi_file_gpt4/screen/register_screen.dart';
 import 'package:aplikasi_ekstraksi_file_gpt4/screen/splash_screen.dart';
 import 'package:aplikasi_ekstraksi_file_gpt4/screen/test_screen.dart';
-import 'package:dart_openai/dart_openai.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
@@ -20,7 +20,6 @@ import 'firebase_options.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await dotenv.load(fileName: ".env");
-  OpenAI.apiKey = dotenv.env["OPENAI_API_KEY"]!;
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
@@ -105,6 +104,7 @@ class MyApp extends StatelessWidget {
           '/home': (context) => Home(),
           '/login': (context) => LoginScreen(),
           '/register': (context) => RegisterScreen(),
+          '/add-bookmark': (context) => CreateSubject(),
           '/bookmarks': (context) => BookmarkScreen(),
           '/test': (context) => TestScreen(),
         },

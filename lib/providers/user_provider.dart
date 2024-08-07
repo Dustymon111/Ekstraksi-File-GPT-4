@@ -8,10 +8,12 @@ class UserProvider extends ChangeNotifier {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   late final String _username;
   late final String _email;
+  String _userId = "";
 
   User? get currentUser => _auth.currentUser;
   String get username => _username;
   String get email => _email;
+  String get userId => _userId;
 
   void setUsername(value) {
     _username = value;
@@ -19,6 +21,10 @@ class UserProvider extends ChangeNotifier {
 
   void setEmail(value) {
     _email = value;
+  }
+
+  void setUserId(value) {
+    _userId = value;
   }
 
   // Create or Update User
