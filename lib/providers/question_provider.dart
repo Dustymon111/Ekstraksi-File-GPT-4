@@ -11,6 +11,10 @@ class QuestionProvider extends ChangeNotifier {
   List<Question> _questions = [];
   Map<int, String> _selectedOption = {};
   Map<int, String> _sortedSelectedOption = {};
+  // Map<int, List<String>> _selectedCheckboxOptions = {};
+  // Map<int, List<String>> get selectedCheckboxOptions => _selectedCheckboxOptions;
+  Map<int, List<String>> selectedOptionMultiple = {};
+
 
   final _questionSetsController =
       StreamController<List<QuestionSet>>.broadcast();
@@ -28,6 +32,26 @@ class QuestionProvider extends ChangeNotifier {
       ..sort((e1, e2) => e1.key.compareTo(e2.key)));
     notifyListeners();
   }
+//   void setSelectedCheckboxOption(int index, String option, bool selected) {
+//   if (selected) {
+//     if (!_selectedCheckboxOptions.containsKey(index)) {
+//       _selectedCheckboxOptions[index] = [];
+//     }
+//     _selectedCheckboxOptions[index]?.add(option);
+//   } else {
+//     _selectedCheckboxOptions[index]?.remove(option);
+//   }
+//   notifyListeners();
+// }
+void setSelectedOptionMultiple(int index, String option, bool value) {
+    if (value) {
+      selectedOptionMultiple.putIfAbsent(index, () => []).add(option);
+    } else {
+      selectedOptionMultiple[index]?.remove(option);
+    }
+    notifyListeners();
+  }
+
 
   Future<void> fetchQuestionSets(String subjectId) async {
     try {

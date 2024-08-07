@@ -20,14 +20,11 @@ class CreateTopicScreen extends StatefulWidget {
 class _CreateTopicScreenState extends State<CreateTopicScreen> {
   String? selectedSubject;
   String? selectedTopic;
-  String? selectedLevel;
   int? selectedMultipleChoice;
   int? selectedEssay;
   String? filename;
   String? subjectId;
   final FirebaseAuth _auth = FirebaseAuth.instance;
-  final String localhost = dotenv.env["LOCALHOST"]!;
-  final String port = dotenv.env["PORT"]!;
   final String serverUrl =
       'https://ekstraksi-file-gpt-4-server-xzcbfs2fqq-et.a.run.app';
 
@@ -47,7 +44,7 @@ class _CreateTopicScreenState extends State<CreateTopicScreen> {
       String userId,
       String filename,
       String subjectId) async {
-    final url = Uri.parse('$localhost:$port/question-maker');
+    final url = Uri.parse('$serverUrl/question-maker');
     final response = await http.post(
       url,
       headers: <String, String>{
@@ -149,13 +146,24 @@ class _CreateTopicScreenState extends State<CreateTopicScreen> {
                     ),
                     value: selectedSubject,
                     isExpanded: true,
+                    // onChanged: (newValue) {
+                    //   setState(() {
+                    //     selectedSubject = newValue;
+                    //     subjectProv.filterSubjectByBookId(selectedSubject!);
+                    //     filename = bookProv.findFilenameById(selectedSubject!);
+                    //   });
+                    // },
                     onChanged: (newValue) {
                       setState(() {
                         selectedSubject = newValue;
-                        subjectProv.filterSubjectByBookId(selectedSubject!);
-                        filename = bookProv.findFilenameById(selectedSubject!);
+                        if (selectedSubject != null) {
+                          subjectProv.filterSubjectByBookId(selectedSubject!);
+                          filename =
+                              bookProv.findFilenameById(selectedSubject!);
+                        }
                       });
                     },
+
                     items: bookProv.bookmarks
                         .map<DropdownMenuItem<String>>((Bookmark value) {
                       return DropdownMenuItem<String>(
@@ -215,7 +223,9 @@ class _CreateTopicScreenState extends State<CreateTopicScreen> {
                         : (newValue) {
                             setState(() {
                               selectedTopic = newValue;
-                              subjectId = selectedTopic;
+                              if (selectedTopic != null) {
+                                subjectId = selectedTopic;
+                              }
                             });
                           },
                     items: subjectProv.filteredSubjects
