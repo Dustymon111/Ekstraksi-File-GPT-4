@@ -2,7 +2,6 @@ import 'package:aplikasi_ekstraksi_file_gpt4/components/custom_button.dart';
 import 'package:aplikasi_ekstraksi_file_gpt4/models/question_model.dart';
 import 'package:aplikasi_ekstraksi_file_gpt4/models/subject_model.dart';
 import 'package:aplikasi_ekstraksi_file_gpt4/screen/answers_screen.dart';
-import 'package:aplikasi_ekstraksi_file_gpt4/screen/topics_detail_screen.dart';
 import 'package:aplikasi_ekstraksi_file_gpt4/utils/docx_generator.dart';
 import 'package:flutter/material.dart';
 
@@ -10,7 +9,7 @@ class ExerciseResultScreen extends StatelessWidget {
   final List<Question> questions;
   final int totalQuestions;
   final int correctAnswers;
-  final Map<int, String> selectedOptions;
+  final Map<int, dynamic> selectedOptions;
   final Subject subject;
 
   ExerciseResultScreen({
@@ -97,11 +96,9 @@ class ExerciseResultScreen extends StatelessWidget {
                 SizedBox(height: 16),
                 CustomElevatedButton(
                   onPressed: () {
-                    Navigator.pushReplacement(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) =>
-                                SubjectDetailScreen(subject: subject)));
+                    Navigator.pop(
+                      context,
+                    );
                   },
                   label: 'Selesai',
                 ),

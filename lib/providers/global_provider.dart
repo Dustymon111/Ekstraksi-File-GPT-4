@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 
-class GlobalProvider extends ChangeNotifier{
+class GlobalProvider extends ChangeNotifier {
   int _subjectIndex = 0;
-  int _bookmarkIndex = 0;
+  String _bookmarkId = "";
   int _questionSetIndex = 0;
 
   int get subjectIndex => _subjectIndex;
-  int get bookmarkIndex => _bookmarkIndex;
+  String get bookmarkId => _bookmarkId;
   int get questionSetIndex => _questionSetIndex;
 
   void setSubjectIndex(int index) {
@@ -14,8 +14,8 @@ class GlobalProvider extends ChangeNotifier{
     notifyListeners();
   }
 
-  void setBookmarkIndex(int index) {
-    _bookmarkIndex = index;
+  void setBookmarkId(String id) {
+    _bookmarkId = id;
     notifyListeners();
   }
 
@@ -26,8 +26,8 @@ class GlobalProvider extends ChangeNotifier{
 
   void clearAllData() {
     _subjectIndex = 0;
-    _bookmarkIndex = 0;
+    _bookmarkId = "";
     _questionSetIndex = 0;
     notifyListeners();
-  } 
+  }
 }

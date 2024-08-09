@@ -7,43 +7,44 @@ import 'package:fluttertoast/fluttertoast.dart';
 
 class QuestionProvider extends ChangeNotifier {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
-  List<QuestionSet> _questionSets = [];
-  List<Question> _questions = [];
-  Map<int, String> _selectedOption = {};
-  Map<int, String> _sortedSelectedOption = {};
-  // Map<int, List<String>> _selectedCheckboxOptions = {};
-  // Map<int, List<String>> get selectedCheckboxOptions => _selectedCheckboxOptions;
-  Map<int, List<String>> selectedOptionMultiple = {};
-
-
   final _questionSetsController =
       StreamController<List<QuestionSet>>.broadcast();
   Stream<List<QuestionSet>> get questionSetsStream =>
       _questionSetsController.stream;
 
+  List<QuestionSet> _questionSets = [];
+  List<Question> _questions = [];
+  Map<int, dynamic> _selectedOption = {};
+  Map<int, dynamic> _sortedSelectedOption = {};
+  List<Map<String, String>> _essayAnswers = [];
+  Map<int, List<String>> selectedOptionMultiple = {};
+
   List<QuestionSet> get questionSets => _questionSets;
   List<Question> get questions => _questions;
+  Map<int, dynamic> get selectedOption => _sortedSelectedOption;
+  List<Map<String, String>> get essayAnswers => _essayAnswers;
 
-  Map<int, String> get selectedOption => _sortedSelectedOption;
+  dynamic getSelectedOption(int index) {
+    return _selectedOption[index] ?? '';
+  }
 
-  void setSelectedOption(int index, String option) {
+  void setSelectedOption(int index, dynamic option) {
     _selectedOption[index] = option;
     _sortedSelectedOption = Map.fromEntries(_selectedOption.entries.toList()
       ..sort((e1, e2) => e1.key.compareTo(e2.key)));
     notifyListeners();
   }
-//   void setSelectedCheckboxOption(int index, String option, bool selected) {
-//   if (selected) {
-//     if (!_selectedCheckboxOptions.containsKey(index)) {
-//       _selectedCheckboxOptions[index] = [];
-//     }
-//     _selectedCheckboxOptions[index]?.add(option);
-//   } else {
-//     _selectedCheckboxOptions[index]?.remove(option);
-//   }
-//   notifyListeners();
-// }
-void setSelectedOptionMultiple(int index, String option, bool value) {
+
+  void insertSelectedOptionMultiple() {
+    selectedOptionMultiple.forEach((key, value) {
+      _selectedOption[key] = value;
+    });
+    _sortedSelectedOption = Map.fromEntries(_selectedOption.entries.toList()
+      ..sort((e1, e2) => e1.key.compareTo(e2.key)));
+    notifyListeners();
+  }
+
+  void setSelectedOptionMultiple(int index, String option, bool value) {
     if (value) {
       selectedOptionMultiple.putIfAbsent(index, () => []).add(option);
     } else {
@@ -52,6 +53,17 @@ void setSelectedOptionMultiple(int index, String option, bool value) {
     notifyListeners();
   }
 
+  void setEssayAnswers(String index, String question, String answer) {
+    _essayAnswers.add({"index": index, "question": question, "answer": answer});
+    notifyListeners();
+  }
+
+  void clearSelectedOption() {
+    _selectedOption.clear();
+    _sortedSelectedOption.clear();
+    selectedOptionMultiple.clear();
+    _essayAnswers.clear();
+  }
 
   Future<void> fetchQuestionSets(String subjectId) async {
     try {
@@ -124,7 +136,12 @@ void setSelectedOptionMultiple(int index, String option, bool value) {
 
         questionSet.point = newData['point'];
         questionSet.status = newData['status'];
-        questionSet.selectedOption = newData['selectedOption'];
+        questionSet.selectedOptions = newData['selectedOption'];
+        questionSet.correctAnswers = newData['correct_answers'];
+        questionSet.questionCount = newData['question_count'];
+        QuestionSet currentQSet =
+            _questionSets.firstWhere((q) => q.id == questionSetId);
+        currentQSet.status = "Selesai";
 
         await FirebaseFirestore.instance
             .collection('question_set')

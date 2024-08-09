@@ -4,16 +4,20 @@ class QuestionSet {
   String? id;
   late int point;
   late String status;
+  int? correctAnswers;
+  int? questionCount;
   List<Question> questions;
-  late Map<int, String> selectedOption;
+  late Map<int, dynamic> selectedOptions;
   final String subjectId; // Reference to the Subject document
 
   QuestionSet({
     this.id,
+    this.correctAnswers,
+    this.questionCount,
     required this.point,
     required this.status,
     required this.questions,
-    required this.selectedOption,
+    required this.selectedOptions,
     required this.subjectId,
   });
 
@@ -21,13 +25,15 @@ class QuestionSet {
     return QuestionSet(
       id: data['id'] ?? "",
       point: data['point'] ?? 0,
+      correctAnswers: data['correct_answers'] ?? 0,
+      questionCount: data['question_count'] ?? 0,
       status: data['status'] ?? '',
       questions:
           (data['questions'] as List<dynamic>? ?? []).map((questionData) {
         return Question.fromMap(questionData as Map<String, dynamic>);
       }).toList(),
-      selectedOption: (data['selectedOptions'] as Map<String, dynamic>?)?.map(
-              (key, value) => MapEntry(int.parse(key), value as String)) ??
+      selectedOptions: (data['selectedOptions'] as Map<String, dynamic>?)
+              ?.map((key, value) => MapEntry(int.parse(key), value)) ??
           {},
       subjectId:
           data['subjectId'] ?? '', // Provide a default empty string if null
@@ -38,10 +44,12 @@ class QuestionSet {
     return {
       'id': id ?? "",
       'point': point,
+      'correct_answers': correctAnswers,
+      'question_count': questionCount,
       'status': status,
       'questions': questions.map((question) => question.toMap()).toList(),
       'selectedOptions':
-          selectedOption.map((key, value) => MapEntry(key.toString(), value)),
+          selectedOptions.map((key, value) => MapEntry(key.toString(), value)),
       'subjectId': subjectId,
     };
   }

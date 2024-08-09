@@ -1,7 +1,6 @@
 import 'package:aplikasi_ekstraksi_file_gpt4/components/bookmark_card.dart';
 import 'package:aplikasi_ekstraksi_file_gpt4/models/bookmark_model.dart';
 import 'package:aplikasi_ekstraksi_file_gpt4/providers/bookmark_provider.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -14,7 +13,6 @@ class BookmarkScreen extends StatefulWidget {
 
 class _BookmarkScreenState extends State<BookmarkScreen> {
   TextEditingController searchController = TextEditingController();
-  final FirebaseAuth _auth = FirebaseAuth.instance;
 
   @override
   void initState() {
@@ -28,17 +26,7 @@ class _BookmarkScreenState extends State<BookmarkScreen> {
       body: Column(
         mainAxisAlignment: MainAxisAlignment.start,
         children: [
-          SizedBox(height: 24),
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Text(
-              "Your Bookmark!",
-              style: TextStyle(
-                  fontSize: 24,
-                  fontWeight: FontWeight.bold,
-                  color: Theme.of(context).textTheme.bodyLarge?.color),
-            ),
-          ),
+          SizedBox(height: 12),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16.0),
             child: TextField(

@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'dart:io';
-import 'package:aplikasi_ekstraksi_file_gpt4/components/circular_progress.dart';
 import 'package:aplikasi_ekstraksi_file_gpt4/components/custom_button.dart';
 import 'package:aplikasi_ekstraksi_file_gpt4/models/subject_model.dart';
 import 'package:aplikasi_ekstraksi_file_gpt4/providers/bookmark_provider.dart';
@@ -12,12 +11,13 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart'; // Import Firebase Storage
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:path/path.dart' as path;
 import 'package:provider/provider.dart';
 import 'package:syncfusion_flutter_pdf/pdf.dart';
 import 'package:syncfusion_flutter_pdfviewer/pdfviewer.dart';
 import 'package:http/http.dart' as http;
-import 'package:flutter_dotenv/flutter_dotenv.dart';
+// import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 // Halaman ini adalah halaman membuat subject / halaman upload file yang akan di ekstrak ( sebelumnya halaman ini  berada di dihalaman utama yg Bang Dustin Buat )
 class CreateSubject extends StatefulWidget {
@@ -109,16 +109,38 @@ class _CreateSubjectState extends State<CreateSubject> {
     }
   }
 
-  Future<void> uploadFile() async {
+  Future<void> uploadFile(BuildContext context) async {
     if (pickedFile != null) {
       try {
         final filePath = pickedFile!.path!;
-        final fileName = path
-            .basename(filePath.split('/').last); // Extract file name from path
+        final fileName = path.basename(filePath.split('/').last);
 
         // Create a reference to Firebase Storage
-        final storageRef = FirebaseStorage.instance.ref().child(
-            'uploads/${auth.currentUser!.uid}/$fileName'); // Use the extracted file name
+        final storageRef = FirebaseStorage.instance
+            .ref()
+            .child('uploads/${auth.currentUser!.uid}/$fileName');
+
+        // Show the initial dialog with loading animation
+        showDialog(
+          context: context,
+          barrierDismissible: false, // Prevents dismissal by tapping outside
+          builder: (BuildContext context) {
+            return AlertDialog(
+              content: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  LoadingAnimationWidget.discreteCircle(
+                      color: Colors.white,
+                      size: 200,
+                      secondRingColor: Colors.grey,
+                      thirdRingColor: Colors.black),
+                  SizedBox(width: 20),
+                  Text('Extracting file...'),
+                ],
+              ),
+            );
+          },
+        );
 
         // Upload the file to Firebase Storage
         final uploadTask = storageRef.putFile(File(filePath));
@@ -133,53 +155,48 @@ class _CreateSubjectState extends State<CreateSubject> {
 
         // Send file to Python backend
         var uri = Uri.parse('$serverUrl/ekstrak-info');
-        // Create the multipart request
         var request = http.MultipartRequest('POST', uri)
-          // Add file to the request
           ..files.add(
             http.MultipartFile(
-              'file', // The name of the form field for the file
+              'file',
               File(filePath).readAsBytes().asStream(),
               File(filePath).lengthSync(),
               filename: fileName,
             ),
           )
-          // Add additional fields to the request
           ..fields['userId'] = auth.currentUser!.uid
-          ..fields['totalPages'] =
-              document.pages.count.toString() // Convert integer to string
+          ..fields['totalPages'] = document.pages.count.toString()
           ..fields['bookUrl'] = bookUrl;
 
         var response = await request.send();
 
+        Navigator.of(context).pop(); // Close the loading dialog
+
         if (response.statusCode == 200) {
-          // Process successful upload
           final responseBody = await response.stream.bytesToString();
           print('response: $responseBody');
           print('File uploaded successfully! Download URL: $bookUrl');
           context.read<BookmarkProvider>().fetchBookmarks(userId);
 
-          // // Process the response data
-          // final responseData = jsonDecode(responseBody);
-          // final data = responseData['data'];
-
-          if (mounted) {
-            showDialog(
-              context: context,
-              barrierDismissible:
-                  false, // Prevent dialog from being dismissed by tapping outside
-              builder: (context) {
-                return UploadProgressDialog(
-                  progressStream: uploadTask.snapshotEvents,
-                  onClose: () {
-                    Navigator.of(context).pop();
-                  },
-                );
-              },
-            ).then((_) {
-              print('Dialog closed'); // Add this line
-            });
-          }
+          // Show success dialog
+          showDialog(
+            context: context,
+            builder: (BuildContext context) {
+              return AlertDialog(
+                title: Text('Upload Complete'),
+                content:
+                    Text('File uploaded successfully! Check your bookmarks.'),
+                actions: <Widget>[
+                  TextButton(
+                    onPressed: () {
+                      Navigator.of(context).pop(); // Close the success dialog
+                    },
+                    child: Text('OK'),
+                  ),
+                ],
+              );
+            },
+          );
         } else {
           // Handle non-200 response from the backend
           Fluttertoast.showToast(
@@ -194,6 +211,8 @@ class _CreateSubjectState extends State<CreateSubject> {
         }
       } catch (e) {
         print("error: $e");
+        Navigator.of(context)
+            .pop(); // Ensure dialog is closed if an error occurs
         Fluttertoast.showToast(
           msg: "Upload failed, error: $e",
           toastLength: Toast.LENGTH_LONG,
@@ -278,7 +297,11 @@ class _CreateSubjectState extends State<CreateSubject> {
               ),
               CustomElevatedButton(
                 label: "Ekstrak Berkas",
-                onPressed: pickedFile != null ? uploadFile : null,
+                onPressed: pickedFile != null
+                    ? () async {
+                        await uploadFile(context);
+                      }
+                    : null,
               ),
             ],
           ),

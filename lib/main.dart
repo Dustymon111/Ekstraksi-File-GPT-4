@@ -13,13 +13,13 @@ import 'package:aplikasi_ekstraksi_file_gpt4/screen/splash_screen.dart';
 import 'package:aplikasi_ekstraksi_file_gpt4/screen/test_screen.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-// import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:provider/provider.dart';
 import 'firebase_options.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  // await dotenv.load(fileName: ".env");
+  await dotenv.load(fileName: ".env");
   // OpenAI.apiKey = dotenv.env["OPENAI_API_KEY"]!;
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,

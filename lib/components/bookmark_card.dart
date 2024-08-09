@@ -1,6 +1,8 @@
 import 'package:aplikasi_ekstraksi_file_gpt4/models/bookmark_model.dart';
+import 'package:aplikasi_ekstraksi_file_gpt4/providers/global_provider.dart';
 import 'package:aplikasi_ekstraksi_file_gpt4/screen/bookmark_detail_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 Widget buildBookmarkCard({
   required Bookmark bookmark,
@@ -50,6 +52,7 @@ Widget buildBookmarkCard({
           },
         ),
         onTap: () {
+          context.read<GlobalProvider>().setBookmarkId(bookmarkId);
           Navigator.push(
             context,
             MaterialPageRoute(

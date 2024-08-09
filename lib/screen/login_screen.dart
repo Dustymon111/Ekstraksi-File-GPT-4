@@ -118,6 +118,12 @@ class _LoginScreenState extends State<LoginScreen> {
                           _auth.currentUser?.displayName as String,
                           _auth.currentUser?.email as String
                         ]);
+                        List<String>? userinfo =
+                            await prefs.getStringList('userinfo');
+                        if (userinfo != null) {
+                          context.read<UserProvider>().setUsername(userinfo[0]);
+                          context.read<UserProvider>().setEmail(userinfo[1]);
+                        }
                         context
                             .read<UserProvider>()
                             .setUserId(_auth.currentUser!.uid);

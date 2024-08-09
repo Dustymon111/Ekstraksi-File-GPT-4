@@ -1,8 +1,8 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:aplikasi_ekstraksi_file_gpt4/providers/user_provider.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:provider/provider.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -12,49 +12,9 @@ class ProfileScreen extends StatefulWidget {
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
-  String _userName = "Loading...";
-  String _email = "Loading...";
-
   @override
   void initState() {
     super.initState();
-    _getUserName();
-    getCurrentUser();
-  }
-
-  void getCurrentUser() {
-    final user_mail = FirebaseAuth.instance.currentUser;
-    setState(() {});
-  }
-
-  Future<void> _getUserName() async {
-    User? user = FirebaseAuth.instance.currentUser;
-
-    if (user != null) {
-      try {
-        DocumentSnapshot userDoc = await FirebaseFirestore.instance
-            .collection('users')
-            .doc(user.uid)
-            .get();
-        if (userDoc.exists && userDoc.data() != null) {
-          setState(() {
-            _userName = userDoc.get('nama') ?? "Unknown";
-            _email = userDoc.get('email') ?? "Unknown";
-          });
-        } else {
-          setState(() {
-            _userName = "Unknown";
-            _email = "Unknown";
-          });
-        }
-      } catch (e) {
-        print("Error fetching user data: $e");
-        setState(() {
-          _userName = "Unknown";
-          _email = "Unknown";
-        });
-      }
-    }
   }
 
   void _showDialog(BuildContext context, String title, String content) {
@@ -79,6 +39,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final userprov = Provider.of<UserProvider>(context);
     return Scaffold(
       body: SingleChildScrollView(
         child: Column(
@@ -118,7 +79,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        _userName,
+                        userprov.username,
                         style: TextStyle(
                           color: Theme.of(context).textTheme.bodyLarge?.color,
                           fontSize: 22,
@@ -126,7 +87,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         ),
                       ),
                       Text(
-                        _email,
+                        userprov.email,
                         style: TextStyle(
                           color: Theme.of(context).textTheme.bodyLarge?.color,
                           fontSize: 16,

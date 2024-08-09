@@ -27,6 +27,7 @@ class _SubjectDetailScreenState extends State<SubjectDetailScreen> {
   void initState() {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       context.read<QuestionProvider>().fetchQuestionSets(widget.subject.id!);
+      context.read<QuestionProvider>().clearSelectedOption();
     });
     super.initState();
   }
@@ -68,7 +69,7 @@ class _SubjectDetailScreenState extends State<SubjectDetailScreen> {
                   ),
                   SizedBox(height: 8),
                   Text(
-                    'Correct Answers: ${(questionSet.point / 100 * questions.length).toInt()}',
+                    'Correct Answers: ${questionSet.correctAnswers}',
                     style: TextStyle(
                         fontSize: 20,
                         fontWeight: FontWeight.w500,
@@ -97,7 +98,7 @@ class _SubjectDetailScreenState extends State<SubjectDetailScreen> {
                             MaterialPageRoute(
                               builder: (context) => AnswersScreen(
                                 questions: questions,
-                                selectedOption: questionSet.selectedOption,
+                                selectedOption: questionSet.selectedOptions,
                               ),
                             ),
                           );
@@ -262,6 +263,8 @@ class _SubjectDetailScreenState extends State<SubjectDetailScreen> {
                                 ),
                               ),
                               onTap: () {
+                                print(questionSet.questions.length);
+
                                 context
                                     .read<GlobalProvider>()
                                     .setQuestionSetIndex(index);
@@ -269,7 +272,7 @@ class _SubjectDetailScreenState extends State<SubjectDetailScreen> {
                                   _showResultDialog(context, questionSet,
                                       questionSet.questions);
                                 } else {
-                                  Navigator.pushReplacement(
+                                  Navigator.push(
                                     context,
                                     MaterialPageRoute(
                                       builder: (context) => QuestionScreen(

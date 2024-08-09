@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:aplikasi_ekstraksi_file_gpt4/providers/theme_provider.dart';
+import 'package:aplikasi_ekstraksi_file_gpt4/providers/user_provider.dart';
 import 'package:aplikasi_ekstraksi_file_gpt4/screen/bookmark_screen.dart';
 import 'package:aplikasi_ekstraksi_file_gpt4/screen/create_page.dart';
 import 'package:aplikasi_ekstraksi_file_gpt4/screen/login_screen.dart';
@@ -10,7 +11,6 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:path/path.dart';
 import 'package:provider/provider.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class Home extends StatefulWidget {
   const Home({super.key});
@@ -38,12 +38,9 @@ class _HomeState extends State<Home> {
     'assets/carousel3.png',
   ];
 
-  String _userName = "Loading...";
-
   @override
   void initState() {
     super.initState();
-    _initSharedPref();
     _authSubscription = auth.authStateChanges().listen((User? user) {
       if (user == null) {
         Navigator.of(context as BuildContext).pushAndRemoveUntil(
@@ -52,16 +49,6 @@ class _HomeState extends State<Home> {
         );
       } else {
         print('User is signed in!');
-      }
-    });
-  }
-
-  _initSharedPref() async {
-    SharedPreferencesAsync pref = SharedPreferencesAsync();
-    List<String>? userinfo = await pref.getStringList('userinfo');
-    setState(() {
-      if (userinfo != null) {
-        _userName = userinfo[0];
       }
     });
   }
@@ -207,7 +194,7 @@ class _HomeState extends State<Home> {
                                   TextStyle(color: Colors.white, fontSize: 18),
                             ),
                             Text(
-                              _userName,
+                              context.read<UserProvider>().username,
                               style: TextStyle(
                                   color: Colors.white,
                                   fontSize: 28,

@@ -6,7 +6,8 @@ import 'package:aplikasi_ekstraksi_file_gpt4/providers/bookmark_provider.dart';
 import 'package:aplikasi_ekstraksi_file_gpt4/providers/subject_provider.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
+// import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:provider/provider.dart';
 import 'package:http/http.dart' as http;
 
@@ -27,8 +28,8 @@ class _CreateTopicScreenState extends State<CreateTopicScreen> {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final String serverUrl =
       'https://ekstraksi-file-gpt-4-server-xzcbfs2fqq-et.a.run.app';
-  final String localhost = dotenv.env["LOCALHOST"]!;
-  final String port = dotenv.env["PORT"]!;
+  // final String localhost = dotenv.env["LOCALHOST"]!;
+  // final String port = dotenv.env["PORT"]!;
 
   @override
   void initState() {
@@ -39,6 +40,7 @@ class _CreateTopicScreenState extends State<CreateTopicScreen> {
   }
 
   Future<void> postData(
+      BuildContext context, // Add BuildContext to manage dialogs
       String topic,
       String mChoiceNumber,
       String essayNumber,
@@ -46,6 +48,27 @@ class _CreateTopicScreenState extends State<CreateTopicScreen> {
       String userId,
       String filename,
       String subjectId) async {
+    // Show the initial dialog with the loading animation
+    showDialog(
+      context: context,
+      barrierDismissible: false, // Prevents dismissal by tapping outside
+      builder: (BuildContext context) {
+        return AlertDialog(
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              LoadingAnimationWidget.prograssiveDots(
+                color: Colors.grey,
+                size: 100,
+              ),
+              SizedBox(width: 20),
+              Text('Generating exercise\nThis may take some time'),
+            ],
+          ),
+        );
+      },
+    );
+
     final url = Uri.parse('$serverUrl/question-maker');
     final response = await http.post(
       url,
@@ -63,12 +86,47 @@ class _CreateTopicScreenState extends State<CreateTopicScreen> {
       }),
     );
 
+    Navigator.of(context).pop(); // Close the loading dialog
+
     if (response.statusCode == 200) {
-      // If the server returns a 200 OK response, parse the JSON.
-      print('Response data: ${response.body}');
+      // Show success dialog
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text('Exercise Generated'),
+            content: Text('Check the book you want to practice with'),
+            actions: <Widget>[
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop(); // Close the success dialog
+                },
+                child: Text('OK'),
+              ),
+            ],
+          );
+        },
+      );
     } else {
-      // If the server did not return a 200 OK response, throw an exception.
-      print('Failed to post data. Status code: ${response.statusCode}');
+      // Show failure dialog
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text('Error'),
+            content: Text(
+                'Failed to generate exercise. Status code: ${response.statusCode}'),
+            actions: <Widget>[
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop(); // Close the error dialog
+                },
+                child: Text('OK'),
+              ),
+            ],
+          );
+        },
+      );
     }
   }
 
@@ -148,13 +206,6 @@ class _CreateTopicScreenState extends State<CreateTopicScreen> {
                     ),
                     value: selectedSubject,
                     isExpanded: true,
-                    // onChanged: (newValue) {
-                    //   setState(() {
-                    //     selectedSubject = newValue;
-                    //     subjectProv.filterSubjectByBookId(selectedSubject!);
-                    //     filename = bookProv.findFilenameById(selectedSubject!);
-                    //   });
-                    // },
                     onChanged: (newValue) {
                       setState(() {
                         selectedSubject = newValue;
@@ -165,7 +216,6 @@ class _CreateTopicScreenState extends State<CreateTopicScreen> {
                         }
                       });
                     },
-
                     items: bookProv.bookmarks
                         .map<DropdownMenuItem<String>>((Bookmark value) {
                       return DropdownMenuItem<String>(
@@ -358,6 +408,7 @@ class _CreateTopicScreenState extends State<CreateTopicScreen> {
                       ? () {
                           // print("Button Pressed");
                           postData(
+                              context,
                               selectedTopic!,
                               selectedMultipleChoice.toString(),
                               selectedEssay.toString(),
