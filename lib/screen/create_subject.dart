@@ -130,10 +130,10 @@ class _CreateSubjectState extends State<CreateSubject> {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   LoadingAnimationWidget.discreteCircle(
-                      color: Colors.white,
-                      size: 100,
-                      secondRingColor: Colors.grey,
-                      thirdRingColor: Colors.black),
+                      color: Colors.blue,
+                      size: MediaQuery.of(context).size.width * 0.25,
+                      secondRingColor: Colors.lightBlue,
+                      thirdRingColor: Colors.grey),
                   SizedBox(width: 20),
                   Text('Extracting file...'),
                 ],
@@ -199,9 +199,9 @@ class _CreateSubjectState extends State<CreateSubject> {
           );
         } else {
           // Handle non-200 response from the backend
+          print("status code: ${response.statusCode}");
           Fluttertoast.showToast(
-            msg:
-                "Upload to backend failed, status code: ${response.statusCode}",
+            msg: "Gagal mengekstrak modul, mohon coba kembali",
             toastLength: Toast.LENGTH_LONG,
             gravity: ToastGravity.BOTTOM,
             backgroundColor: Colors.black,
@@ -214,7 +214,7 @@ class _CreateSubjectState extends State<CreateSubject> {
         Navigator.of(context)
             .pop(); // Ensure dialog is closed if an error occurs
         Fluttertoast.showToast(
-          msg: "Upload failed, error: $e",
+          msg: "Gagal mengekstrak modul, mohon coba kembali",
           toastLength: Toast.LENGTH_LONG,
           gravity: ToastGravity.BOTTOM,
           backgroundColor: Colors.black,

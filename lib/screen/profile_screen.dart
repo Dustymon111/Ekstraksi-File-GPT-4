@@ -89,9 +89,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       Text(
                         userprov.email,
                         style: TextStyle(
-                          color: Theme.of(context).textTheme.bodyLarge?.color,
-                          fontSize: 16,
-                        ),
+                            color: Theme.of(context).textTheme.bodyLarge?.color,
+                            fontSize: 16,
+                            overflow: TextOverflow.ellipsis),
                       ),
                     ],
                   ),

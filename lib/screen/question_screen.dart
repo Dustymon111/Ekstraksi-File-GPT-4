@@ -34,7 +34,7 @@ class _QuestionScreenState extends State<QuestionScreen> {
   final ScrollController _scrollController = ScrollController();
   late int totalQuestions;
   int correctAnswers = 0;
-  List<TextEditingController> _controllers = [];
+  final List<TextEditingController> _controllers = [];
   Map<int, List<String>> selectedCheckboxOptions = {};
   Map<int, String> essayAnswers = {};
   final String serverUrl =
@@ -58,18 +58,27 @@ class _QuestionScreenState extends State<QuestionScreen> {
 
   @override
   void initState() {
+    super.initState();
     context.read<QuestionProvider>().clearSelectedOption();
+
     for (int i = 0; i < widget.questions.length; i++) {
       if (widget.questions[i].type == "essay") {
-        _controllers.add(TextEditingController());
+        // Initialize controllers for essay questions only
+        _controllers.add(TextEditingController(
+          text: context.read<QuestionProvider>().getSelectedOption(i),
+        ));
+      } else {
+        _controllers.add(TextEditingController()); // To keep indexes aligned
       }
     }
-    super.initState();
   }
 
   @override
   void dispose() {
     _scrollController.dispose();
+    for (final controller in _controllers) {
+      controller.dispose();
+    }
     super.dispose();
   }
 
@@ -92,7 +101,7 @@ class _QuestionScreenState extends State<QuestionScreen> {
             children: [
               LoadingAnimationWidget.staggeredDotsWave(
                 color: Colors.blue,
-                size: 100,
+                size: MediaQuery.of(context).size.width * 0.25,
               ),
               SizedBox(width: 20),
               Text('Checking answer...'),
@@ -356,10 +365,7 @@ class _QuestionScreenState extends State<QuestionScreen> {
                         return EssayQuestionCard(
                           number: index + 1,
                           question: question,
-                          controller: TextEditingController(
-                              text: context
-                                  .read<QuestionProvider>()
-                                  .getSelectedOption(index)),
+                          controller: _controllers[index],
                           onEssayChanged: (value) {
                             context
                                 .read<QuestionProvider>()
@@ -367,7 +373,7 @@ class _QuestionScreenState extends State<QuestionScreen> {
                           },
                         );
                       default:
-                        return Container(); // Handle any other cases
+                        return SizedBox.shrink(); // Handle any other cases
                     }
                   },
                 ),

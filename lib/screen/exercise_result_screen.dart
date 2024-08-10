@@ -1,9 +1,11 @@
 import 'package:aplikasi_ekstraksi_file_gpt4/components/custom_button.dart';
 import 'package:aplikasi_ekstraksi_file_gpt4/models/question_model.dart';
 import 'package:aplikasi_ekstraksi_file_gpt4/models/subject_model.dart';
+import 'package:aplikasi_ekstraksi_file_gpt4/providers/question_provider.dart';
 import 'package:aplikasi_ekstraksi_file_gpt4/screen/answers_screen.dart';
 import 'package:aplikasi_ekstraksi_file_gpt4/utils/docx_generator.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class ExerciseResultScreen extends StatelessWidget {
   final List<Question> questions;
@@ -72,14 +74,18 @@ class ExerciseResultScreen extends StatelessWidget {
                 ),
                 SizedBox(height: 24),
                 CustomElevatedButton(
-                  onPressed: () {
+                  onPressed: () async {
+                    await context
+                        .read<QuestionProvider>()
+                        .fetchQuestionSets(subject.id!);
                     Navigator.push(
                       context,
                       MaterialPageRoute(
                         builder: (context) => AnswersScreen(
-                          selectedOption: selectedOptions,
-                          subject: subject,
-                        ),
+                            selectedOption: selectedOptions,
+                            subject: subject,
+                            questions:
+                                context.read<QuestionProvider>().questions),
                       ),
                     );
                   },
