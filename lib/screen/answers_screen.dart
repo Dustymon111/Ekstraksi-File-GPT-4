@@ -1,11 +1,14 @@
 import 'package:aplikasi_ekstraksi_file_gpt4/models/question_model.dart';
+import 'package:aplikasi_ekstraksi_file_gpt4/models/subject_model.dart';
+import 'package:aplikasi_ekstraksi_file_gpt4/providers/question_provider.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class AnswersScreen extends StatefulWidget {
   final Map<int, dynamic> selectedOption;
-  final List<Question> questions;
+  final Subject subject;
 
-  AnswersScreen({required this.selectedOption, required this.questions});
+  AnswersScreen({required this.selectedOption, required this.subject});
 
   @override
   _AnswersScreenState createState() => _AnswersScreenState();
@@ -14,14 +17,18 @@ class AnswersScreen extends StatefulWidget {
 class _AnswersScreenState extends State<AnswersScreen> {
   final ScrollController _scrollController = ScrollController();
   late List<TextEditingController> _controllers;
+  late List<Question> questions;
 
   @override
   void initState() {
     super.initState();
-
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      context.read<QuestionProvider>().fetchQuestionSets(widget.subject.id!);
+    });
+    questions = context.read<QuestionProvider>().questions;
     // Initialize a controller for each question
-    _controllers = List.generate(widget.questions.length, (index) {
-      final question = widget.questions[index];
+    _controllers = List.generate(questions.length, (index) {
+      final question = questions[index];
       final selectedOption = widget.selectedOption[index];
       // final correctOption = question.correctOption;
 
@@ -57,9 +64,9 @@ class _AnswersScreenState extends State<AnswersScreen> {
             child: SizedBox(
               child: ListView.builder(
                 controller: _scrollController,
-                itemCount: widget.questions.length,
+                itemCount: questions.length,
                 itemBuilder: (context, index) {
-                  final question = widget.questions[index];
+                  final question = questions[index];
                   final selectedOption = widget.selectedOption[index];
                   final correctOption = question.correctOption;
 
@@ -171,7 +178,6 @@ class _AnswersScreenState extends State<AnswersScreen> {
                           ? () {
                               setState(() {
                                 _controllers[index].text = selectedOption;
-                                print(selectedOption);
                               });
                             }
                           : null, // Button is disabled when text is already equal to selectedOption
@@ -185,7 +191,6 @@ class _AnswersScreenState extends State<AnswersScreen> {
                           ? () {
                               setState(() {
                                 _controllers[index].text = correctOption;
-                                print(selectedOption);
                               });
                             }
                           : null, // Button is disabled when text is already equal to selectedOption

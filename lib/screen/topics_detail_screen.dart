@@ -7,6 +7,7 @@ import 'package:aplikasi_ekstraksi_file_gpt4/providers/question_provider.dart';
 import 'package:aplikasi_ekstraksi_file_gpt4/screen/answers_screen.dart';
 import 'package:aplikasi_ekstraksi_file_gpt4/screen/create_topic_screen.dart';
 import 'package:aplikasi_ekstraksi_file_gpt4/screen/question_screen.dart';
+import 'package:aplikasi_ekstraksi_file_gpt4/utils/docx_generator.dart';
 import 'package:flutter/material.dart';
 import 'package:aplikasi_ekstraksi_file_gpt4/models/subject_model.dart';
 import 'package:provider/provider.dart';
@@ -97,8 +98,8 @@ class _SubjectDetailScreenState extends State<SubjectDetailScreen> {
                             context,
                             MaterialPageRoute(
                               builder: (context) => AnswersScreen(
-                                questions: questions,
                                 selectedOption: questionSet.selectedOptions,
+                                subject: widget.subject,
                               ),
                             ),
                           );
@@ -115,6 +116,7 @@ class _SubjectDetailScreenState extends State<SubjectDetailScreen> {
                                   0xFF1C88BF)), // Border color for "Generate Docx"
                         ),
                         onPressed: () {
+                          generateQuestionsDocx(questions);
                           print("Proses Generate Dokumen berhasil!");
                         },
                         child: Text(
@@ -249,7 +251,7 @@ class _SubjectDetailScreenState extends State<SubjectDetailScreen> {
                                 ),
                               ),
                               subtitle: Text(
-                                'Number of Questions: ${questionSet.questions.length}',
+                                'Number of Questions: ${context.read<QuestionProvider>().questions.length}',
                               ),
                               trailing: Text(
                                 questionSet.status == "Selesai"
@@ -276,7 +278,9 @@ class _SubjectDetailScreenState extends State<SubjectDetailScreen> {
                                     context,
                                     MaterialPageRoute(
                                       builder: (context) => QuestionScreen(
-                                          questions: questionSet.questions,
+                                          questions: context
+                                              .read<QuestionProvider>()
+                                              .questions,
                                           questionSetId: questionSet.id!,
                                           subject: widget.subject),
                                     ),

@@ -23,7 +23,6 @@ class ExerciseResultScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final double score = (correctAnswers / totalQuestions * 100).ceilToDouble();
-
     return Scaffold(
       appBar: AppBar(
         foregroundColor: Colors.white,
@@ -78,8 +77,8 @@ class ExerciseResultScreen extends StatelessWidget {
                       context,
                       MaterialPageRoute(
                         builder: (context) => AnswersScreen(
-                          questions: questions,
                           selectedOption: selectedOptions,
+                          subject: subject,
                         ),
                       ),
                     );
@@ -89,7 +88,7 @@ class ExerciseResultScreen extends StatelessWidget {
                 SizedBox(height: 16),
                 CustomElevatedButton(
                   onPressed: () {
-                    generateQuestionsDocx();
+                    generateQuestionsDocx(questions);
                   },
                   label: 'Generate Docx',
                 ),

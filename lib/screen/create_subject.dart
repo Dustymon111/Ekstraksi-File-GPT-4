@@ -131,7 +131,7 @@ class _CreateSubjectState extends State<CreateSubject> {
                 children: [
                   LoadingAnimationWidget.discreteCircle(
                       color: Colors.white,
-                      size: 200,
+                      size: 100,
                       secondRingColor: Colors.grey,
                       thirdRingColor: Colors.black),
                   SizedBox(width: 20),

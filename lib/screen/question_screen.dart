@@ -146,8 +146,8 @@ class _QuestionScreenState extends State<QuestionScreen> {
     }
   }
 
-  Future<void> _dialogBuilder(BuildContext context) {
-    return showDialog<void>(
+  Future<bool> _dialogBuilder(BuildContext context) {
+    return showDialog<bool>(
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
@@ -162,8 +162,10 @@ class _QuestionScreenState extends State<QuestionScreen> {
               onPressed: () async {
                 for (int i = 0; i < widget.questions.length; i++) {
                   if (widget.questions[i].type == 'm_answer') {
-                    if (areListsEqual(widget.questions[i].correctOption,
-                        context.read<QuestionProvider>().selectedOption[i])) {
+                    if (areListsEqual(
+                        widget.questions[i].correctOption,
+                        context.read<QuestionProvider>().selectedOption[i] ??
+                            [])) {
                       setState(() {
                         correctAnswers++;
                       });
@@ -190,8 +192,6 @@ class _QuestionScreenState extends State<QuestionScreen> {
                 String? filename = context
                     .read<BookmarkProvider>()
                     .findFilenameById(bookmarkId);
-                print(context.read<QuestionProvider>().essayAnswers);
-
                 final res = await checkEssayAnswer(
                     context,
                     context.read<QuestionProvider>().essayAnswers,
@@ -202,8 +202,10 @@ class _QuestionScreenState extends State<QuestionScreen> {
                 setState(() {
                   correctAnswers += res['correct_answers'] as int;
                 });
+                print(
+                    "All Answers:\n${context.read<QuestionProvider>().selectedOption}");
                 print("correct answer count :$correctAnswers");
-                // Retrieve the questionSetId from the context or the appropriate source
+
                 final newData = {
                   "point":
                       (correctAnswers / widget.questions.length * 100).round(),
@@ -217,7 +219,9 @@ class _QuestionScreenState extends State<QuestionScreen> {
                 await context
                     .read<QuestionProvider>()
                     .updateQuestionSetFields(questionSetId, newData);
-                Navigator.of(context).pop();
+
+                Navigator.pop(
+                    context, true); // Close the dialog and return true
               },
             ),
             TextButton(
@@ -226,13 +230,14 @@ class _QuestionScreenState extends State<QuestionScreen> {
               ),
               child: const Text('Cancel'),
               onPressed: () {
-                Navigator.of(context).pop();
+                Navigator.pop(
+                    context, false); // Close the dialog and return false
               },
             ),
           ],
         );
       },
-    );
+    ).then((value) => value ?? false); // Ensure a bool is returned
   }
 
   Future<bool> _showExitDialog(BuildContext context) async {
@@ -345,9 +350,6 @@ class _QuestionScreenState extends State<QuestionScreen> {
                             context
                                 .read<QuestionProvider>()
                                 .insertSelectedOptionMultiple();
-                            print(context
-                                .read<QuestionProvider>()
-                                .selectedOption);
                           },
                         );
                       case 'essay':
@@ -376,23 +378,25 @@ class _QuestionScreenState extends State<QuestionScreen> {
               child: CustomElevatedButton(
                 label: "Submit",
                 onPressed: () async {
-                  await _dialogBuilder(context);
-                  Navigator.pushReplacement(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => ExerciseResultScreen(
-                        subject: widget.subject,
-                        questions: widget.questions,
-                        totalQuestions: widget.questions.length,
-                        correctAnswers: correctAnswers,
-                        selectedOptions:
-                            context.read<QuestionProvider>().selectedOption,
+                  bool shouldNavigate = await _dialogBuilder(context);
+                  if (shouldNavigate) {
+                    Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => ExerciseResultScreen(
+                          subject: widget.subject,
+                          questions: widget.questions,
+                          totalQuestions: widget.questions.length,
+                          correctAnswers: correctAnswers,
+                          selectedOptions:
+                              context.read<QuestionProvider>().selectedOption,
+                        ),
                       ),
-                    ),
-                  );
+                    );
+                  }
                 },
               ),
-            ),
+            )
           ],
         ),
       ),

@@ -23,6 +23,7 @@ class _CreateTopicScreenState extends State<CreateTopicScreen> {
   String? selectedTopic;
   int? selectedMultipleChoice;
   int? selectedEssay;
+  String? difficulty;
   String? filename;
   String? subjectId;
   final FirebaseAuth _auth = FirebaseAuth.instance;
@@ -100,6 +101,10 @@ class _CreateTopicScreenState extends State<CreateTopicScreen> {
               TextButton(
                 onPressed: () {
                   Navigator.of(context).pop(); // Close the success dialog
+
+                  // Pop until root and push to /create
+                  Navigator.popUntil(context, (route) => route.isFirst);
+                  Navigator.pushNamed(context, '/home');
                 },
                 child: Text('OK'),
               ),
@@ -134,6 +139,7 @@ class _CreateTopicScreenState extends State<CreateTopicScreen> {
   Widget build(BuildContext context) {
     final subjectProv = Provider.of<SubjectProvider>(context);
     final bookProv = Provider.of<BookmarkProvider>(context);
+    final difficulties = ['beginner', 'intermediate', 'expert'];
     return Scaffold(
       appBar: AppBar(
         foregroundColor: Colors.white,
@@ -398,13 +404,32 @@ class _CreateTopicScreenState extends State<CreateTopicScreen> {
                   );
                 }),
               ),
+              Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: List.generate(difficulties.length, (index) {
+                    final value = difficulties[index];
+                    return Expanded(
+                      child: RadioListTile<String>(
+                        title:
+                            Text(value[0].toUpperCase() + value.substring(1)),
+                        value: value,
+                        groupValue: difficulty,
+                        onChanged: (selectedValue) {
+                          setState(() {
+                            difficulty = selectedValue;
+                          });
+                        },
+                      ),
+                    );
+                  })),
               const SizedBox(height: 30),
               Center(
                 child: ElevatedButton.icon(
                   onPressed: selectedSubject != null &&
                           selectedEssay != null &&
                           selectedMultipleChoice != null &&
-                          selectedTopic != null
+                          selectedTopic != null &&
+                          difficulty != null
                       ? () {
                           // print("Button Pressed");
                           postData(
@@ -412,7 +437,7 @@ class _CreateTopicScreenState extends State<CreateTopicScreen> {
                               selectedTopic!,
                               selectedMultipleChoice.toString(),
                               selectedEssay.toString(),
-                              "intermmediate",
+                              difficulty!,
                               _auth.currentUser!.uid,
                               filename!,
                               subjectId!);
