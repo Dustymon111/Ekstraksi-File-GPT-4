@@ -84,7 +84,7 @@ class QuestionProvider extends ChangeNotifier {
           // Fetch questions for each question set
           QuerySnapshot questionSnapshot =
               await questionSetDoc.reference.collection('question').get();
-          questionSet.questions = questionSnapshot.docs.map((questionDoc) {
+          _questions = questionSnapshot.docs.map((questionDoc) {
             return Question.fromMap(questionDoc.data() as Map<String, dynamic>);
           }).toList();
           return questionSet;

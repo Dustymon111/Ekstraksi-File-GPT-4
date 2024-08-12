@@ -34,7 +34,7 @@ class _QuestionScreenState extends State<QuestionScreen> {
   final ScrollController _scrollController = ScrollController();
   late int totalQuestions;
   int correctAnswers = 0;
-  List<TextEditingController> _controllers = [];
+  final List<TextEditingController> _controllers = [];
   Map<int, List<String>> selectedCheckboxOptions = {};
   Map<int, String> essayAnswers = {};
   final String serverUrl =
@@ -58,18 +58,27 @@ class _QuestionScreenState extends State<QuestionScreen> {
 
   @override
   void initState() {
+    super.initState();
     context.read<QuestionProvider>().clearSelectedOption();
+
     for (int i = 0; i < widget.questions.length; i++) {
       if (widget.questions[i].type == "essay") {
-        _controllers.add(TextEditingController());
+        // Initialize controllers for essay questions only
+        _controllers.add(TextEditingController(
+          text: context.read<QuestionProvider>().getSelectedOption(i),
+        ));
+      } else {
+        _controllers.add(TextEditingController()); // To keep indexes aligned
       }
     }
-    super.initState();
   }
 
   @override
   void dispose() {
     _scrollController.dispose();
+    for (final controller in _controllers) {
+      controller.dispose();
+    }
     super.dispose();
   }
 
@@ -92,7 +101,7 @@ class _QuestionScreenState extends State<QuestionScreen> {
             children: [
               LoadingAnimationWidget.staggeredDotsWave(
                 color: Colors.blue,
-                size: 100,
+                size: MediaQuery.of(context).size.width * 0.25,
               ),
               SizedBox(width: 20),
               Text('Checking answer...'),
@@ -146,8 +155,8 @@ class _QuestionScreenState extends State<QuestionScreen> {
     }
   }
 
-  Future<void> _dialogBuilder(BuildContext context) {
-    return showDialog<void>(
+  Future<bool> _dialogBuilder(BuildContext context) {
+    return showDialog<bool>(
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
@@ -162,8 +171,10 @@ class _QuestionScreenState extends State<QuestionScreen> {
               onPressed: () async {
                 for (int i = 0; i < widget.questions.length; i++) {
                   if (widget.questions[i].type == 'm_answer') {
-                    if (areListsEqual(widget.questions[i].correctOption,
-                        context.read<QuestionProvider>().selectedOption[i])) {
+                    if (areListsEqual(
+                        widget.questions[i].correctOption,
+                        context.read<QuestionProvider>().selectedOption[i] ??
+                            [])) {
                       setState(() {
                         correctAnswers++;
                       });
@@ -190,8 +201,6 @@ class _QuestionScreenState extends State<QuestionScreen> {
                 String? filename = context
                     .read<BookmarkProvider>()
                     .findFilenameById(bookmarkId);
-                print(context.read<QuestionProvider>().essayAnswers);
-
                 final res = await checkEssayAnswer(
                     context,
                     context.read<QuestionProvider>().essayAnswers,
@@ -202,8 +211,10 @@ class _QuestionScreenState extends State<QuestionScreen> {
                 setState(() {
                   correctAnswers += res['correct_answers'] as int;
                 });
+                print(
+                    "All Answers:\n${context.read<QuestionProvider>().selectedOption}");
                 print("correct answer count :$correctAnswers");
-                // Retrieve the questionSetId from the context or the appropriate source
+
                 final newData = {
                   "point":
                       (correctAnswers / widget.questions.length * 100).round(),
@@ -217,7 +228,9 @@ class _QuestionScreenState extends State<QuestionScreen> {
                 await context
                     .read<QuestionProvider>()
                     .updateQuestionSetFields(questionSetId, newData);
-                Navigator.of(context).pop();
+
+                Navigator.pop(
+                    context, true); // Close the dialog and return true
               },
             ),
             TextButton(
@@ -226,13 +239,14 @@ class _QuestionScreenState extends State<QuestionScreen> {
               ),
               child: const Text('Cancel'),
               onPressed: () {
-                Navigator.of(context).pop();
+                Navigator.pop(
+                    context, false); // Close the dialog and return false
               },
             ),
           ],
         );
       },
-    );
+    ).then((value) => value ?? false); // Ensure a bool is returned
   }
 
   Future<bool> _showExitDialog(BuildContext context) async {
@@ -345,19 +359,13 @@ class _QuestionScreenState extends State<QuestionScreen> {
                             context
                                 .read<QuestionProvider>()
                                 .insertSelectedOptionMultiple();
-                            print(context
-                                .read<QuestionProvider>()
-                                .selectedOption);
                           },
                         );
                       case 'essay':
                         return EssayQuestionCard(
                           number: index + 1,
                           question: question,
-                          controller: TextEditingController(
-                              text: context
-                                  .read<QuestionProvider>()
-                                  .getSelectedOption(index)),
+                          controller: _controllers[index],
                           onEssayChanged: (value) {
                             context
                                 .read<QuestionProvider>()
@@ -365,7 +373,7 @@ class _QuestionScreenState extends State<QuestionScreen> {
                           },
                         );
                       default:
-                        return Container(); // Handle any other cases
+                        return SizedBox.shrink(); // Handle any other cases
                     }
                   },
                 ),
@@ -376,23 +384,25 @@ class _QuestionScreenState extends State<QuestionScreen> {
               child: CustomElevatedButton(
                 label: "Submit",
                 onPressed: () async {
-                  await _dialogBuilder(context);
-                  Navigator.pushReplacement(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => ExerciseResultScreen(
-                        subject: widget.subject,
-                        questions: widget.questions,
-                        totalQuestions: widget.questions.length,
-                        correctAnswers: correctAnswers,
-                        selectedOptions:
-                            context.read<QuestionProvider>().selectedOption,
+                  bool shouldNavigate = await _dialogBuilder(context);
+                  if (shouldNavigate) {
+                    Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => ExerciseResultScreen(
+                          subject: widget.subject,
+                          questions: widget.questions,
+                          totalQuestions: widget.questions.length,
+                          correctAnswers: correctAnswers,
+                          selectedOptions:
+                              context.read<QuestionProvider>().selectedOption,
+                        ),
                       ),
-                    ),
-                  );
+                    );
+                  }
                 },
               ),
-            ),
+            )
           ],
         ),
       ),

@@ -23,6 +23,7 @@ class _CreateTopicScreenState extends State<CreateTopicScreen> {
   String? selectedTopic;
   int? selectedMultipleChoice;
   int? selectedEssay;
+  String? difficulty;
   String? filename;
   String? subjectId;
   final FirebaseAuth _auth = FirebaseAuth.instance;
@@ -58,11 +59,15 @@ class _CreateTopicScreenState extends State<CreateTopicScreen> {
             mainAxisSize: MainAxisSize.min,
             children: [
               LoadingAnimationWidget.prograssiveDots(
-                color: Colors.grey,
-                size: 100,
+                color: Colors.blue,
+                size: MediaQuery.of(context).size.width *
+                    0.25, // 25% of screen width
               ),
-              SizedBox(width: 20),
-              Text('Generating exercise\nThis may take some time'),
+              SizedBox(height: 20),
+              Text(
+                'Generating exercise\nThis may take some time',
+                textAlign: TextAlign.center,
+              ),
             ],
           ),
         );
@@ -100,6 +105,10 @@ class _CreateTopicScreenState extends State<CreateTopicScreen> {
               TextButton(
                 onPressed: () {
                   Navigator.of(context).pop(); // Close the success dialog
+
+                  // Pop until root and push to /create
+                  Navigator.popUntil(context, (route) => route.isFirst);
+                  Navigator.pushNamed(context, '/home');
                 },
                 child: Text('OK'),
               ),
@@ -134,6 +143,7 @@ class _CreateTopicScreenState extends State<CreateTopicScreen> {
   Widget build(BuildContext context) {
     final subjectProv = Provider.of<SubjectProvider>(context);
     final bookProv = Provider.of<BookmarkProvider>(context);
+    final difficulties = ['beginner', 'intermediate', 'expert'];
     return Scaffold(
       appBar: AppBar(
         foregroundColor: Colors.white,
@@ -399,36 +409,74 @@ class _CreateTopicScreenState extends State<CreateTopicScreen> {
                 }),
               ),
               const SizedBox(height: 30),
+              Text("Difficulties",
+                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+              Wrap(
+                alignment: WrapAlignment.spaceEvenly,
+                children: List.generate(difficulties.length, (index) {
+                  final value = difficulties[index];
+                  return GestureDetector(
+                    onTap: () {
+                      setState(() {
+                        difficulty = value;
+                      });
+                    },
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Radio<String>(
+                          value: value,
+                          groupValue: difficulty,
+                          onChanged: (selectedValue) {
+                            setState(() {
+                              difficulty = selectedValue;
+                            });
+                          },
+                        ),
+                        Text(
+                          value[0].toUpperCase() + value.substring(1),
+                          textAlign: TextAlign.center,
+                        ),
+                      ],
+                    ),
+                  );
+                }),
+              ),
+              const SizedBox(height: 30),
               Center(
-                child: ElevatedButton.icon(
-                  onPressed: selectedSubject != null &&
-                          selectedEssay != null &&
-                          selectedMultipleChoice != null &&
-                          selectedTopic != null
-                      ? () {
-                          // print("Button Pressed");
-                          postData(
-                              context,
-                              selectedTopic!,
-                              selectedMultipleChoice.toString(),
-                              selectedEssay.toString(),
-                              "intermmediate",
-                              _auth.currentUser!.uid,
-                              filename!,
-                              subjectId!);
-                        }
-                      : null,
-                  icon: Icon(Icons.arrow_forward, color: Colors.white),
-                  label: Text(
-                    "Generate",
-                    style: TextStyle(color: Colors.white, fontSize: 18),
-                  ),
-                  style: ElevatedButton.styleFrom(
-                    padding:
-                        EdgeInsets.symmetric(vertical: 17.0, horizontal: 130.0),
-                    backgroundColor: Color(0xFF1C88BF),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(20.0),
+                child: Container(
+                  width: MediaQuery.of(context).size.width *
+                      0.5, // 80% of screen width
+                  height: MediaQuery.of(context).size.height * 0.07,
+                  child: ElevatedButton.icon(
+                    onPressed: selectedSubject != null &&
+                            selectedEssay != null &&
+                            selectedMultipleChoice != null &&
+                            selectedTopic != null &&
+                            difficulty != null
+                        ? () {
+                            // print("Button Pressed");
+                            postData(
+                                context,
+                                selectedTopic!,
+                                selectedMultipleChoice.toString(),
+                                selectedEssay.toString(),
+                                difficulty!,
+                                _auth.currentUser!.uid,
+                                filename!,
+                                subjectId!);
+                          }
+                        : null,
+                    icon: Icon(Icons.arrow_forward, color: Colors.white),
+                    label: Text(
+                      "Generate",
+                      style: TextStyle(color: Colors.white, fontSize: 18),
+                    ),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Color(0xFF1C88BF),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(20.0),
+                      ),
                     ),
                   ),
                 ),
