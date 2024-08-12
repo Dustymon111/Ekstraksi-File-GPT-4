@@ -18,9 +18,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   void _showDialog(BuildContext context, String title, String content) {
+    // Make sure to use the correct BuildContext
     showDialog(
       context: context,
-      builder: (BuildContext context) {
+      builder: (BuildContext dialogContext) {
         return AlertDialog(
           title: Text(title),
           content: Text(content),
@@ -28,7 +29,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             TextButton(
               child: const Text("OK"),
               onPressed: () {
-                Navigator.of(context).pop();
+                Navigator.of(dialogContext).pop();
               },
             ),
           ],
@@ -44,14 +45,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
       body: SingleChildScrollView(
         child: Column(
           children: [
-            SizedBox(height: 16),
+            const SizedBox(height: 16),
             Container(
-              margin: EdgeInsets.symmetric(horizontal: 20),
+              margin: const EdgeInsets.symmetric(horizontal: 20),
               padding: const EdgeInsets.all(16.0),
               decoration: BoxDecoration(
                 color: Theme.of(context).scaffoldBackgroundColor,
                 borderRadius: BorderRadius.circular(10),
-                boxShadow: [
+                boxShadow: const [
                   BoxShadow(
                     color: Color(0xFF1C88BF),
                     spreadRadius: 5,
@@ -62,7 +63,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
               ),
               child: Row(
                 children: [
-                  CircleAvatar(
+                  const CircleAvatar(
                     radius: 40,
                     backgroundColor: Color(0xFF1C88BF),
                     child: Text(
@@ -74,7 +75,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       ),
                     ),
                   ),
-                  SizedBox(width: 16),
+                  const SizedBox(width: 16),
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -103,15 +104,16 @@ class _ProfileScreenState extends State<ProfileScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  SizedBox(height: 24),
+                  const SizedBox(height: 24),
                   Text(
                     "Pengaturan",
                     style: TextStyle(
-                        fontSize: 22,
-                        fontWeight: FontWeight.bold,
-                        color: Theme.of(context).textTheme.bodyMedium?.color),
+                      fontSize: 22,
+                      fontWeight: FontWeight.bold,
+                      color: Theme.of(context).textTheme.bodyMedium?.color,
+                    ),
                   ),
-                  SizedBox(height: 8),
+                  const SizedBox(height: 8),
                   Text(
                     "Ubah Email",
                     style: TextStyle(
@@ -119,7 +121,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       color: Theme.of(context).textTheme.bodyLarge?.color,
                     ),
                   ),
-                  SizedBox(height: 4),
+                  const SizedBox(height: 4),
                   Text(
                     "Ubah Password",
                     style: TextStyle(
@@ -127,15 +129,16 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       color: Theme.of(context).textTheme.bodyLarge?.color,
                     ),
                   ),
-                  SizedBox(height: 24),
+                  const SizedBox(height: 24),
                   const Divider(thickness: 2),
                   const SizedBox(height: 20),
                   Text(
                     "Bantuan & Informasi",
                     style: TextStyle(
-                        fontSize: 25,
-                        fontWeight: FontWeight.bold,
-                        color: Theme.of(context).textTheme.bodyLarge?.color),
+                      fontSize: 25,
+                      fontWeight: FontWeight.bold,
+                      color: Theme.of(context).textTheme.bodyLarge?.color,
+                    ),
                   ),
                   const SizedBox(height: 10),
                   TextButton(
@@ -193,31 +196,41 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       ),
                     ),
                   ),
-                  SizedBox(height: 24),
+                  const SizedBox(height: 24),
                   Align(
                     alignment: Alignment.centerRight,
                     child: ElevatedButton(
                       onPressed: () async {
                         try {
+                          print("Attempting to sign out...");
                           // Sign out the user
                           await FirebaseAuth.instance.signOut();
+                          print(
+                              "Sign out successful. Preparing to navigate...");
 
-                          // Navigate to the login screen and remove all previous routes
-                          Navigator.of(context).pushNamedAndRemoveUntil(
-                            '/login',
-                            (Route<dynamic> route) => false,
-                          );
+                          // Use context mounted after the sign out process
+                          if (mounted) {
+                            print("Navigating to login screen...");
+                            Navigator.of(context).pushNamedAndRemoveUntil(
+                              '/login',
+                              (Route<dynamic> route) => false,
+                            );
+                            print("Navigation successful.");
 
-                          // Show a toast message indicating successful sign out
-                          Fluttertoast.showToast(
-                            msg: "Successfully Signed Out",
-                            toastLength: Toast.LENGTH_SHORT,
-                            gravity: ToastGravity.BOTTOM,
-                            timeInSecForIosWeb: 1,
-                            backgroundColor: Colors.white,
-                            textColor: Colors.black,
-                            fontSize: 16.0,
-                          );
+                            // Show a toast message indicating successful sign out
+                            Fluttertoast.showToast(
+                              msg: "Successfully Signed Out",
+                              toastLength: Toast.LENGTH_SHORT,
+                              gravity: ToastGravity.BOTTOM,
+                              timeInSecForIosWeb: 1,
+                              backgroundColor: Colors.white,
+                              textColor: Colors.black,
+                              fontSize: 16.0,
+                            );
+                          } else {
+                            print(
+                                "Context is not mounted, navigation skipped."); // Log jika context tidak valid
+                          }
                         } catch (e) {
                           // Handle any errors during sign out
                           print("Error signing out: $e");
@@ -232,7 +245,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           );
                         }
                       },
-                      child: Text('Keluar'),
+                      child: const Text('Keluar'),
                     ),
                   ),
                 ],

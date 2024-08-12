@@ -31,79 +31,81 @@ class ExerciseResultScreen extends StatelessWidget {
         title: Text('Exercise Result'),
         leading: Container(),
       ),
-      body: Card(
-        child: Center(
-          child: Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Text(
-                  'Your Result',
-                  style: TextStyle(
-                    fontSize: 28,
-                    fontWeight: FontWeight.bold,
-                    color: Color(0xFF1C88BF),
+      body: SingleChildScrollView(
+        child: Card(
+          child: Center(
+            child: Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Text(
+                    'Your Result',
+                    style: TextStyle(
+                      fontSize: 28,
+                      fontWeight: FontWeight.bold,
+                      color: Color(0xFF1C88BF),
+                    ),
                   ),
-                ),
-                SizedBox(height: 24),
-                Text(
-                  'Total Questions: $totalQuestions',
-                  style: TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.w500,
+                  SizedBox(height: 24),
+                  Text(
+                    'Total Questions: $totalQuestions',
+                    style: TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.w500,
+                    ),
                   ),
-                ),
-                SizedBox(height: 8),
-                Text(
-                  'Correct Answers: $correctAnswers',
-                  style: TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.w500,
+                  SizedBox(height: 8),
+                  Text(
+                    'Correct Answers: $correctAnswers',
+                    style: TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.w500,
+                    ),
                   ),
-                ),
-                SizedBox(height: 8),
-                Text(
-                  'Score: $score',
-                  style: TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.w500,
+                  SizedBox(height: 8),
+                  Text(
+                    'Score: $score',
+                    style: TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.w500,
+                    ),
                   ),
-                ),
-                SizedBox(height: 24),
-                CustomElevatedButton(
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => AnswersScreen(
-                          questions: questions,
-                          selectedOption: selectedOptions,
+                  SizedBox(height: 24),
+                  CustomElevatedButton(
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => AnswersScreen(
+                            questions: questions,
+                            selectedOption: selectedOptions,
+                          ),
                         ),
-                      ),
-                    );
-                  },
-                  label: 'Check Answers',
-                ),
-                SizedBox(height: 16),
-                CustomElevatedButton(
-                  onPressed: () {
-                    generateQuestionsDocx();
-                  },
-                  label: 'Generate Docx',
-                ),
-                SizedBox(height: 16),
-                CustomElevatedButton(
-                  onPressed: () {
-                    Navigator.pop(
-                      context,
-                    );
-                  },
-                  label: 'Selesai',
-                ),
-                SizedBox(height: 16),
-              ],
+                      );
+                    },
+                    label: 'Check Answers',
+                  ),
+                  SizedBox(height: 16),
+                  CustomElevatedButton(
+                    onPressed: () {
+                      generateQuestionsDocx();
+                    },
+                    label: 'Generate Docx',
+                  ),
+                  SizedBox(height: 16),
+                  CustomElevatedButton(
+                    onPressed: () {
+                      Navigator.pop(
+                        context,
+                      );
+                    },
+                    label: 'Selesai',
+                  ),
+                  SizedBox(height: 16),
+                ],
+              ),
             ),
           ),
         ),

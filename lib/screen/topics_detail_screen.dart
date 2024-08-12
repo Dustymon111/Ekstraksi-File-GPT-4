@@ -55,72 +55,77 @@ class _SubjectDetailScreenState extends State<SubjectDetailScreen> {
                   Text(
                     'Your Result',
                     style: TextStyle(
-                        fontSize: 28,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.blueAccent),
+                      fontSize: 28,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.blueAccent,
+                    ),
                   ),
                   SizedBox(height: 24),
                   Text(
                     'Total Questions: ${questions.length}',
                     style: TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.w500,
-                        color: Theme.of(context).textTheme.bodyLarge?.color),
+                      fontSize: 20,
+                      fontWeight: FontWeight.w500,
+                      color: Theme.of(context).textTheme.bodyLarge?.color,
+                    ),
                   ),
                   SizedBox(height: 8),
                   Text(
                     'Correct Answers: ${questionSet.correctAnswers}',
                     style: TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.w500,
-                        color: Theme.of(context).textTheme.bodyLarge?.color),
+                      fontSize: 20,
+                      fontWeight: FontWeight.w500,
+                      color: Theme.of(context).textTheme.bodyLarge?.color,
+                    ),
                   ),
                   SizedBox(height: 8),
                   Text(
                     'Score: ${(questionSet.point).ceil()}',
                     style: TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.w500,
-                        color: Theme.of(context).textTheme.bodyLarge?.color),
+                      fontSize: 20,
+                      fontWeight: FontWeight.w500,
+                      color: Theme.of(context).textTheme.bodyLarge?.color,
+                    ),
                   ),
                   SizedBox(height: 24),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
-                      ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Color(
-                              0xFF1C88BF), // Background color for "Check Answers"
-                        ),
-                        onPressed: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => AnswersScreen(
-                                questions: questions,
-                                selectedOption: questionSet.selectedOptions,
+                      Expanded(
+                        child: ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Color(0xFF1C88BF),
+                          ),
+                          onPressed: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => AnswersScreen(
+                                  questions: questions,
+                                  selectedOption: questionSet.selectedOptions,
+                                ),
                               ),
-                            ),
-                          );
-                        },
-                        child: Text(
-                          'Check Answers',
-                          style: TextStyle(color: Colors.white),
+                            );
+                          },
+                          child: Text(
+                            'Check Answers',
+                            style: TextStyle(color: Colors.white),
+                          ),
                         ),
                       ),
-                      OutlinedButton(
-                        style: OutlinedButton.styleFrom(
-                          side: BorderSide(
-                              color: Color(
-                                  0xFF1C88BF)), // Border color for "Generate Docx"
-                        ),
-                        onPressed: () {
-                          print("Proses Generate Dokumen berhasil!");
-                        },
-                        child: Text(
-                          'Generate Docx',
-                          style:
-                              TextStyle(color: Color(0xFF1C88BF)), // Text color
+                      SizedBox(width: 8),
+                      Expanded(
+                        child: OutlinedButton(
+                          style: OutlinedButton.styleFrom(
+                            side: BorderSide(color: Color(0xFF1C88BF)),
+                          ),
+                          onPressed: () {
+                            print("Proses Generate Dokumen berhasil!");
+                          },
+                          child: Text(
+                            'Generate Docx',
+                            style: TextStyle(color: Color(0xFF1C88BF)),
+                          ),
                         ),
                       ),
                     ],
