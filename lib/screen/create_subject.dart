@@ -41,7 +41,7 @@ class _CreateSubjectState extends State<CreateSubject> {
   String? userEmail;
   String? userName;
   late String userId;
-  late final StreamSubscription<User?> _authSubscription;
+  // late final StreamSubscription<User?> _authSubscription;
   double progress = 0.0;
 
   // @override
@@ -62,7 +62,7 @@ class _CreateSubjectState extends State<CreateSubject> {
 
   @override
   void dispose() {
-    _authSubscription.cancel();
+    // _authSubscription.cancel();
     _pageController.dispose();
     super.dispose();
   }

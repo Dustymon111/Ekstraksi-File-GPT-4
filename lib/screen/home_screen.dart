@@ -29,7 +29,7 @@ class _HomeState extends State<Home> {
   User? user;
   String? userEmail;
   String? userName;
-  late final StreamSubscription<User?> _authSubscription;
+  StreamSubscription<User?>? _authSubscription;
   double progress = 0.0;
 
   final color = [Colors.red, Colors.yellow, Colors.blue];
@@ -55,7 +55,7 @@ class _HomeState extends State<Home> {
 
   @override
   void dispose() {
-    _authSubscription.cancel();
+    _authSubscription?.cancel();
     _pageController.dispose();
     super.dispose();
   }
