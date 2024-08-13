@@ -248,7 +248,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           );
                         }
                       },
-                      child: const Text('Keluar'),
+                      child: const Text('Logout'),
                     ),
                   ),
                 ],

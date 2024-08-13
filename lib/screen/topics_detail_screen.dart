@@ -183,7 +183,7 @@ class _SubjectDetailScreenState extends State<SubjectDetailScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('Detail Topik'),
+        title: Text('Chapters Details'),
         foregroundColor: Colors.white,
         backgroundColor: Color(0xFF1C88BF),
       ),

@@ -1,15 +1,14 @@
 import 'dart:convert';
+import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:http/http.dart' as http;
 
 import 'package:aplikasi_ekstraksi_file_gpt4/models/bookmark_model.dart';
 import 'package:aplikasi_ekstraksi_file_gpt4/models/subject_model.dart';
 import 'package:aplikasi_ekstraksi_file_gpt4/providers/bookmark_provider.dart';
 import 'package:aplikasi_ekstraksi_file_gpt4/providers/subject_provider.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/material.dart';
-// import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
-import 'package:provider/provider.dart';
-import 'package:http/http.dart' as http;
 
 class CreateTopicScreen extends StatefulWidget {
   const CreateTopicScreen({super.key});
@@ -29,16 +28,11 @@ class _CreateTopicScreenState extends State<CreateTopicScreen> {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final String serverUrl =
       'https://ekstraksi-file-gpt-4-server-xzcbfs2fqq-et.a.run.app';
-  // final String localhost = dotenv.env["LOCALHOST"]!;
-  // final String port = dotenv.env["PORT"]!;
 
-  @override
-  void initState() {
-    super.initState();
-  }
+  List<String> selectedTopics = [];
 
   Future<void> postData(
-      BuildContext context, // Add BuildContext to manage dialogs
+      BuildContext context,
       String topic,
       String mChoiceNumber,
       String essayNumber,
@@ -46,10 +40,9 @@ class _CreateTopicScreenState extends State<CreateTopicScreen> {
       String userId,
       String filename,
       String subjectId) async {
-    // Show the initial dialog with the loading animation
     showDialog(
       context: context,
-      barrierDismissible: false, // Prevents dismissal by tapping outside
+      barrierDismissible: false,
       builder: (BuildContext context) {
         return AlertDialog(
           content: Column(
@@ -57,8 +50,7 @@ class _CreateTopicScreenState extends State<CreateTopicScreen> {
             children: [
               LoadingAnimationWidget.prograssiveDots(
                 color: Colors.blue,
-                size: MediaQuery.of(context).size.width *
-                    0.25, // 25% of screen width
+                size: MediaQuery.of(context).size.width * 0.25,
               ),
               SizedBox(height: 20),
               Text(
@@ -88,10 +80,9 @@ class _CreateTopicScreenState extends State<CreateTopicScreen> {
       }),
     );
 
-    Navigator.of(context).pop(); // Close the loading dialog
+    Navigator.of(context).pop();
 
     if (response.statusCode == 200) {
-      // Show success dialog
       showDialog(
         context: context,
         builder: (BuildContext context) {
@@ -101,9 +92,7 @@ class _CreateTopicScreenState extends State<CreateTopicScreen> {
             actions: <Widget>[
               TextButton(
                 onPressed: () {
-                  Navigator.of(context).pop(); // Close the success dialog
-
-                  // Pop until root and push to /create
+                  Navigator.of(context).pop();
                   Navigator.popUntil(context, (route) => route.isFirst);
                   Navigator.pushNamed(context, '/home');
                 },
@@ -114,7 +103,6 @@ class _CreateTopicScreenState extends State<CreateTopicScreen> {
         },
       );
     } else {
-      // Show failure dialog
       showDialog(
         context: context,
         builder: (BuildContext context) {
@@ -125,7 +113,7 @@ class _CreateTopicScreenState extends State<CreateTopicScreen> {
             actions: <Widget>[
               TextButton(
                 onPressed: () {
-                  Navigator.of(context).pop(); // Close the error dialog
+                  Navigator.of(context).pop();
                 },
                 child: Text('OK'),
               ),
@@ -141,6 +129,8 @@ class _CreateTopicScreenState extends State<CreateTopicScreen> {
     final subjectProv = Provider.of<SubjectProvider>(context);
     final bookProv = Provider.of<BookmarkProvider>(context);
     final difficulties = ['beginner', 'intermediate', 'expert'];
+    final language = ['English', 'Indonesian'];
+
     return Scaffold(
       appBar: AppBar(
         foregroundColor: Colors.white,
@@ -161,7 +151,7 @@ class _CreateTopicScreenState extends State<CreateTopicScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    "Buat Latihan Berdasarkan Bab di dalam Buku",
+                    "Create Exercises Based on the Chapters in the Book",
                     style: TextStyle(
                       color: Theme.of(context).textTheme.bodyLarge?.color,
                       fontSize: 22,
@@ -170,7 +160,7 @@ class _CreateTopicScreenState extends State<CreateTopicScreen> {
                   ),
                   SizedBox(height: 10),
                   Text(
-                    "Sesuaikan dengan Bab yang kamu inginkan!",
+                    "Customize According to the Chapters You Want!",
                     style: TextStyle(
                       color: Theme.of(context).textTheme.bodyLarge?.color,
                       fontSize: 16,
@@ -180,7 +170,7 @@ class _CreateTopicScreenState extends State<CreateTopicScreen> {
               ),
               SizedBox(height: 20),
               Text(
-                "Buku",
+                "Book",
                 style: TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.bold,
@@ -205,7 +195,7 @@ class _CreateTopicScreenState extends State<CreateTopicScreen> {
                     hint: Padding(
                       padding: const EdgeInsets.all(8.0),
                       child: Text(
-                        "Pilih Buku",
+                        "Choose Book",
                         style: TextStyle(
                             color:
                                 Theme.of(context).textTheme.bodyLarge?.color),
@@ -216,6 +206,8 @@ class _CreateTopicScreenState extends State<CreateTopicScreen> {
                     onChanged: (newValue) {
                       setState(() {
                         selectedSubject = newValue;
+                        selectedTopics
+                            .clear(); // clear selected topics when book changes
                         if (selectedSubject != null) {
                           subjectProv.filterSubjectByBookId(selectedSubject!);
                           filename =
@@ -244,7 +236,7 @@ class _CreateTopicScreenState extends State<CreateTopicScreen> {
               ),
               SizedBox(height: 20),
               Text(
-                "Topik Buku",
+                "Chapters Book",
                 style: TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.bold,
@@ -264,52 +256,79 @@ class _CreateTopicScreenState extends State<CreateTopicScreen> {
                     ),
                   ],
                 ),
-                child: DropdownButtonHideUnderline(
-                  child: DropdownButton<String>(
-                    hint: Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Text(
-                        "Pilih Topik",
-                        style: TextStyle(
-                          color: Theme.of(context).textTheme.bodyLarge?.color,
-                        ),
-                      ),
-                    ),
-                    value: selectedTopic,
-                    isExpanded: true,
-                    onChanged: selectedSubject == null
-                        ? null
-                        : (newValue) {
-                            setState(() {
-                              selectedTopic = newValue;
-                              if (selectedTopic != null) {
-                                subjectId = selectedTopic;
-                              }
-                            });
-                          },
-                    items: subjectProv.filteredSubjects
-                        .map<DropdownMenuItem<String>>((Subject value) {
-                      return DropdownMenuItem<String>(
-                        value: value.id,
-                        child: Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Text(
-                            value.title,
-                            overflow: TextOverflow.ellipsis,
-                            style: TextStyle(
-                              color:
-                                  Theme.of(context).textTheme.bodyLarge?.color,
+                child: ListTile(
+                  title: Text("Choose Chapters"),
+                  onTap: () {
+                    showDialog(
+                      context: context,
+                      builder: (BuildContext context) {
+                        List<String> tempSelectedTopics =
+                            List.from(selectedTopics);
+                        return AlertDialog(
+                          title: Text("Choose Chapters"),
+                          content: SingleChildScrollView(
+                            child: ListBody(
+                              children: subjectProv.filteredSubjects
+                                  .map((Subject value) {
+                                return CheckboxListTile(
+                                  title: Text(value.title),
+                                  value: tempSelectedTopics.contains(value.id),
+                                  onChanged: (bool? isSelected) {
+                                    setState(() {
+                                      if (isSelected == true) {
+                                        tempSelectedTopics.add(value.id!);
+                                      } else {
+                                        tempSelectedTopics.remove(value.id);
+                                      }
+                                    });
+                                  },
+                                );
+                              }).toList(),
                             ),
                           ),
-                        ),
-                      );
-                    }).toList(),
-                  ),
+                          actions: <Widget>[
+                            TextButton(
+                              child: Text("Cancel"),
+                              onPressed: () {
+                                Navigator.of(context).pop();
+                              },
+                            ),
+                            TextButton(
+                              child: Text("Choose"),
+                              onPressed: () {
+                                setState(() {
+                                  selectedTopics = tempSelectedTopics;
+                                });
+                                Navigator.of(context).pop();
+                              },
+                            ),
+                          ],
+                        );
+                      },
+                    );
+                  },
                 ),
               ),
               SizedBox(height: 20),
+              if (selectedTopics.isNotEmpty)
+                Wrap(
+                  spacing: 8.0,
+                  children: selectedTopics.map((topicId) {
+                    String topicTitle =
+                        subjectProv.getSubjectTitleById(topicId);
+                    return Chip(
+                      label: Text(topicTitle),
+                      onDeleted: () {
+                        setState(() {
+                          selectedTopics.remove(topicId);
+                        });
+                      },
+                    );
+                  }).toList(),
+                ),
+              SizedBox(height: 20),
               Text(
-                "Jumlah Soal",
+                "Number Of Questions",
                 style: TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.bold,
@@ -412,6 +431,40 @@ class _CreateTopicScreenState extends State<CreateTopicScreen> {
                 alignment: WrapAlignment.spaceEvenly,
                 children: List.generate(difficulties.length, (index) {
                   final value = difficulties[index];
+                  return GestureDetector(
+                    onTap: () {
+                      setState(() {
+                        difficulty = value;
+                      });
+                    },
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Radio<String>(
+                          value: value,
+                          groupValue: difficulty,
+                          onChanged: (selectedValue) {
+                            setState(() {
+                              difficulty = selectedValue;
+                            });
+                          },
+                        ),
+                        Text(
+                          value[0].toUpperCase() + value.substring(1),
+                          textAlign: TextAlign.center,
+                        ),
+                      ],
+                    ),
+                  );
+                }),
+              ),
+              const SizedBox(height: 30),
+              Text("Language",
+                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+              Wrap(
+                alignment: WrapAlignment.spaceEvenly,
+                children: List.generate(language.length, (index) {
+                  final value = language[index];
                   return GestureDetector(
                     onTap: () {
                       setState(() {

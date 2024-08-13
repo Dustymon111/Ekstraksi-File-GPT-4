@@ -20,7 +20,7 @@ class BookmarkDetailScreen extends StatelessWidget {
       appBar: AppBar(
         foregroundColor: Colors.white,
         backgroundColor: Color(0xFF1C88BF),
-        title: Text('Detail Modul/Buku'),
+        title: Text('Extracted Book Pages'),
       ),
       body: StreamBuilder<List<Subject>>(
         stream: subjectProvider.getSubjectsStream(bookmarkId),
