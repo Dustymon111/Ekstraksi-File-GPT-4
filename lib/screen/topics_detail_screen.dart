@@ -27,11 +27,9 @@ class _SubjectDetailScreenState extends State<SubjectDetailScreen> {
 
   @override
   void initState() {
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      context.read<QuestionProvider>().fetchQuestionSets(widget.subject.id!);
-      context.read<QuestionProvider>().clearSelectedOption();
-    });
     super.initState();
+    context.read<QuestionProvider>().fetchQuestionSets(widget.subject.id!);
+    context.read<QuestionProvider>().clearSelectedOption();
   }
 
   @override
@@ -83,7 +81,7 @@ class _SubjectDetailScreenState extends State<SubjectDetailScreen> {
                   ),
                   SizedBox(height: 8),
                   Text(
-                    'Score: ${(questionSet.point).ceil()}',
+                    'Score: ${(questionSet.point.toDouble())}',
                     style: TextStyle(
                       fontSize: 20,
                       fontWeight: FontWeight.w500,
@@ -114,9 +112,7 @@ class _SubjectDetailScreenState extends State<SubjectDetailScreen> {
                                   builder: (context) => AnswersScreen(
                                     selectedOption: questionSet.selectedOptions,
                                     subject: widget.subject,
-                                    questions: context
-                                        .read<QuestionProvider>()
-                                        .questions,
+                                    questions: questionSet.questions,
                                   ),
                                 ),
                               );
@@ -268,10 +264,11 @@ class _SubjectDetailScreenState extends State<SubjectDetailScreen> {
                 physics: NeverScrollableScrollPhysics(),
                 itemCount: questionProvider.questionSets.length,
                 itemBuilder: (context, index) {
-                  List<Question> questions = questionProvider.questions;
                   List<QuestionSet> questionSets =
                       questionProvider.questionSets;
                   QuestionSet questionSet = questionSets[index];
+                  List<Question> questions = questionSet.questions;
+
                   return Card(
                     margin: const EdgeInsets.only(bottom: 8.0),
                     shape: RoundedRectangleBorder(
@@ -294,7 +291,7 @@ class _SubjectDetailScreenState extends State<SubjectDetailScreen> {
                           ),
                         ),
                         subtitle: Text(
-                          'Number of Questions: ${context.read<QuestionProvider>().questions.length}',
+                          'Number of Questions: ${questionSet.questionCount}',
                         ),
                         trailing: Text(
                           questionSet.status == "Selesai"
@@ -308,8 +305,6 @@ class _SubjectDetailScreenState extends State<SubjectDetailScreen> {
                           ),
                         ),
                         onTap: () {
-                          print(questions.length);
-
                           context
                               .read<GlobalProvider>()
                               .setQuestionSetIndex(index);
@@ -317,15 +312,16 @@ class _SubjectDetailScreenState extends State<SubjectDetailScreen> {
                             _showResultDialog(
                                 context,
                                 questionProvider.questionSets[index],
-                                questionProvider.questions);
+                                questionSet.questions);
                           } else {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
                                 builder: (context) => QuestionScreen(
-                                    questions: context
-                                        .read<QuestionProvider>()
-                                        .questions,
+                                    questions: questions
+                                        .where((e) =>
+                                            e.questionSetId == questionSet.id)
+                                        .toList(),
                                     questionSetId: questionSet.id!,
                                     subject: widget.subject),
                               ),

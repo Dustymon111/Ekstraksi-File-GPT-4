@@ -13,6 +13,7 @@ class ExerciseResultScreen extends StatelessWidget {
   final int correctAnswers;
   final Map<int, dynamic> selectedOptions;
   final Subject subject;
+  final double score;
 
   ExerciseResultScreen({
     required this.totalQuestions,
@@ -20,11 +21,11 @@ class ExerciseResultScreen extends StatelessWidget {
     required this.questions,
     required this.selectedOptions,
     required this.subject,
+    required this.score,
   });
 
   @override
   Widget build(BuildContext context) {
-    final double score = (correctAnswers / totalQuestions * 100).ceilToDouble();
     return Scaffold(
       appBar: AppBar(
         foregroundColor: Colors.white,
@@ -84,8 +85,7 @@ class ExerciseResultScreen extends StatelessWidget {
                         builder: (context) => AnswersScreen(
                             selectedOption: selectedOptions,
                             subject: subject,
-                            questions:
-                                context.read<QuestionProvider>().questions),
+                            questions: questions),
                       ),
                     );
                   },

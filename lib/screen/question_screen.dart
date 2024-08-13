@@ -34,6 +34,10 @@ class _QuestionScreenState extends State<QuestionScreen> {
   final ScrollController _scrollController = ScrollController();
   late int totalQuestions;
   int correctAnswers = 0;
+  int essayCorrect = 0;
+  int mChoiceCorrect = 0;
+  int mAnswerCorrect = 0;
+  double calculatedPoint = 0;
   final List<TextEditingController> _controllers = [];
   Map<int, List<String>> selectedCheckboxOptions = {};
   Map<int, String> essayAnswers = {};
@@ -177,6 +181,7 @@ class _QuestionScreenState extends State<QuestionScreen> {
                             [])) {
                       setState(() {
                         correctAnswers++;
+                        mAnswerCorrect++;
                       });
                     }
                   } else {
@@ -184,6 +189,7 @@ class _QuestionScreenState extends State<QuestionScreen> {
                         context.read<QuestionProvider>().selectedOption[i]) {
                       setState(() {
                         correctAnswers++;
+                        mChoiceCorrect++;
                       });
                     }
                   }
@@ -194,7 +200,8 @@ class _QuestionScreenState extends State<QuestionScreen> {
                     context.read<QuestionProvider>().setEssayAnswers(
                         i.toString(),
                         widget.questions[i].text,
-                        context.read<QuestionProvider>().selectedOption[i]);
+                        context.read<QuestionProvider>().selectedOption[i] ??
+                            "");
                   }
                 }
                 String? bookmarkId = context.read<GlobalProvider>().bookmarkId;
@@ -210,14 +217,25 @@ class _QuestionScreenState extends State<QuestionScreen> {
                     questionSetId);
                 setState(() {
                   correctAnswers += res['correct_answers'] as int;
+                  essayCorrect += res['correct_answers'] as int;
                 });
-                print(
-                    "All Answers:\n${context.read<QuestionProvider>().selectedOption}");
+                print("mChoice correct: $mChoiceCorrect");
+                print("mAnswer correct: $mAnswerCorrect");
+                print("essay correct: $essayCorrect");
                 print("correct answer count :$correctAnswers");
 
+                setState(() {
+                  calculatedPoint = context
+                      .read<QuestionProvider>()
+                      .calculatePoints(
+                          questions: widget.questions,
+                          mChoiceCorrect: mChoiceCorrect,
+                          mAnswerCorrect: mAnswerCorrect,
+                          essayCorrect: essayCorrect);
+                });
+
                 final newData = {
-                  "point":
-                      (correctAnswers / widget.questions.length * 100).round(),
+                  "point": calculatedPoint.round().toInt(),
                   "status": "Selesai",
                   "selectedOption":
                       context.read<QuestionProvider>().selectedOption,
@@ -390,13 +408,13 @@ class _QuestionScreenState extends State<QuestionScreen> {
                       context,
                       MaterialPageRoute(
                         builder: (context) => ExerciseResultScreen(
-                          subject: widget.subject,
-                          questions: widget.questions,
-                          totalQuestions: widget.questions.length,
-                          correctAnswers: correctAnswers,
-                          selectedOptions:
-                              context.read<QuestionProvider>().selectedOption,
-                        ),
+                            subject: widget.subject,
+                            questions: widget.questions,
+                            totalQuestions: widget.questions.length,
+                            correctAnswers: correctAnswers,
+                            selectedOptions:
+                                context.read<QuestionProvider>().selectedOption,
+                            score: calculatedPoint.roundToDouble()),
                       ),
                     );
                   }

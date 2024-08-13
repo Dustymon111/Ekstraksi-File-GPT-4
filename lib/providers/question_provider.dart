@@ -12,15 +12,16 @@ class QuestionProvider extends ChangeNotifier {
   Stream<List<QuestionSet>> get questionSetsStream =>
       _questionSetsController.stream;
 
+  List<String> typePriority = ['m_choice', 'm_answer', 'essay'];
+
   List<QuestionSet> _questionSets = [];
-  List<Question> _questions = [];
   Map<int, dynamic> _selectedOption = {};
   Map<int, dynamic> _sortedSelectedOption = {};
   List<Map<String, String>> _essayAnswers = [];
   Map<int, List<String>> selectedOptionMultiple = {};
 
   List<QuestionSet> get questionSets => _questionSets;
-  List<Question> get questions => _questions;
+
   Map<int, dynamic> get selectedOption => _sortedSelectedOption;
   List<Map<String, String>> get essayAnswers => _essayAnswers;
 
@@ -84,9 +85,15 @@ class QuestionProvider extends ChangeNotifier {
           // Fetch questions for each question set
           QuerySnapshot questionSnapshot =
               await questionSetDoc.reference.collection('question').get();
-          _questions = questionSnapshot.docs.map((questionDoc) {
+          questionSet.questions = questionSnapshot.docs.map((questionDoc) {
             return Question.fromMap(questionDoc.data() as Map<String, dynamic>);
           }).toList();
+
+          questionSet.questions.sort((a, b) {
+            return typePriority
+                .indexOf(a.type)
+                .compareTo(typePriority.indexOf(b.type));
+          });
           return questionSet;
         }).toList());
         _notifyChanges();
@@ -139,9 +146,6 @@ class QuestionProvider extends ChangeNotifier {
         questionSet.selectedOptions = newData['selectedOption'];
         questionSet.correctAnswers = newData['correct_answers'];
         questionSet.questionCount = newData['question_count'];
-        QuestionSet currentQSet =
-            _questionSets.firstWhere((q) => q.id == questionSetId);
-        currentQSet.status = "Selesai";
 
         await FirebaseFirestore.instance
             .collection('question_set')
@@ -165,6 +169,78 @@ class QuestionProvider extends ChangeNotifier {
         return (data['point'] as num).toDouble();
       }).toList();
     });
+  }
+
+  double calculatePoints({
+    required List<Question> questions,
+    double essayMultiplier = 2.5,
+    double multipleAnswerMultiplier = 1.5,
+    double totalPoints = 100,
+    required int essayCorrect,
+    required int mAnswerCorrect,
+    required int mChoiceCorrect,
+  }) {
+    // Initialize counts
+    int essayCount = 0;
+    int multipleAnswerCount = 0;
+    int multipleChoiceCount = 0;
+
+    // Count the number of each question type
+    for (var q in questions) {
+      if (q.type == 'm_answer') multipleAnswerCount++;
+      if (q.type == 'm_choice') multipleChoiceCount++;
+      if (q.type == 'essay') essayCount++;
+    }
+
+    // Ensure there are questions to avoid division by zero
+    if (essayCount == 0 &&
+        multipleAnswerCount == 0 &&
+        multipleChoiceCount == 0) {
+      print("No questions available.");
+      return 0;
+    }
+
+    print("Essay Count : $essayCount");
+    print("multipleAnswer Count : $multipleAnswerCount");
+    print("multipleChoice Count : $multipleChoiceCount");
+
+    // Calculate z (points for each multiple choice question)
+    double z = totalPoints /
+        (essayCount * essayMultiplier +
+            multipleAnswerCount * multipleAnswerMultiplier +
+            multipleChoiceCount);
+
+    // Calculate x (points for each essay question) and y (points for each multiple answer question)
+    double x = essayMultiplier * z;
+    double y = multipleAnswerMultiplier * z;
+
+    print("Before Normalization");
+    print("x: $x");
+    print("y: $y");
+    print("z: $z");
+
+    // Calculate the total calculated points
+    double totalCalculatedPoints =
+        essayCount * x + multipleAnswerCount * y + multipleChoiceCount * z;
+
+    // Normalize if necessary
+    if (totalCalculatedPoints != totalPoints) {
+      double normalizationFactor = totalPoints / totalCalculatedPoints;
+      x *= normalizationFactor;
+      y *= normalizationFactor;
+      z *= normalizationFactor;
+    }
+
+    print("After Normalization");
+    print("x: $x");
+    print("y: $y");
+    print("z: $z");
+
+    // Calculate the total points based on the correct answers
+    double pointCalculation =
+        (essayCorrect * x) + (mAnswerCorrect * y) + (mChoiceCorrect * z);
+    print("Total Points: $pointCalculation");
+    return pointCalculation;
   }
 
   Stream<List<QuestionSet>> getQuestionSetsStream(String subjectId) {

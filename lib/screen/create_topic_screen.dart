@@ -34,9 +34,6 @@ class _CreateTopicScreenState extends State<CreateTopicScreen> {
 
   @override
   void initState() {
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      context.read<SubjectProvider>().fetchAllSubjectsFromAllBooks();
-    });
     super.initState();
   }
 

@@ -29,6 +29,7 @@ class _HomeState extends State<Home> {
   User? user;
   String? userEmail;
   String? userName;
+  String? userId;
   StreamSubscription<User?>? _authSubscription;
   double progress = 0.0;
 
@@ -42,7 +43,7 @@ class _HomeState extends State<Home> {
   @override
   void initState() {
     super.initState();
-    // userId = context.read<UserProvider>().userId;
+    userId = context.read<UserProvider>().userId;
     _authSubscription = auth.authStateChanges().listen((User? user) {
       if (user == null) {
         Navigator.push(

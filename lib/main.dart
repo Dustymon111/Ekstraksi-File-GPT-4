@@ -4,7 +4,6 @@ import 'package:aplikasi_ekstraksi_file_gpt4/providers/question_provider.dart';
 import 'package:aplikasi_ekstraksi_file_gpt4/providers/subject_provider.dart';
 import 'package:aplikasi_ekstraksi_file_gpt4/providers/user_provider.dart';
 import 'package:aplikasi_ekstraksi_file_gpt4/providers/theme_provider.dart';
-import 'package:aplikasi_ekstraksi_file_gpt4/screen/auth_state.dart';
 import 'package:aplikasi_ekstraksi_file_gpt4/screen/bookmark_screen.dart';
 import 'package:aplikasi_ekstraksi_file_gpt4/screen/create_subject.dart';
 import 'package:aplikasi_ekstraksi_file_gpt4/screen/home_screen.dart';
@@ -111,7 +110,6 @@ class MyApp extends StatelessWidget {
           '/add-bookmark': (context) => CreateSubject(),
           '/bookmarks': (context) => BookmarkScreen(),
           '/test': (context) => TestScreen(),
-          '/auth': (context) => AuthStateListener(),
         },
       ),
     );
