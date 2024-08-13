@@ -58,33 +58,37 @@ class _SubjectDetailScreenState extends State<SubjectDetailScreen> {
                   Text(
                     'Your Result',
                     style: TextStyle(
-                        fontSize: 28,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.blueAccent),
+                      fontSize: 28,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.blueAccent,
+                    ),
                   ),
                   SizedBox(height: 24),
                   Text(
                     'Total Questions: ${questions.length}',
                     style: TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.w500,
-                        color: Theme.of(context).textTheme.bodyLarge?.color),
+                      fontSize: 20,
+                      fontWeight: FontWeight.w500,
+                      color: Theme.of(context).textTheme.bodyLarge?.color,
+                    ),
                   ),
                   SizedBox(height: 8),
                   Text(
                     'Correct Answers: ${questionSet.correctAnswers}',
                     style: TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.w500,
-                        color: Theme.of(context).textTheme.bodyLarge?.color),
+                      fontSize: 20,
+                      fontWeight: FontWeight.w500,
+                      color: Theme.of(context).textTheme.bodyLarge?.color,
+                    ),
                   ),
                   SizedBox(height: 8),
                   Text(
                     'Score: ${(questionSet.point).ceil()}',
                     style: TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.w500,
-                        color: Theme.of(context).textTheme.bodyLarge?.color),
+                      fontSize: 20,
+                      fontWeight: FontWeight.w500,
+                      color: Theme.of(context).textTheme.bodyLarge?.color,
+                    ),
                   ),
                   SizedBox(height: 24),
                   Row(

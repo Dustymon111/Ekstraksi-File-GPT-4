@@ -4,8 +4,8 @@ import 'package:aplikasi_ekstraksi_file_gpt4/components/custom_button.dart';
 import 'package:aplikasi_ekstraksi_file_gpt4/models/subject_model.dart';
 import 'package:aplikasi_ekstraksi_file_gpt4/providers/bookmark_provider.dart';
 import 'package:aplikasi_ekstraksi_file_gpt4/providers/theme_provider.dart';
-import 'package:aplikasi_ekstraksi_file_gpt4/providers/user_provider.dart';
-import 'package:aplikasi_ekstraksi_file_gpt4/screen/login_screen.dart';
+// import 'package:aplikasi_ekstraksi_file_gpt4/providers/user_provider.dart';
+// import 'package:aplikasi_ekstraksi_file_gpt4/screen/login_screen.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart'; // Import Firebase Storage
@@ -41,28 +41,28 @@ class _CreateSubjectState extends State<CreateSubject> {
   String? userEmail;
   String? userName;
   late String userId;
-  late final StreamSubscription<User?> _authSubscription;
+  // late final StreamSubscription<User?> _authSubscription;
   double progress = 0.0;
 
-  @override
-  void initState() {
-    super.initState();
-    userId = context.read<UserProvider>().userId;
-    _authSubscription = auth.authStateChanges().listen((User? user) {
-      if (user == null) {
-        Navigator.of(context).pushAndRemoveUntil(
-          MaterialPageRoute(builder: (context) => LoginScreen()),
-          (route) => false,
-        );
-      } else {
-        print('User is signed in!');
-      }
-    });
-  }
+  // @override
+  // void initState() {
+  //   super.initState();
+  //   userId = context.read<UserProvider>().userId;
+  //   _authSubscription = auth.authStateChanges().listen((User? user) {
+  //     if (user == null) {
+  //       Navigator.of(context).pushAndRemoveUntil(
+  //         MaterialPageRoute(builder: (context) => LoginScreen()),
+  //         (route) => false,
+  //       );
+  //     } else {
+  //       print('User is signed in!');
+  //     }
+  //   });
+  // }
 
   @override
   void dispose() {
-    _authSubscription.cancel();
+    // _authSubscription.cancel();
     _pageController.dispose();
     super.dispose();
   }

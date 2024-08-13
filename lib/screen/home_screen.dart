@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'dart:async';
 
 import 'package:aplikasi_ekstraksi_file_gpt4/providers/theme_provider.dart';
@@ -8,8 +9,8 @@ import 'package:aplikasi_ekstraksi_file_gpt4/screen/login_screen.dart';
 import 'package:aplikasi_ekstraksi_file_gpt4/screen/profile_screen.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/material.dart';
-import 'package:path/path.dart';
+
+// import 'package:path/path.dart';
 import 'package:provider/provider.dart';
 
 class Home extends StatefulWidget {
@@ -28,7 +29,7 @@ class _HomeState extends State<Home> {
   User? user;
   String? userEmail;
   String? userName;
-  late final StreamSubscription<User?> _authSubscription;
+  StreamSubscription<User?>? _authSubscription;
   double progress = 0.0;
 
   final color = [Colors.red, Colors.yellow, Colors.blue];
@@ -41,12 +42,11 @@ class _HomeState extends State<Home> {
   @override
   void initState() {
     super.initState();
+    // userId = context.read<UserProvider>().userId;
     _authSubscription = auth.authStateChanges().listen((User? user) {
       if (user == null) {
-        Navigator.of(context as BuildContext).pushAndRemoveUntil(
-          MaterialPageRoute(builder: (context) => LoginScreen()),
-          (route) => false,
-        );
+        Navigator.push(
+            context, MaterialPageRoute(builder: (context) => LoginScreen()));
       } else {
         print('User is signed in!');
       }
@@ -55,7 +55,7 @@ class _HomeState extends State<Home> {
 
   @override
   void dispose() {
-    _authSubscription.cancel();
+    _authSubscription?.cancel();
     _pageController.dispose();
     super.dispose();
   }
@@ -325,14 +325,14 @@ class _HomeState extends State<Home> {
   }
 
   Widget buildBookmarkPage(BuildContext context) {
-    return BookmarkScreen();
+    return const BookmarkScreen();
   }
 
   Widget buildCreatePage(BuildContext context) {
-    return CreateScreen();
+    return const CreateScreen();
   }
 
   Widget buildProfilePage(BuildContext context) {
-    return ProfileScreen();
+    return const ProfileScreen();
   }
 }
