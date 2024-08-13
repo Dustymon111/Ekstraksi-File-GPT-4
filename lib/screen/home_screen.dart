@@ -30,6 +30,7 @@ class _HomeState extends State<Home> {
   User? user;
   String? userEmail;
   String? userName;
+  String? userId;
   StreamSubscription<User?>? _authSubscription;
   double progress = 0.0;
   int BookCount = 0;

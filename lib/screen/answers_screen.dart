@@ -21,25 +21,19 @@ class AnswersScreen extends StatefulWidget {
 class _AnswersScreenState extends State<AnswersScreen> {
   final ScrollController _scrollController = ScrollController();
   late List<TextEditingController> _controllers;
-  List<Question>? questions;
 
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      context.read<QuestionProvider>().fetchQuestionSets(widget.subject.id!);
-    });
-    questions = context.read<QuestionProvider>().questions;
-
     // Initialize a controller for each question
-    _controllers = List.generate(questions!.length, (index) {
-      final question = questions?[index];
+    _controllers = List.generate(widget.questions.length, (index) {
+      final question = widget.questions[index];
       final selectedOption = widget.selectedOption[index];
       // final correctOption = question.correctOption;
 
-      if (question?.type == "essay") {}
+      if (question.type == "essay") {}
       // Set initial text based on the type of question and its correctness
-      final initialText = question?.type == "essay"
+      final initialText = question.type == "essay"
           ? selectedOption // Initially display the selected answer
           : null;
 
@@ -70,12 +64,11 @@ class _AnswersScreenState extends State<AnswersScreen> {
             child: SizedBox(
               child: ListView.builder(
                 controller: _scrollController,
-                itemCount: questions?.length,
+                itemCount: widget.questions.length,
                 itemBuilder: (context, index) {
-                  final question = questions![index];
+                  final question = widget.questions[index];
                   final selectedOption = widget.selectedOption[index];
                   final correctOption = question.correctOption;
-
                   return Card(
                     elevation: 5,
                     shape: RoundedRectangleBorder(
@@ -135,18 +128,22 @@ class _AnswersScreenState extends State<AnswersScreen> {
       case "m_answer":
         return Column(
           children: question.options.map((option) {
-            final isSelected =
-                (selectedOption as List<dynamic>).contains(option);
+            final isSelected = selectedOption?.contains(option);
             return CheckboxListTile(
               title: Text(style: TextStyle(color: Colors.black), option),
-              value: isSelected,
+              value: isSelected ?? false,
               onChanged:
                   null, // No change handler since we're just displaying the results
-              secondary: correctOption.contains(option)
-                  ? Icon(Icons.check, color: Colors.green)
-                  : selectedOption.contains(option)
-                      ? Icon(Icons.close, color: Colors.red) // Incorrect answer
-                      : SizedBox.shrink(),
+              secondary: selectedOption != null
+                  ? correctOption.contains(option)
+                      ? Icon(Icons.check, color: Colors.green)
+                      : selectedOption?.contains(option)
+                          ? Icon(Icons.close,
+                              color: Colors.red) // Incorrect answer
+                          : SizedBox.shrink()
+                  : correctOption.contains(option)
+                      ? Icon(Icons.check, color: Colors.green)
+                      : Icon(Icons.close, color: Colors.red),
 
               controlAffinity: ListTileControlAffinity.leading,
             );
@@ -183,7 +180,7 @@ class _AnswersScreenState extends State<AnswersScreen> {
                       onPressed: _controllers[index].text != selectedOption
                           ? () {
                               setState(() {
-                                _controllers[index].text = selectedOption;
+                                _controllers[index].text = selectedOption ?? "";
                               });
                             }
                           : null, // Button is disabled when text is already equal to selectedOption
