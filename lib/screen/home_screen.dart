@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'dart:async';
 
@@ -31,6 +32,7 @@ class _HomeState extends State<Home> {
   String? userName;
   StreamSubscription<User?>? _authSubscription;
   double progress = 0.0;
+  int BookCount = 0;
 
   final color = [Colors.red, Colors.yellow, Colors.blue];
   List<String> assets = [
@@ -42,6 +44,7 @@ class _HomeState extends State<Home> {
   @override
   void initState() {
     super.initState();
+    fetchBookCount();
     // userId = context.read<UserProvider>().userId;
     _authSubscription = auth.authStateChanges().listen((User? user) {
       if (user == null) {
@@ -51,6 +54,24 @@ class _HomeState extends State<Home> {
         print('User is signed in!');
       }
     });
+  }
+
+  @override
+  void fetchBookCount() async {
+    User? user = FirebaseAuth.instance.currentUser;
+    if (user != null) {
+      String uid = user.uid;
+
+      // Mengambil data dari Firestore berdasarkan UID
+      DocumentSnapshot snapshot =
+          await FirebaseFirestore.instance.collection('users').doc(uid).get();
+
+      List bookmarkIds = snapshot['bookmarkIds'];
+
+      setState(() {
+        BookCount = bookmarkIds.length;
+      });
+    }
   }
 
   @override
@@ -189,7 +210,7 @@ class _HomeState extends State<Home> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              "Welcome to Examqz..",
+                              "Welcome to EduCraft..",
                               style:
                                   TextStyle(color: Colors.white, fontSize: 18),
                             ),
@@ -201,7 +222,7 @@ class _HomeState extends State<Home> {
                                   fontWeight: FontWeight.bold),
                             ),
                             Text(
-                              "Pengetahuan Mengalir Bebas dengan Latihan",
+                              "Knowledge Flows Freely with Practice",
                               style:
                                   TextStyle(color: Colors.white, fontSize: 14),
                             ),
@@ -222,7 +243,7 @@ class _HomeState extends State<Home> {
                   children: [
                     Icon(Icons.subject, size: 30),
                     SizedBox(height: 5),
-                    Text("1 Buku",
+                    Text("$BookCount Book",
                         style: TextStyle(
                           fontSize: 18,
                           color: Theme.of(context).textTheme.bodyLarge?.color,
@@ -233,7 +254,7 @@ class _HomeState extends State<Home> {
                   children: [
                     Icon(Icons.topic, size: 30),
                     SizedBox(height: 5),
-                    Text("3 Latihan",
+                    Text("0 Exercise",
                         style: TextStyle(
                           fontSize: 18,
                           color: Theme.of(context).textTheme.bodyLarge?.color,
@@ -247,19 +268,41 @@ class _HomeState extends State<Home> {
               onPressed: () {
                 _onTabTapped(1);
               },
-              child: Text("Buat Baru",
-                  style: TextStyle(
-                    fontSize: 18,
-                    color: Theme.of(context).textTheme.bodyLarge?.color,
-                  )),
+              child: LayoutBuilder(
+                builder: (context, constraints) {
+                  double screenWidth = MediaQuery.of(context).size.width;
+                  double basePaddingHorizontal =
+                      screenWidth * 0.1; // Basic padding based on screen width
+                  double additionalPadding =
+                      30.0; // Additional padding to increase left and right padding
+                  double paddingHorizontal =
+                      basePaddingHorizontal + additionalPadding;
+                  double paddingVertical = 15.0; // Fixed vertical padding
+                  double fontSize = screenWidth *
+                      0.05; // Adjust font size based on screen width
+
+                  return Padding(
+                    padding: EdgeInsets.symmetric(
+                        horizontal: paddingHorizontal,
+                        vertical: paddingVertical),
+                    child: Text(
+                      "Create New",
+                      style: TextStyle(
+                        fontSize: fontSize,
+                        color: Theme.of(context).textTheme.bodyLarge?.color,
+                      ),
+                    ),
+                  );
+                },
+              ),
               style: ElevatedButton.styleFrom(
-                  side: BorderSide(
-                    color: Color(0xFF1C88BF),
-                    width: 3,
-                  ),
-                  padding: EdgeInsets.symmetric(horizontal: 150, vertical: 15),
-                  foregroundColor: Color(0xFF1C88BF),
-                  backgroundColor: Theme.of(context).scaffoldBackgroundColor),
+                side: BorderSide(
+                  color: Color(0xFF1C88BF),
+                  width: 3,
+                ),
+                backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+                foregroundColor: Color(0xFF1C88BF),
+              ),
             ),
             const SizedBox(
               height: 20,
@@ -269,12 +312,12 @@ class _HomeState extends State<Home> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text("Instruksi",
+                  Text("Instructions",
                       style: TextStyle(
                           fontSize: 20,
                           fontWeight: FontWeight.bold,
                           color: Theme.of(context).textTheme.bodyLarge?.color)),
-                  Text("Untuk pengguna baru, ikuti langkah-langkah berikut!",
+                  Text("For new users, follow these steps!",
                       style: TextStyle(
                           fontSize: 16,
                           color: Theme.of(context).textTheme.bodyLarge?.color)),

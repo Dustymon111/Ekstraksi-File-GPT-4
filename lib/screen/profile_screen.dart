@@ -18,7 +18,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   void _showDialog(BuildContext context, String title, String content) {
-    // Make sure to use the correct BuildContext
     showDialog(
       context: context,
       builder: (BuildContext dialogContext) {
@@ -106,7 +105,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 children: [
                   const SizedBox(height: 24),
                   Text(
-                    "Pengaturan",
+                    "Settings",
                     style: TextStyle(
                       fontSize: 22,
                       fontWeight: FontWeight.bold,
@@ -115,7 +114,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   ),
                   const SizedBox(height: 8),
                   Text(
-                    "Ubah Email",
+                    "Change Email",
                     style: TextStyle(
                       fontSize: 18,
                       color: Theme.of(context).textTheme.bodyLarge?.color,
@@ -123,7 +122,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   ),
                   const SizedBox(height: 4),
                   Text(
-                    "Ubah Password",
+                    "Change Password",
                     style: TextStyle(
                       fontSize: 18,
                       color: Theme.of(context).textTheme.bodyLarge?.color,
@@ -133,7 +132,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   const Divider(thickness: 2),
                   const SizedBox(height: 20),
                   Text(
-                    "Bantuan & Informasi",
+                    "Help And Information",
                     style: TextStyle(
                       fontSize: 25,
                       fontWeight: FontWeight.bold,
@@ -143,11 +142,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   const SizedBox(height: 10),
                   TextButton(
                     onPressed: () {
-                      _showDialog(context, "Syarat dan Ketentuan",
-                          "Terima kasih telah menggunakan aplikasi kami. Harap dibaca dan pahami syarat dan ketentuan berikut sebelum menggunakan layanan kami:\n\n1. Penggunaan aplikasi ini tunduk pada syarat dan ketentuan yang berlaku.\n\n2. Kami menghargai privasi Anda dan akan melindungi data pribadi sesuai dengan kebijakan privasi kami.\n\n3. Setiap penggunaan yang melanggar ketentuan dapat mengakibatkan pembatasan akses atau penghentian layanan.\n\nTerima kasih atas perhatian Anda.");
+                      _showDialog(context, "Terms & Conditions",
+                          "Thank you for using our application. Please read and understand the following terms and conditions before using our services:\n\n1. The use of this application is subject to the applicable terms and conditions.\n\n2.We respect your privacy and will protect personal data in accordance with our privacy policy.\n\n3. Any use that violates the terms may result in restricted access or termination of services.\n\nThank you for your attention.");
                     },
                     child: const Text(
-                      "Syarat Dan Ketentuan",
+                      "Terms & Conditions",
                       style: TextStyle(
                         fontWeight: FontWeight.bold,
                         fontSize: 15,
@@ -157,11 +156,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   const SizedBox(height: 10),
                   TextButton(
                     onPressed: () {
-                      _showDialog(context, "Pusat Bantuan",
-                          "Selamat datang di Pusat Bantuan kami.\n\nKami siap membantu Anda dengan segala pertanyaan atau masalah yang Anda miliki terkait penggunaan aplikasi kami.\n\nSilakan cari jawaban untuk pertanyaan umum di bagian FAQ kami.\n\nJika Anda tidak menemukan jawaban yang Anda cari, jangan ragu untuk menghubungi tim dukungan kami melalui email atau telepon yang tertera di halaman kontak aplikasi.\n\nTerima kasih.");
+                      _showDialog(context, "Help Center",
+                          "Welcome to Our Help Center.\n\nWe are here to assist you with any questions or issues you may have regarding the use of our application.\n\nPlease look for answers to common questions in our FAQ section.\n\nIf you do not find the answer you are looking for, feel free to contact our support team via the email or phone number provided on the application's contact page.\n\nThank you.");
                     },
                     child: const Text(
-                      "Pusat Bantuan",
+                      "Help Center",
                       style: TextStyle(
                         fontWeight: FontWeight.bold,
                         fontSize: 15,
@@ -171,11 +170,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   const SizedBox(height: 10),
                   TextButton(
                     onPressed: () {
-                      _showDialog(context, "Tentang Aplikasi",
-                          "Aplikasi ini merupakan aplikasi ekstraksi file digital menjadi beberapa soal dalam bentuk quis. Soal yang dihasilkan dapat menjadi latihan untuk siswa belajar dan referensi untuk ujian siswa bagi guru");
+                      _showDialog(context, "About",
+                          "This application is designed to extract digital files into quizzes. The generated questions can be used for student practice and serve as a reference for teachers when preparing exams..");
                     },
                     child: const Text(
-                      "Tentang Aplikasi",
+                      "About",
                       style: TextStyle(
                         fontWeight: FontWeight.bold,
                         fontSize: 15,
@@ -186,7 +185,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   TextButton(
                     onPressed: () {
                       _showDialog(context, "Contact Person",
-                          "Berikut adalah informasi kontak kami untuk pertanyaan lebih lanjut:\n\nNama: TIM L\nEmail: informatika@mikroskil.ac.id\nTelepon: 082362246172\n\nJangan ragu untuk menghubungi kami jika Anda memiliki pertanyaan atau membutuhkan bantuan lebih lanjut.\n\nTerima kasih.");
+                          "Here is our contact information for further inquiries:\n\nName: Examqz\nEmail: informatika@mikroskil.ac.id\nPhone: 082362246172\n\nPlease feel free to contact us if you have any questions or need further assistance.\n\nThankyou.");
                     },
                     child: const Text(
                       "Contact Person",

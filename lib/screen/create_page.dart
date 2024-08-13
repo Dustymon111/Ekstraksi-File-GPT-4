@@ -41,7 +41,7 @@ class _CreateScreenState extends State<CreateScreen> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: const [
                             Text(
-                              "Examqz..",
+                              "EduCraft..",
                               style: TextStyle(
                                 color: Colors.white,
                                 fontSize: 24,
@@ -49,7 +49,7 @@ class _CreateScreenState extends State<CreateScreen> {
                               ),
                             ),
                             Text(
-                              "Pengetahuan Mengalir Bebas dengan Latihan",
+                              "Knowledge Flows Freely with Practice",
                               style: TextStyle(
                                 color: Colors.white,
                                 fontSize: 14,
