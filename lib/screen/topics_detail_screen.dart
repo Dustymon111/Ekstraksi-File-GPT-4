@@ -27,9 +27,11 @@ class _SubjectDetailScreenState extends State<SubjectDetailScreen> {
 
   @override
   void initState() {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      context.read<QuestionProvider>().fetchQuestionSets(widget.subject.id!);
+      context.read<QuestionProvider>().clearSelectedOption();
+    });
     super.initState();
-    context.read<QuestionProvider>().fetchQuestionSets(widget.subject.id!);
-    context.read<QuestionProvider>().clearSelectedOption();
   }
 
   @override
@@ -202,14 +204,9 @@ class _SubjectDetailScreenState extends State<SubjectDetailScreen> {
                     color: Theme.of(context).textTheme.bodyLarge?.color),
               ),
               SizedBox(height: 8),
+
               Text(
-                'Book: ${widget.subject.title}',
-                style: TextStyle(
-                    fontSize: 16,
-                    color: Theme.of(context).textTheme.bodyLarge?.color),
-              ),
-              Text(
-                'Count of Exercise: ${widget.subject.questionSetIds.length}',
+                'Number of Exercise(s): ${widget.subject.questionSetIds.length}',
                 style: TextStyle(fontSize: 16),
               ),
               SizedBox(height: 16),
@@ -268,6 +265,8 @@ class _SubjectDetailScreenState extends State<SubjectDetailScreen> {
                       questionProvider.questionSets;
                   QuestionSet questionSet = questionSets[index];
                   List<Question> questions = questionSet.questions;
+                  print(questionSet.questionCount);
+                  print(questionSet.subjectId);
 
                   return Card(
                     margin: const EdgeInsets.only(bottom: 8.0),
@@ -296,7 +295,7 @@ class _SubjectDetailScreenState extends State<SubjectDetailScreen> {
                         trailing: Text(
                           questionSet.status == "Selesai"
                               ? "${questionSet.point}/100"
-                              : "Belum Selesai",
+                              : "Not Finished",
                           style: TextStyle(
                             color: questionSet.status == "Selesai"
                                 ? Colors.green
@@ -345,7 +344,7 @@ class _SubjectDetailScreenState extends State<SubjectDetailScreen> {
                           MaterialPageRoute(
                               builder: (context) => const CreateTopicScreen()));
                     },
-                    label: "Buat Latihan Baru"),
+                    label: "Create a New Exercise"),
               )
             ],
           ),

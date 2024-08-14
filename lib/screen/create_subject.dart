@@ -101,6 +101,7 @@ class _CreateSubjectState extends State<CreateSubject> {
   }
 
   Future<void> uploadFile(BuildContext context) async {
+    Stopwatch stopwatch = Stopwatch()..start();
     if (pickedFile != null) {
       try {
         final filePath = pickedFile!.path!;
@@ -122,7 +123,7 @@ class _CreateSubjectState extends State<CreateSubject> {
                 children: [
                   LoadingAnimationWidget.discreteCircle(
                       color: Colors.blue,
-                      size: MediaQuery.of(context).size.width * 0.25,
+                      size: MediaQuery.of(context).size.width * 0.2,
                       secondRingColor: Colors.lightBlue,
                       thirdRingColor: Colors.grey),
                   SizedBox(width: 20),
@@ -163,7 +164,10 @@ class _CreateSubjectState extends State<CreateSubject> {
 
         Navigator.of(context).pop(); // Close the loading dialog
 
+        stopwatch.stop();
         if (response.statusCode == 200) {
+          print('Response time: ${stopwatch.elapsedMilliseconds} ms');
+
           final responseBody = await response.stream.bytesToString();
           print('response: $responseBody');
           print('File uploaded successfully! Download URL: $bookUrl');

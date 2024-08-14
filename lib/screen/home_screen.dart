@@ -57,7 +57,6 @@ class _HomeState extends State<Home> {
     });
   }
 
-  @override
   void fetchBookCount() async {
     User? user = FirebaseAuth.instance.currentUser;
     if (user != null) {

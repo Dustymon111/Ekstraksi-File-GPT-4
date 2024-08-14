@@ -26,7 +26,7 @@ class QuestionSet {
       id: data['id'] ?? "",
       point: data['point'] ?? 0,
       correctAnswers: data['correct_answers'] ?? 0,
-      questionCount: data['question_count'] ?? 0,
+      questionCount: data['questionCount'] ?? 0,
       status: data['status'] ?? '',
       questions:
           (data['questions'] as List<dynamic>? ?? []).map((questionData) {
@@ -45,7 +45,7 @@ class QuestionSet {
       'id': id ?? "",
       'point': point,
       'correct_answers': correctAnswers,
-      'question_count': questionCount,
+      'questionCount': questionCount,
       'status': status,
       'questions': questions.map((question) => question.toMap()).toList(),
       'selectedOptions':

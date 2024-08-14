@@ -66,7 +66,7 @@ class BookmarkDetailScreen extends StatelessWidget {
                             EdgeInsets.symmetric(vertical: 12, horizontal: 24),
                       ),
                       child: Text(
-                        'See Details Book',
+                        'Book details',
                         style:
                             TextStyle(color: Color(0xFF1C88BF), fontSize: 16),
                       ),
@@ -177,7 +177,7 @@ class BookmarkDetailScreen extends StatelessWidget {
                                       ),
                                       SizedBox(height: 8),
                                       Text(
-                                        '${subject.questionSetIds.length} latihan',
+                                        '${subject.questionSetIds.length} Exercise(s)',
                                         style: TextStyle(color: Colors.white),
                                       ),
                                     ],

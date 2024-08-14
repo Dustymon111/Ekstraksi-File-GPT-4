@@ -1,13 +1,11 @@
 import 'package:aplikasi_ekstraksi_file_gpt4/models/question_model.dart';
 import 'package:aplikasi_ekstraksi_file_gpt4/models/subject_model.dart';
-import 'package:aplikasi_ekstraksi_file_gpt4/providers/question_provider.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 
 class AnswersScreen extends StatefulWidget {
   final Map<int, dynamic> selectedOption;
   final Subject subject;
-  List<Question> questions;
+  final List<Question> questions;
 
   AnswersScreen(
       {required this.selectedOption,
