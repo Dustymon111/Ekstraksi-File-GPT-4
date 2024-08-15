@@ -12,7 +12,7 @@ import 'package:aplikasi_ekstraksi_file_gpt4/providers/theme_provider.dart';
 import 'package:aplikasi_ekstraksi_file_gpt4/providers/user_provider.dart';
 import 'package:aplikasi_ekstraksi_file_gpt4/screen/exercise_result_screen.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
+// import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:provider/provider.dart';
@@ -44,8 +44,8 @@ class _QuestionScreenState extends State<QuestionScreen> {
   Map<int, String> essayAnswers = {};
   final String serverUrl =
       'https://ekstraksi-file-gpt-4-server-xzcbfs2fqq-et.a.run.app';
-  final String localhost = dotenv.env["LOCALHOST"]!;
-  final String port = dotenv.env["PORT"]!;
+  // final String localhost = dotenv.env["LOCALHOST"]!;
+  // final String port = dotenv.env["PORT"]!;
 
   bool areListsEqual(List<dynamic> list1, List<dynamic> list2) {
     if (list1.length != list2.length) {
@@ -116,7 +116,7 @@ class _QuestionScreenState extends State<QuestionScreen> {
       },
     );
 
-    final url = Uri.parse('$localhost:$port/essay-checker');
+    final url = Uri.parse('$serverUrl/essay-checker');
     final response = await http.post(
       url,
       headers: <String, String>{
