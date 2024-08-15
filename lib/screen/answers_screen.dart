@@ -161,7 +161,7 @@ class _AnswersScreenState extends State<AnswersScreen> {
                       : "Correct Answer",
                   labelStyle: TextStyle(color: Colors.black),
                   border: OutlineInputBorder(),
-                  suffixIcon: correctOption == "correct"
+                  suffixIcon: correctOption == selectedOption
                       ? Icon(Icons.check, color: Colors.green)
                       : _controllers[index].text == selectedOption
                           ? Icon(Icons.close, color: Colors.red)
@@ -169,7 +169,7 @@ class _AnswersScreenState extends State<AnswersScreen> {
               maxLines: null,
               style: TextStyle(color: Colors.black),
             ),
-            if (correctOption != "correct") ...[
+            if (correctOption != selectedOption) ...[
               SizedBox(height: 12),
               Row(
                 children: [

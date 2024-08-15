@@ -40,12 +40,34 @@ Future<void> generateQuestionsDocx(List<Question> questions) async {
       }
     }
 
+    List<Content> answerList = [];
+    for (var n in questions) {
+      if (n.type == "m_answer") {
+        final c = PlainContent("value")
+          ..add(TextContent(
+              "normal", "Multiple Answer:\n- ${n.correctOption.join("\n- ")}"));
+        answerList.add(c);
+      } else {
+        final c = PlainContent("value")
+          ..add(TextContent("normal", n.correctOption));
+        answerList.add(c);
+      }
+    }
+
     final content = Content();
     for (int i = 0; i < questions.length; i++) {
       content.add(ListContent("list$i", [
         TextContent("value", questions[i].text)
           ..add(ListContent("listnested", contentList[i])),
       ]));
+      content.add(ListContent("answer0", answerList));
+      // if (questions[i].type == "m_answer") {
+      //   content.add(ListContent("answer$i",
+      //       [TextContent("value", questions[i].correctOption.join('\n'))]));
+      // } else {
+      //   content.add(ListContent(
+      //       "answer$i", [TextContent("value", questions[i].correctOption)]));
+      // }
     }
 
     final generatedBytes = await docx.generate(content);

@@ -12,7 +12,8 @@ import 'package:aplikasi_ekstraksi_file_gpt4/providers/theme_provider.dart';
 import 'package:aplikasi_ekstraksi_file_gpt4/providers/user_provider.dart';
 import 'package:aplikasi_ekstraksi_file_gpt4/screen/exercise_result_screen.dart';
 import 'package:flutter/material.dart';
-// import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:provider/provider.dart';
 import 'package:http/http.dart' as http;
@@ -43,8 +44,8 @@ class _QuestionScreenState extends State<QuestionScreen> {
   Map<int, String> essayAnswers = {};
   final String serverUrl =
       'https://ekstraksi-file-gpt-4-server-xzcbfs2fqq-et.a.run.app';
-  // final String localhost = dotenv.env["LOCALHOST"]!;
-  // final String port = dotenv.env["PORT"]!;
+  final String localhost = dotenv.env["LOCALHOST"]!;
+  final String port = dotenv.env["PORT"]!;
 
   bool areListsEqual(List<dynamic> list1, List<dynamic> list2) {
     if (list1.length != list2.length) {
@@ -115,7 +116,7 @@ class _QuestionScreenState extends State<QuestionScreen> {
       },
     );
 
-    final url = Uri.parse('$serverUrl/essay-checker');
+    final url = Uri.parse('$localhost:$port/essay-checker');
     final response = await http.post(
       url,
       headers: <String, String>{
@@ -208,17 +209,28 @@ class _QuestionScreenState extends State<QuestionScreen> {
                 String? filename = context
                     .read<BookmarkProvider>()
                     .findFilenameById(bookmarkId);
-                final res = await checkEssayAnswer(
-                    context,
-                    context.read<QuestionProvider>().essayAnswers,
-                    context.read<UserProvider>().userId,
-                    filename!,
-                    widget.subject.id!,
-                    questionSetId);
-                setState(() {
-                  correctAnswers += res['correct_answers'] as int;
-                  essayCorrect += res['correct_answers'] as int;
-                });
+                try {
+                  final res = await checkEssayAnswer(
+                      context,
+                      context.read<QuestionProvider>().essayAnswers,
+                      context.read<UserProvider>().userId,
+                      filename!,
+                      widget.subject.id!,
+                      questionSetId);
+                  setState(() {
+                    correctAnswers += res['correct_answers'] as int;
+                    essayCorrect += res['correct_answers'] as int;
+                  });
+                } catch (e) {
+                  Fluttertoast.showToast(
+                      msg: "Error Submitting Exercise, Please try again.",
+                      toastLength: Toast.LENGTH_LONG,
+                      gravity: ToastGravity.BOTTOM,
+                      timeInSecForIosWeb: 1,
+                      backgroundColor: Colors.green,
+                      textColor: Colors.white,
+                      fontSize: 16.0);
+                }
                 print("mChoice correct: $mChoiceCorrect");
                 print("mAnswer correct: $mAnswerCorrect");
                 print("essay correct: $essayCorrect");
@@ -246,6 +258,10 @@ class _QuestionScreenState extends State<QuestionScreen> {
                 await context
                     .read<QuestionProvider>()
                     .updateQuestionSetFields(questionSetId, newData);
+
+                await context
+                    .read<QuestionProvider>()
+                    .fetchQuestions(questionSetId);
 
                 Navigator.pop(
                     context, true); // Close the dialog and return true
@@ -409,7 +425,8 @@ class _QuestionScreenState extends State<QuestionScreen> {
                       MaterialPageRoute(
                         builder: (context) => ExerciseResultScreen(
                             subject: widget.subject,
-                            questions: widget.questions,
+                            questions:
+                                context.read<QuestionProvider>().questions,
                             totalQuestions: widget.questions.length,
                             correctAnswers: correctAnswers,
                             selectedOptions:

@@ -15,12 +15,14 @@ class QuestionProvider extends ChangeNotifier {
   List<String> typePriority = ['m_choice', 'm_answer', 'essay'];
 
   List<QuestionSet> _questionSets = [];
+  List<Question> _questions = [];
   Map<int, dynamic> _selectedOption = {};
   Map<int, dynamic> _sortedSelectedOption = {};
   List<Map<String, String>> _essayAnswers = [];
   Map<int, List<String>> selectedOptionMultiple = {};
 
   List<QuestionSet> get questionSets => _questionSets;
+  List<Question> get questions => _questions;
 
   Map<int, dynamic> get selectedOption => _sortedSelectedOption;
   List<Map<String, String>> get essayAnswers => _essayAnswers;
@@ -111,6 +113,32 @@ class QuestionProvider extends ChangeNotifier {
           backgroundColor: Colors.red,
           textColor: Colors.white,
           fontSize: 16.0);
+    }
+  }
+
+  Future<void> fetchQuestions(String questionSetId) async {
+    try {
+      // Reference to the 'question' collection inside a specific 'questionSets' document
+      CollectionReference questionCollection = _firestore
+          .collection('question_set')
+          .doc(questionSetId)
+          .collection('question');
+
+      // Fetch the documents from the 'question' collection
+      QuerySnapshot querySnapshot = await questionCollection.get();
+
+      // Map each document into a list of maps
+      _questions = querySnapshot.docs.map((doc) {
+        return Question.fromMap(doc.data() as Map<String, dynamic>);
+      }).toList();
+      questions.sort((a, b) {
+        return typePriority
+            .indexOf(a.type)
+            .compareTo(typePriority.indexOf(b.type));
+      });
+    } catch (e) {
+      // Handle any errors that occur during fetching
+      print('Error fetching questions: $e');
     }
   }
 
