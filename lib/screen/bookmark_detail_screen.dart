@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:aplikasi_ekstraksi_file_gpt4/models/bookmark_model.dart';
 import 'package:aplikasi_ekstraksi_file_gpt4/models/subject_model.dart';
 import 'package:aplikasi_ekstraksi_file_gpt4/providers/subject_provider.dart';
-import 'package:aplikasi_ekstraksi_file_gpt4/screen/create_topic_screen.dart';
 import 'package:provider/provider.dart';
 
 class BookmarkDetailScreen extends StatelessWidget {
@@ -96,97 +95,59 @@ class BookmarkDetailScreen extends StatelessWidget {
                         mainAxisSpacing: 10,
                         childAspectRatio: 3 / 2,
                       ),
-                      itemCount: subjects.length + 1,
+                      itemCount: subjects.length,
                       itemBuilder: (context, index) {
-                        if (index == subjects.length) {
-                          return GestureDetector(
-                            onTap: () {
-                              Navigator.of(context).push(
-                                MaterialPageRoute(
-                                    builder: (context) => CreateTopicScreen()),
-                              );
-                            },
-                            child: Container(
-                              decoration: BoxDecoration(
-                                color: Colors.white,
-                                borderRadius: BorderRadius.circular(8),
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: Colors.grey.withOpacity(0.5),
-                                    spreadRadius: 2,
-                                    blurRadius: 5,
-                                    offset: Offset(0, 3),
-                                  ),
-                                ],
-                                border: Border.all(color: Color(0xFF1C88BF)),
+                        Subject subject = subjects[index];
+                        return GestureDetector(
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) =>
+                                    SubjectDetailScreen(subject: subject),
                               ),
-                              child: Center(
+                            );
+                          },
+                          child: Container(
+                            decoration: BoxDecoration(
+                              color: Color(0xFF1C88BF),
+                              borderRadius: BorderRadius.circular(8),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.grey.withOpacity(0.5),
+                                  spreadRadius: 2,
+                                  blurRadius: 5,
+                                  offset: Offset(0, 3),
+                                ),
+                              ],
+                            ),
+                            child: Center(
+                              child: Padding(
+                                padding: const EdgeInsets.all(8.0),
                                 child: Column(
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
-                                    Icon(Icons.add,
-                                        size: 40, color: Color(0xFF1C88BF)),
-                                    Text('Create New Topics',
-                                        style: TextStyle(
-                                            color: Color(0xFF1C88BF))),
+                                    Text(
+                                      subject.title,
+                                      style: TextStyle(
+                                          color: Colors.white,
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.bold),
+                                      textAlign: TextAlign.center,
+                                      overflow: TextOverflow.ellipsis,
+                                      maxLines: 2,
+                                    ),
+                                    SizedBox(height: 8),
+                                    Text(
+                                      '${subject.questionSetIds.length} Exercise(s)',
+                                      style: TextStyle(color: Colors.white),
+                                    ),
                                   ],
                                 ),
                               ),
                             ),
-                          );
-                        } else {
-                          Subject subject = subjects[index];
-                          return GestureDetector(
-                            onTap: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) =>
-                                      SubjectDetailScreen(subject: subject),
-                                ),
-                              );
-                            },
-                            child: Container(
-                              decoration: BoxDecoration(
-                                color: Color(0xFF1C88BF),
-                                borderRadius: BorderRadius.circular(8),
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: Colors.grey.withOpacity(0.5),
-                                    spreadRadius: 2,
-                                    blurRadius: 5,
-                                    offset: Offset(0, 3),
-                                  ),
-                                ],
-                              ),
-                              child: Center(
-                                child: Padding(
-                                  padding: const EdgeInsets.all(8.0),
-                                  child: Column(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      Text(
-                                        subject.title,
-                                        style: TextStyle(
-                                            color: Colors.white,
-                                            fontSize: 16,
-                                            fontWeight: FontWeight.bold),
-                                        textAlign: TextAlign.center,
-                                        overflow: TextOverflow.ellipsis,
-                                        maxLines: 2,
-                                      ),
-                                      SizedBox(height: 8),
-                                      Text(
-                                        '${subject.questionSetIds.length} Exercise(s)',
-                                        style: TextStyle(color: Colors.white),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ),
-                            ),
-                          );
-                        }
+                          ),
+                        );
                       },
                     ),
                 ],

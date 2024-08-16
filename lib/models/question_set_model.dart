@@ -1,17 +1,22 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:aplikasi_ekstraksi_file_gpt4/models/question_model.dart';
 
 class QuestionSet {
   String? id;
+  String? title;
   late int point;
   late String status;
   int? correctAnswers;
   int? questionCount;
   List<Question> questions;
   late Map<int, dynamic> selectedOptions;
+  DateTime? createdAt;
+  DateTime? finishedAt;
   final String subjectId; // Reference to the Subject document
 
   QuestionSet({
     this.id,
+    this.title,
     this.correctAnswers,
     this.questionCount,
     required this.point,
@@ -19,11 +24,14 @@ class QuestionSet {
     required this.questions,
     required this.selectedOptions,
     required this.subjectId,
+    this.createdAt, // Allow this to be nullable
+    this.finishedAt, // Allow this to be nullable
   });
 
   factory QuestionSet.fromMap(Map<String, dynamic> data) {
     return QuestionSet(
       id: data['id'] ?? "",
+      title: data['title'],
       point: data['point'] ?? 0,
       correctAnswers: data['correct_answers'] ?? 0,
       questionCount: data['questionCount'] ?? 0,
@@ -35,14 +43,26 @@ class QuestionSet {
       selectedOptions: (data['selectedOptions'] as Map<String, dynamic>?)
               ?.map((key, value) => MapEntry(int.parse(key), value)) ??
           {},
-      subjectId:
-          data['subjectId'] ?? '', // Provide a default empty string if null
+      subjectId: data['subjectId'] ?? '',
+      createdAt: data['createdAt'] != null
+          ? (data['createdAt'] is Timestamp
+              ? (data['createdAt'] as Timestamp).toDate()
+              : DateTime.tryParse(data['createdAt'] as String) ??
+                  DateTime.now())
+          : null,
+      finishedAt: data['finishedAt'] != null
+          ? (data['finishedAt'] is Timestamp
+              ? (data['finishedAt'] as Timestamp).toDate()
+              : DateTime.tryParse(data['finishedAt'] as String) ??
+                  DateTime.now())
+          : null, // Handle null case
     );
   }
 
   Map<String, dynamic> toMap() {
     return {
       'id': id ?? "",
+      'title': title,
       'point': point,
       'correct_answers': correctAnswers,
       'questionCount': questionCount,
@@ -51,6 +71,12 @@ class QuestionSet {
       'selectedOptions':
           selectedOptions.map((key, value) => MapEntry(key.toString(), value)),
       'subjectId': subjectId,
+      'createdAt': createdAt != null
+          ? Timestamp.fromDate(createdAt!)
+          : null, // Handle null case
+      'finishedAt': createdAt != null
+          ? Timestamp.fromDate(createdAt!)
+          : null, // Handle null case
     };
   }
 }

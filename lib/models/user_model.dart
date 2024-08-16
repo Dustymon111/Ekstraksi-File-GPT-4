@@ -1,4 +1,3 @@
-import 'package:aplikasi_ekstraksi_file_gpt4/models/bookmark_model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class UserModel {
@@ -6,7 +5,8 @@ class UserModel {
   String nama;
   String password;
   String role;
-  List<Bookmark> bookmarkIds;
+  List<String> bookmarkIds;
+  List<String> questionSetIds;
 
   UserModel({
     required this.email,
@@ -14,6 +14,7 @@ class UserModel {
     required this.password,
     required this.role,
     required this.bookmarkIds,
+    required this.questionSetIds,
   });
 
   // Factory constructor to create a UserModel object from a Firestore document
@@ -26,6 +27,7 @@ class UserModel {
       password: data['password'] ?? '',
       role: data['role'] ?? '',
       bookmarkIds: data['bookmarkIds'] ?? [],
+      questionSetIds: data['questionSetIds'] ?? [],
     );
   }
 
@@ -37,6 +39,7 @@ class UserModel {
       'password': password,
       'role': role,
       'bookmarkIds': bookmarkIds,
+      'questionSetIds': questionSetIds,
     };
   }
 
@@ -48,6 +51,7 @@ class UserModel {
       password: map['password'] ?? '',
       role: map['role'] ?? '',
       bookmarkIds: map['bookmarkIds'] ?? [],
+      questionSetIds: map['questionSetIds'] ?? [],
     );
   }
 }

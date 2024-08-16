@@ -58,6 +58,7 @@ dependencies:
   langchain_core: ^0.3.4
   langchain_community: ^0.3.0
   loading_animation_widget: ^1.2.1
+  intl: ^0.19.0
 
 dev_dependencies:
   flutter_test:

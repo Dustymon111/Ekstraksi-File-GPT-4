@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
-// import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:provider/provider.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:http/http.dart' as http;
@@ -30,13 +31,15 @@ class _CreateTopicScreenState extends State<CreateTopicScreen> {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final String serverUrl =
       'https://ekstraksi-file-gpt-4-server-xzcbfs2fqq-et.a.run.app';
-  // final String localhost = dotenv.env["LOCALHOST"]!;
-  // final String port = dotenv.env["PORT"]!;
+  final String localhost = dotenv.env["LOCALHOST"]!;
+  final String port = dotenv.env["PORT"]!;
   List<String> selectedTopicsId = [];
+  TextEditingController exerciseTitle = TextEditingController();
 
   Future<void> postData(
       BuildContext context,
       List<String> topics,
+      String title,
       String mChoiceNumber,
       String essayNumber,
       String? difficulty,
@@ -68,13 +71,14 @@ class _CreateTopicScreenState extends State<CreateTopicScreen> {
       },
     );
 
-    final url = Uri.parse('$serverUrl/question-maker');
+    final url = Uri.parse('$localhost:$port/question-maker');
     final response = await http.post(
       url,
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
       },
       body: jsonEncode(<String, dynamic>{
+        'title': title,
         'topics': topics,
         'm_choice_number': mChoiceNumber,
         'essay_number': essayNumber,
@@ -372,7 +376,6 @@ class _CreateTopicScreenState extends State<CreateTopicScreen> {
                     );
                   }).toList(),
                 ),
-              SizedBox(height: 20),
               Text(
                 "Number Of Questions",
                 style: TextStyle(
@@ -471,6 +474,34 @@ class _CreateTopicScreenState extends State<CreateTopicScreen> {
                 }),
               ),
               const SizedBox(height: 30),
+              Text(
+                "Title (optional)",
+                style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                    color: Theme.of(context).textTheme.bodyLarge?.color),
+              ),
+              Text("Default is Question Set", style: TextStyle(fontSize: 14)),
+              SizedBox(height: 8),
+              TextFormField(
+                controller: exerciseTitle,
+                decoration: InputDecoration(
+                  labelText: 'Exercise Title',
+                  border: OutlineInputBorder(),
+                  hintText: 'Enter the title of the exercise',
+                ),
+                // Optional: Add validation
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Please enter an exercise title';
+                  }
+                  return null;
+                },
+                inputFormatters: [
+                  LengthLimitingTextInputFormatter(40),
+                ],
+              ),
+              SizedBox(height: 20),
               Text("Difficulties (Optional)",
                   style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
               Text("Default is combined of the three difficulties",
@@ -558,6 +589,7 @@ class _CreateTopicScreenState extends State<CreateTopicScreen> {
                             postData(
                                 context,
                                 selectedTopic,
+                                exerciseTitle.text,
                                 selectedMultipleChoice.toString(),
                                 selectedEssay.toString(),
                                 difficulty ?? "Combined",

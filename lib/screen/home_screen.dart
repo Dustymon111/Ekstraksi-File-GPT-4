@@ -33,7 +33,8 @@ class _HomeState extends State<Home> {
   String? userId;
   StreamSubscription<User?>? _authSubscription;
   double progress = 0.0;
-  int BookCount = 0;
+  int bookCount = 0;
+  int exerciseCount = 0;
 
   final color = [Colors.red, Colors.yellow, Colors.blue];
   List<String> assets = [
@@ -45,7 +46,7 @@ class _HomeState extends State<Home> {
   @override
   void initState() {
     super.initState();
-    fetchBookCount();
+    fetchb();
     // userId = context.read<UserProvider>().userId;
     _authSubscription = auth.authStateChanges().listen((User? user) {
       if (user == null) {
@@ -57,7 +58,7 @@ class _HomeState extends State<Home> {
     });
   }
 
-  void fetchBookCount() async {
+  void fetchb() async {
     User? user = FirebaseAuth.instance.currentUser;
     if (user != null) {
       String uid = user.uid;
@@ -67,9 +68,11 @@ class _HomeState extends State<Home> {
           await FirebaseFirestore.instance.collection('users').doc(uid).get();
 
       List bookmarkIds = snapshot['bookmarkIds'];
+      List questionSetIds = snapshot['questionSetIds'];
 
       setState(() {
-        BookCount = bookmarkIds.length;
+        bookCount = bookmarkIds.length;
+        exerciseCount = questionSetIds.length;
       });
     }
   }
@@ -243,7 +246,7 @@ class _HomeState extends State<Home> {
                   children: [
                     Icon(Icons.subject, size: 30),
                     SizedBox(height: 5),
-                    Text("$BookCount Book",
+                    Text("$bookCount Book",
                         style: TextStyle(
                           fontSize: 18,
                           color: Theme.of(context).textTheme.bodyLarge?.color,
@@ -254,7 +257,7 @@ class _HomeState extends State<Home> {
                   children: [
                     Icon(Icons.topic, size: 30),
                     SizedBox(height: 5),
-                    Text("0 Exercise",
+                    Text("$exerciseCount Exercise",
                         style: TextStyle(
                           fontSize: 18,
                           color: Theme.of(context).textTheme.bodyLarge?.color,

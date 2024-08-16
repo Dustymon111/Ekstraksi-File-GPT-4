@@ -11,6 +11,7 @@ import 'package:aplikasi_ekstraksi_file_gpt4/utils/docx_generator.dart';
 import 'package:flutter/material.dart';
 import 'package:aplikasi_ekstraksi_file_gpt4/models/subject_model.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
 class SubjectDetailScreen extends StatefulWidget {
@@ -250,7 +251,7 @@ class _SubjectDetailScreenState extends State<SubjectDetailScreen> {
                 ),
               SizedBox(height: 20),
               Text(
-                "Question List",
+                "Exercise List",
                 style: TextStyle(
                     fontSize: 20,
                     fontWeight: FontWeight.bold,
@@ -265,8 +266,6 @@ class _SubjectDetailScreenState extends State<SubjectDetailScreen> {
                       questionProvider.questionSets;
                   QuestionSet questionSet = questionSets[index];
                   List<Question> questions = questionSet.questions;
-                  print(questionSet.questionCount);
-                  print(questionSet.subjectId);
 
                   return Card(
                     margin: const EdgeInsets.only(bottom: 8.0),
@@ -284,13 +283,33 @@ class _SubjectDetailScreenState extends State<SubjectDetailScreen> {
                         contentPadding:
                             EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                         title: Text(
-                          'Question Set ${index + 1}',
+                          questionSet.title ?? 'Question Set ${index + 1}',
                           style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                          ),
+                              fontWeight: FontWeight.bold,
+                              overflow: TextOverflow.ellipsis),
+                          maxLines: 1,
                         ),
-                        subtitle: Text(
-                          'Number of Questions: ${questionSet.questionCount}',
+                        subtitle: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'Number of Questions: ${questionSet.questionCount}',
+                            ),
+                            SizedBox(
+                                height: 4), // Add spacing between subtitles
+                            Text(
+                              'Created At: ${questionSet.createdAt != null ? DateFormat('yyyy MMMM dd').format(questionSet.createdAt!) : 'Not Available'}',
+                              style: TextStyle(
+                                color: Colors.grey[600],
+                              ),
+                            ),
+                            Text(
+                              'Finished At: ${questionSet.finishedAt != null ? DateFormat('yyyy MMMM dd').format(questionSet.finishedAt!) : 'Not Finished'}',
+                              style: TextStyle(
+                                color: Colors.grey[600],
+                              ),
+                            ),
+                          ],
                         ),
                         trailing: Text(
                           questionSet.status == "Selesai"
@@ -309,20 +328,22 @@ class _SubjectDetailScreenState extends State<SubjectDetailScreen> {
                               .setQuestionSetIndex(index);
                           if (questionSet.status == "Selesai") {
                             _showResultDialog(
-                                context,
-                                questionProvider.questionSets[index],
-                                questionSet.questions);
+                              context,
+                              questionProvider.questionSets[index],
+                              questionSet.questions,
+                            );
                           } else {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
                                 builder: (context) => QuestionScreen(
-                                    questions: questions
-                                        .where((e) =>
-                                            e.questionSetId == questionSet.id)
-                                        .toList(),
-                                    questionSetId: questionSet.id!,
-                                    subject: widget.subject),
+                                  questions: questions
+                                      .where((e) =>
+                                          e.questionSetId == questionSet.id)
+                                      .toList(),
+                                  questionSetId: questionSet.id!,
+                                  subject: widget.subject,
+                                ),
                               ),
                             );
                           }
@@ -344,7 +365,7 @@ class _SubjectDetailScreenState extends State<SubjectDetailScreen> {
                           MaterialPageRoute(
                               builder: (context) => const CreateTopicScreen()));
                     },
-                    label: "Create a New Exercise"),
+                    label: "Add Exercise"),
               )
             ],
           ),
