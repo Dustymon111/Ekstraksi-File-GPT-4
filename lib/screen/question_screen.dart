@@ -17,6 +17,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:provider/provider.dart';
 import 'package:http/http.dart' as http;
+import 'dart:developer';
 
 class QuestionScreen extends StatefulWidget {
   final List<Question> questions;
@@ -95,6 +96,7 @@ class _QuestionScreenState extends State<QuestionScreen> {
       String subjectId,
       String questionSetId) async {
     // Show the initial dialog with loading animation
+    Stopwatch stopwatch = Stopwatch()..start();
     showDialog(
       context: context,
       barrierDismissible:
@@ -130,11 +132,14 @@ class _QuestionScreenState extends State<QuestionScreen> {
         'questionSetId': questionSetId,
       }),
     );
-
+    stopwatch.stop();
     if (response.statusCode == 200) {
+      print('Response time: ${stopwatch.elapsedMilliseconds} ms');
+      log(response.body);
+
       // If the server returns a 200 OK response, parse the JSON.
       final responseData = jsonDecode(response.body);
-      final responseContent = responseData["response_data"];
+      final responseContent = responseData["data"];
       Navigator.pop(context);
       return responseContent; // Return the parsed response data
     } else {
@@ -222,6 +227,7 @@ class _QuestionScreenState extends State<QuestionScreen> {
                     essayCorrect += res['correct_answers'] as int;
                   });
                 } catch (e) {
+                  Navigator.pop(context);
                   Fluttertoast.showToast(
                       msg: "Error Submitting Exercise, Please try again.",
                       toastLength: Toast.LENGTH_LONG,

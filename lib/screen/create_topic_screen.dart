@@ -13,6 +13,7 @@ import 'package:aplikasi_ekstraksi_file_gpt4/models/subject_model.dart';
 import 'package:aplikasi_ekstraksi_file_gpt4/providers/bookmark_provider.dart';
 import 'package:aplikasi_ekstraksi_file_gpt4/providers/subject_provider.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
+import 'dart:developer';
 
 class CreateTopicScreen extends StatefulWidget {
   const CreateTopicScreen({super.key});
@@ -51,6 +52,7 @@ class _CreateTopicScreenState extends State<CreateTopicScreen> {
       String subjectId,
       String bookId,
       String? language) async {
+    Stopwatch stopwatch = Stopwatch()..start();
     showDialog(
       context: context,
       barrierDismissible: false,
@@ -95,8 +97,11 @@ class _CreateTopicScreenState extends State<CreateTopicScreen> {
     );
 
     Navigator.of(context).pop();
-
+    stopwatch.stop();
     if (response.statusCode == 200) {
+      print('Response time: ${stopwatch.elapsedMilliseconds} ms');
+      log(response.body);
+
       showDialog(
         context: context,
         builder: (BuildContext context) {
