@@ -205,7 +205,11 @@ class _SubjectDetailScreenState extends State<SubjectDetailScreen> {
                     color: Theme.of(context).textTheme.bodyLarge?.color),
               ),
               SizedBox(height: 8),
-
+              Text(
+                'Description: ${widget.subject.description}',
+                style: TextStyle(fontSize: 16),
+              ),
+              SizedBox(height: 16),
               Text(
                 'Number of Exercise(s): ${widget.subject.questionSetIds.length}',
                 style: TextStyle(fontSize: 16),

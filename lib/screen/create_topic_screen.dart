@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-// import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:provider/provider.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:http/http.dart' as http;
@@ -11,6 +11,7 @@ import 'package:aplikasi_ekstraksi_file_gpt4/models/subject_model.dart';
 import 'package:aplikasi_ekstraksi_file_gpt4/providers/bookmark_provider.dart';
 import 'package:aplikasi_ekstraksi_file_gpt4/providers/subject_provider.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
+import 'dart:developer';
 
 class CreateTopicScreen extends StatefulWidget {
   const CreateTopicScreen({super.key});
@@ -31,8 +32,8 @@ class _CreateTopicScreenState extends State<CreateTopicScreen> {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final String serverUrl =
       'https://ekstraksi-file-gpt-4-server-xzcbfs2fqq-et.a.run.app';
-  // final String localhost = dotenv.env["LOCALHOST"]!;
-  // final String port = dotenv.env["PORT"]!;
+  final String localhost = dotenv.env["LOCALHOST"]!;
+  final String port = dotenv.env["PORT"]!;
   List<String> selectedTopicsId = [];
   TextEditingController exerciseTitle = TextEditingController();
 
@@ -48,6 +49,7 @@ class _CreateTopicScreenState extends State<CreateTopicScreen> {
       String subjectId,
       String bookId,
       String? language) async {
+    Stopwatch stopwatch = Stopwatch()..start();
     showDialog(
       context: context,
       barrierDismissible: false,
@@ -71,7 +73,7 @@ class _CreateTopicScreenState extends State<CreateTopicScreen> {
       },
     );
 
-    final url = Uri.parse('$serverUrl/question-maker');
+    final url = Uri.parse('$localhost:$port/question-maker');
     final response = await http.post(
       url,
       headers: <String, String>{
@@ -92,8 +94,11 @@ class _CreateTopicScreenState extends State<CreateTopicScreen> {
     );
 
     Navigator.of(context).pop();
-
+    stopwatch.stop();
     if (response.statusCode == 200) {
+      print('Response time: ${stopwatch.elapsedMilliseconds} ms');
+      log(response.body);
+
       showDialog(
         context: context,
         builder: (BuildContext context) {
@@ -297,35 +302,38 @@ class _CreateTopicScreenState extends State<CreateTopicScreen> {
                                   SizedBox(
                                       height:
                                           16), // Add some space between the subtitle and the list
-                                  SingleChildScrollView(
-                                    child: ListBody(
-                                      children: subjectProv.filteredSubjects
-                                          .where((Subject value) =>
-                                              value.title != "Custom Topic")
-                                          .map((Subject value) {
-                                        return CheckboxListTile(
-                                          title: Text(value.title),
-                                          value: tempSelectedTopicsId
-                                              .contains(value.id),
-                                          onChanged: (bool? isSelected) {
-                                            setState(() {
-                                              if (isSelected == true) {
-                                                tempSelectedTopicsId
-                                                    .add(value.id!);
-                                                selectedTopic.add(value.title);
-                                              } else {
-                                                tempSelectedTopicsId
-                                                    .remove(value.id);
-                                                selectedTopic
-                                                    .remove(value.title);
-                                              }
-                                              print(selectedTopic);
-                                            });
-                                          },
-                                        );
-                                      }).toList(),
+                                  Expanded(
+                                    child: SingleChildScrollView(
+                                      child: ListBody(
+                                        children: subjectProv.filteredSubjects
+                                            .where((Subject value) =>
+                                                value.title != "Custom Topic")
+                                            .map((Subject value) {
+                                          return CheckboxListTile(
+                                            title: Text(value.title),
+                                            value: tempSelectedTopicsId
+                                                .contains(value.id),
+                                            onChanged: (bool? isSelected) {
+                                              setState(() {
+                                                if (isSelected == true) {
+                                                  tempSelectedTopicsId
+                                                      .add(value.id!);
+                                                  selectedTopic
+                                                      .add(value.title);
+                                                } else {
+                                                  tempSelectedTopicsId
+                                                      .remove(value.id);
+                                                  selectedTopic
+                                                      .remove(value.title);
+                                                }
+                                                print(selectedTopic);
+                                              });
+                                            },
+                                          );
+                                        }).toList(),
+                                      ),
                                     ),
-                                  ),
+                                  )
                                 ],
                               ),
                               actions: <Widget>[

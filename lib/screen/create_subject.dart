@@ -18,7 +18,8 @@ import 'package:provider/provider.dart';
 import 'package:syncfusion_flutter_pdf/pdf.dart';
 import 'package:syncfusion_flutter_pdfviewer/pdfviewer.dart';
 import 'package:http/http.dart' as http;
-// import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'dart:developer';
 
 // Halaman ini adalah halaman membuat subject / halaman upload file yang akan di ekstrak ( sebelumnya halaman ini  berada di dihalaman utama yg Bang Dustin Buat )
 class CreateSubject extends StatefulWidget {
@@ -29,8 +30,8 @@ class CreateSubject extends StatefulWidget {
 }
 
 class _CreateSubjectState extends State<CreateSubject> {
-  // final String localhost = dotenv.env["LOCALHOST"]!;
-  // final String port = dotenv.env["PORT"]!;
+  final String localhost = dotenv.env["LOCALHOST"]!;
+  final String port = dotenv.env["PORT"]!;
   final String serverUrl =
       'https://ekstraksi-file-gpt-4-server-xzcbfs2fqq-et.a.run.app';
 
@@ -146,7 +147,7 @@ class _CreateSubjectState extends State<CreateSubject> {
             PdfDocument(inputBytes: File(filePath).readAsBytesSync());
 
         // Send file to Python backend
-        var uri = Uri.parse('$serverUrl/ekstrak-info');
+        var uri = Uri.parse('$localhost:$port/ekstrak-info');
         var request = http.MultipartRequest('POST', uri)
           ..files.add(
             http.MultipartFile(
@@ -169,7 +170,7 @@ class _CreateSubjectState extends State<CreateSubject> {
           print('Response time: ${stopwatch.elapsedMilliseconds} ms');
 
           final responseBody = await response.stream.bytesToString();
-          print('response: $responseBody');
+          log('response: $responseBody');
           print('File uploaded successfully! Download URL: $bookUrl');
           context.read<BookmarkProvider>().fetchBookmarks(userId!);
 
