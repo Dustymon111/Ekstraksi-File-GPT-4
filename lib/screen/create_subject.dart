@@ -18,7 +18,7 @@ import 'package:provider/provider.dart';
 import 'package:syncfusion_flutter_pdf/pdf.dart';
 import 'package:syncfusion_flutter_pdfviewer/pdfviewer.dart';
 import 'package:http/http.dart' as http;
-import 'package:flutter_dotenv/flutter_dotenv.dart';
+// import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'dart:developer';
 
 // Halaman ini adalah halaman membuat subject / halaman upload file yang akan di ekstrak ( sebelumnya halaman ini  berada di dihalaman utama yg Bang Dustin Buat )
@@ -30,8 +30,8 @@ class CreateSubject extends StatefulWidget {
 }
 
 class _CreateSubjectState extends State<CreateSubject> {
-  final String localhost = dotenv.env["LOCALHOST"]!;
-  final String port = dotenv.env["PORT"]!;
+  // final String localhost = dotenv.env["LOCALHOST"]!;
+  // final String port = dotenv.env["PORT"]!;
   final String serverUrl =
       'https://ekstraksi-file-gpt-4-server-xzcbfs2fqq-et.a.run.app';
 

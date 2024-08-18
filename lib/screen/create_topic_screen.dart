@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
+// import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:provider/provider.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:http/http.dart' as http;
@@ -32,8 +32,8 @@ class _CreateTopicScreenState extends State<CreateTopicScreen> {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final String serverUrl =
       'https://ekstraksi-file-gpt-4-server-xzcbfs2fqq-et.a.run.app';
-  final String localhost = dotenv.env["LOCALHOST"]!;
-  final String port = dotenv.env["PORT"]!;
+  // final String localhost = dotenv.env["LOCALHOST"]!;
+  // final String port = dotenv.env["PORT"]!;
   List<String> selectedTopicsId = [];
   TextEditingController exerciseTitle = TextEditingController();
 
@@ -73,7 +73,7 @@ class _CreateTopicScreenState extends State<CreateTopicScreen> {
       },
     );
 
-    final url = Uri.parse('$localhost:$port/question-maker');
+    final url = Uri.parse('$serverUrl/question-maker');
     final response = await http.post(
       url,
       headers: <String, String>{
