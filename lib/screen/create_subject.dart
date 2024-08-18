@@ -196,7 +196,7 @@ class _CreateSubjectState extends State<CreateSubject> {
           // Handle non-200 response from the backend
           print("status code: ${response.statusCode}");
           Fluttertoast.showToast(
-            msg: "Gagal mengekstrak modul, mohon coba kembali",
+            msg: "Failed to extract module, please try again",
             toastLength: Toast.LENGTH_LONG,
             gravity: ToastGravity.BOTTOM,
             backgroundColor: Colors.black,
@@ -209,7 +209,7 @@ class _CreateSubjectState extends State<CreateSubject> {
         Navigator.of(context)
             .pop(); // Ensure dialog is closed if an error occurs
         Fluttertoast.showToast(
-          msg: "Gagal mengekstrak modul, mohon coba kembali",
+          msg: "Failed to extract module, please try again",
           toastLength: Toast.LENGTH_LONG,
           gravity: ToastGravity.BOTTOM,
           backgroundColor: Colors.black,
@@ -229,6 +229,7 @@ class _CreateSubjectState extends State<CreateSubject> {
     var themeprov = Provider.of<ThemeNotifier>(context);
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: Color(0xFF1C88BF),
         actions: [
           Switch(
             thumbIcon: themeprov.isDarkTheme
@@ -266,11 +267,11 @@ class _CreateSubjectState extends State<CreateSubject> {
                   ),
                 )
               : Container(
-                  child: const Text(
-                    "Unggah file anda",
+                  child: Text(
+                    "Upload Your File",
                     style: TextStyle(
-                      fontSize: 24,
-                    ),
+                        fontSize: 24,
+                        color: Theme.of(context).textTheme.bodyLarge?.color),
                   ),
                 ),
           Container(
@@ -287,11 +288,11 @@ class _CreateSubjectState extends State<CreateSubject> {
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
               CustomElevatedButton(
-                label: pickedFile != null ? "Ganti Berkas" : "Unggah Berkas",
+                label: pickedFile != null ? "Change File" : "Upload File",
                 onPressed: pickFile,
               ),
               CustomElevatedButton(
-                label: "Ekstrak Berkas",
+                label: "Extract File",
                 onPressed: pickedFile != null
                     ? () async {
                         await uploadFile(context);

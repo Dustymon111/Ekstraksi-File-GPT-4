@@ -85,9 +85,13 @@ flutter:
   assets:
     - .env
     - assets/templates - 50 soal.docx
-    - assets/carousel1.png
-    - assets/carousel2.png
-    - assets/carousel3.png
+    - assets/carousel_Pertama.png
+    - assets/carousel_Kedua.png
+    - assets/carousel_Ketiga.png
+    - assets/carousel_Keempat.png
+    - assets/carousel_Kelima.png
+    - assets/carousel_Keenam.png
+    - assets/educraft_logo_finish.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware

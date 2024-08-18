@@ -54,7 +54,7 @@ class _AnswersScreenState extends State<AnswersScreen> {
       appBar: AppBar(
         foregroundColor: Colors.white,
         backgroundColor: Color(0xFF1C88BF),
-        title: const Text('Hasil Akhir'),
+        title: const Text('Final Result'),
       ),
       body: Column(
         children: [
@@ -84,6 +84,8 @@ class _AnswersScreenState extends State<AnswersScreen> {
                             style: TextStyle(
                               fontSize: 18,
                               fontWeight: FontWeight.bold,
+                              color:
+                                  Theme.of(context).textTheme.bodyLarge?.color,
                             ),
                           ),
                           SizedBox(height: 12),
@@ -109,7 +111,10 @@ class _AnswersScreenState extends State<AnswersScreen> {
         return Column(
           children: question.options.map((option) {
             return RadioListTile<String>(
-              title: Text(style: TextStyle(color: Colors.black), option),
+              title: Text(
+                  style: TextStyle(
+                      color: Theme.of(context).textTheme.bodyLarge?.color),
+                  option),
               value: option,
               groupValue: selectedOption ?? "",
               onChanged:
@@ -128,7 +133,10 @@ class _AnswersScreenState extends State<AnswersScreen> {
           children: question.options.map((option) {
             final isSelected = selectedOption?.contains(option);
             return CheckboxListTile(
-              title: Text(style: TextStyle(color: Colors.black), option),
+              title: Text(
+                  style: TextStyle(
+                      color: Theme.of(context).textTheme.bodyLarge?.color),
+                  option),
               value: isSelected ?? false,
               onChanged:
                   null, // No change handler since we're just displaying the results
@@ -159,7 +167,8 @@ class _AnswersScreenState extends State<AnswersScreen> {
                   labelText: _controllers[index].text == selectedOption
                       ? "Your Answer"
                       : "Correct Answer",
-                  labelStyle: TextStyle(color: Colors.black),
+                  labelStyle: TextStyle(
+                      color: Theme.of(context).textTheme.bodyLarge?.color),
                   border: OutlineInputBorder(),
                   suffixIcon: correctOption == selectedOption
                       ? Icon(Icons.check, color: Colors.green)
@@ -167,7 +176,8 @@ class _AnswersScreenState extends State<AnswersScreen> {
                           ? Icon(Icons.close, color: Colors.red)
                           : Icon(Icons.check, color: Colors.green)),
               maxLines: null,
-              style: TextStyle(color: Colors.black),
+              style: TextStyle(
+                  color: Theme.of(context).textTheme.bodyLarge?.color),
             ),
             if (correctOption != selectedOption) ...[
               SizedBox(height: 12),

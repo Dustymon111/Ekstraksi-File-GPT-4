@@ -1,4 +1,6 @@
 import 'dart:convert';
+import 'package:aplikasi_ekstraksi_file_gpt4/components/select_book_screen.dart';
+import 'package:aplikasi_ekstraksi_file_gpt4/components/select_chapters.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 // import 'package:flutter_dotenv/flutter_dotenv.dart';
@@ -34,6 +36,7 @@ class _CreateTopicScreenState extends State<CreateTopicScreen> {
   // final String localhost = dotenv.env["LOCALHOST"]!;
   // final String port = dotenv.env["PORT"]!;
   List<String> selectedTopicsId = [];
+
   TextEditingController exerciseTitle = TextEditingController();
 
   Future<void> postData(
@@ -147,6 +150,10 @@ class _CreateTopicScreenState extends State<CreateTopicScreen> {
     final bookProv = Provider.of<BookmarkProvider>(context);
     final difficulties = ['beginner', 'intermediate', 'expert'];
     final languages = ['English', 'Indonesian'];
+    print("topik terpilih: $selectedTopic");
+    print("subject terpilih: $selectedSubject");
+    print("id topik : $selectedTopicsId");
+    print("id subject : $subjectId");
 
     return Scaffold(
       appBar: AppBar(
@@ -154,7 +161,7 @@ class _CreateTopicScreenState extends State<CreateTopicScreen> {
         backgroundColor: Color(0xFF1C88BF),
         elevation: 0,
         title: Text(
-          'Buat Latihan',
+          'Create Exercise',
           style: TextStyle(color: Colors.white),
         ),
       ),
@@ -195,62 +202,43 @@ class _CreateTopicScreenState extends State<CreateTopicScreen> {
               ),
               SizedBox(height: 8),
               Container(
-                decoration: BoxDecoration(
-                  color: Theme.of(context).scaffoldBackgroundColor,
-                  borderRadius: BorderRadius.circular(10),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Color(0xFF1C88BF),
-                      spreadRadius: 2,
-                      blurRadius: 2,
-                      offset: Offset(0, 1),
-                    ),
-                  ],
-                ),
-                child: DropdownButtonHideUnderline(
-                  child: DropdownButton<String>(
-                    hint: Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Text(
-                        "Choose Book",
-                        style: TextStyle(
-                            color:
-                                Theme.of(context).textTheme.bodyLarge?.color),
+                  decoration: BoxDecoration(
+                    color: Theme.of(context).scaffoldBackgroundColor,
+                    borderRadius: BorderRadius.circular(10),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Color(0xFF1C88BF),
+                        spreadRadius: 2,
+                        blurRadius: 2,
+                        offset: Offset(0, 1),
                       ),
-                    ),
-                    value: selectedSubject,
-                    isExpanded: true,
-                    onChanged: (newValue) {
-                      setState(() {
-                        selectedSubject = newValue;
-                        selectedTopicsId
-                            .clear(); // clear selected topics when book changes
-                        if (selectedSubject != null) {
+                    ],
+                  ),
+                  child: ListTile(
+                    title: Text(selectedSubject != null
+                        ? bookProv.findTitleById(selectedSubject!) ??
+                            "Book no available"
+                        : "Choose Book"),
+                    onTap: () async {
+                      final selectedBookId = await Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => SelectBookScreen(),
+                        ),
+                      );
+
+                      if (selectedBookId != null) {
+                        setState(() {
+                          selectedSubject = selectedBookId;
+                          selectedTopicsId
+                              .clear(); // kosongkan topik yang dipilih saat buku berubah
                           subjectProv.filterSubjectByBookId(selectedSubject!);
                           filename =
                               bookProv.findFilenameById(selectedSubject!);
-                        }
-                      });
+                        });
+                      }
                     },
-                    items: bookProv.bookmarks
-                        .map<DropdownMenuItem<String>>((Bookmark value) {
-                      return DropdownMenuItem<String>(
-                        value: value.id,
-                        child: Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Text(value.title,
-                              overflow: TextOverflow.ellipsis,
-                              style: TextStyle(
-                                  color: Theme.of(context)
-                                      .textTheme
-                                      .bodyLarge
-                                      ?.color)),
-                        ),
-                      );
-                    }).toList(),
-                  ),
-                ),
-              ),
+                  )),
               SizedBox(height: 20),
               Text(
                 "Chapters",
@@ -276,86 +264,23 @@ class _CreateTopicScreenState extends State<CreateTopicScreen> {
                 child: ListTile(
                   title: Text("Choose Chapters"),
                   onTap: () async {
-                    List<String> tempSelectedTopicsId =
-                        List.from(selectedTopicsId);
-                    await showDialog(
-                      context: context,
-                      builder: (BuildContext context) {
-                        return StatefulBuilder(
-                          builder:
-                              (BuildContext context, StateSetter setState) {
-                            return AlertDialog(
-                              title: Text("Choose Chapters"),
-                              content: Column(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  Text(
-                                    "If you choose more than one topic, it will be added to the custom topic instead.",
-                                    style:
-                                        Theme.of(context).textTheme.bodyLarge,
-                                  ),
-                                  SizedBox(
-                                      height:
-                                          16), // Add some space between the subtitle and the list
-                                  SingleChildScrollView(
-                                    child: ListBody(
-                                      children: subjectProv.filteredSubjects
-                                          .where((Subject value) =>
-                                              value.title != "Custom Topic")
-                                          .map((Subject value) {
-                                        return CheckboxListTile(
-                                          title: Text(value.title),
-                                          value: tempSelectedTopicsId
-                                              .contains(value.id),
-                                          onChanged: (bool? isSelected) {
-                                            setState(() {
-                                              if (isSelected == true) {
-                                                tempSelectedTopicsId
-                                                    .add(value.id!);
-                                                selectedTopic.add(value.title);
-                                              } else {
-                                                tempSelectedTopicsId
-                                                    .remove(value.id);
-                                                selectedTopic
-                                                    .remove(value.title);
-                                              }
-                                              print(selectedTopic);
-                                            });
-                                          },
-                                        );
-                                      }).toList(),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              actions: <Widget>[
-                                TextButton(
-                                  child: Text("Cancel"),
-                                  onPressed: () {
-                                    Navigator.of(context).pop();
-                                  },
-                                ),
-                                TextButton(
-                                  child: Text("Choose"),
-                                  onPressed: () {
-                                    Navigator.of(context)
-                                        .pop(tempSelectedTopicsId);
-                                  },
-                                ),
-                              ],
-                            );
-                          },
-                        );
-                      },
-                    ).then((selectedTopicsIdResult) {
-                      if (selectedTopicsIdResult != null) {
-                        setState(() {
-                          selectedTopicsId = selectedTopicsIdResult;
-                          subjectId = selectedTopicsId[0];
-                          print(subjectId);
-                        });
-                      }
-                    });
+                    final selectedTopicsIdResult = await Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => ChapterSelectionScreen(
+                          selectedChapters: selectedTopicsId,
+                          bookId: selectedSubject!,
+                        ),
+                      ),
+                    );
+
+                    if (selectedTopicsIdResult != null) {
+                      setState(() {
+                        selectedTopicsId = selectedTopicsIdResult;
+                        subjectId = selectedTopicsId[0];
+                        print(subjectId);
+                      });
+                    }
                   },
                 ),
               ),
@@ -366,6 +291,10 @@ class _CreateTopicScreenState extends State<CreateTopicScreen> {
                   children: selectedTopicsId.map((topicId) {
                     String topicTitle =
                         subjectProv.getSubjectTitleById(topicId);
+                    selectedTopic.add(topicTitle);
+                    print("topik list : $selectedTopic");
+                    print("selected topic id : $selectedTopicsId");
+                    print("topics title : $topicTitle");
                     return Chip(
                       label: Text(topicTitle),
                       onDeleted: () {
@@ -376,6 +305,7 @@ class _CreateTopicScreenState extends State<CreateTopicScreen> {
                     );
                   }).toList(),
                 ),
+              SizedBox(height: 10),
               Text(
                 "Number Of Questions",
                 style: TextStyle(
@@ -481,13 +411,27 @@ class _CreateTopicScreenState extends State<CreateTopicScreen> {
                     fontWeight: FontWeight.bold,
                     color: Theme.of(context).textTheme.bodyLarge?.color),
               ),
-              Text("Default is Question Set", style: TextStyle(fontSize: 14)),
+              Text("Default is Question Set",
+                  style: TextStyle(
+                      fontSize: 14,
+                      color: Theme.of(context).textTheme.bodyLarge?.color)),
               SizedBox(height: 8),
               TextFormField(
                 controller: exerciseTitle,
                 decoration: InputDecoration(
                   labelText: 'Exercise Title',
-                  border: OutlineInputBorder(),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.all(Radius.circular(20)),
+                    borderSide: BorderSide(color: Color(0xFF1C88BF)),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.all(Radius.circular(20)),
+                    borderSide: BorderSide(color: Color(0xFF1C88BF)),
+                  ),
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.all(Radius.circular(20)),
+                    borderSide: BorderSide(color: Color(0xFF1C88BF)),
+                  ),
                   hintText: 'Enter the title of the exercise',
                 ),
                 // Optional: Add validation
@@ -503,9 +447,14 @@ class _CreateTopicScreenState extends State<CreateTopicScreen> {
               ),
               SizedBox(height: 20),
               Text("Difficulties (Optional)",
-                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+                  style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 16,
+                      color: Theme.of(context).textTheme.bodyLarge?.color)),
               Text("Default is combined of the three difficulties",
-                  style: TextStyle(fontSize: 14)),
+                  style: TextStyle(
+                      fontSize: 14,
+                      color: Theme.of(context).textTheme.bodyLarge?.color)),
               Wrap(
                 alignment: WrapAlignment.spaceEvenly,
                 children: List.generate(difficulties.length, (index) {
@@ -531,6 +480,9 @@ class _CreateTopicScreenState extends State<CreateTopicScreen> {
                         Text(
                           value[0].toUpperCase() + value.substring(1),
                           textAlign: TextAlign.center,
+                          style: TextStyle(
+                              color:
+                                  Theme.of(context).textTheme.bodyLarge?.color),
                         ),
                       ],
                     ),
@@ -539,9 +491,14 @@ class _CreateTopicScreenState extends State<CreateTopicScreen> {
               ),
               const SizedBox(height: 30),
               Text("Language (optional)",
-                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+                  style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 16,
+                      color: Theme.of(context).textTheme.bodyLarge?.color)),
               Text("Default is the book original language",
-                  style: TextStyle(fontSize: 14)),
+                  style: TextStyle(
+                      fontSize: 14,
+                      color: Theme.of(context).textTheme.bodyLarge?.color)),
               Wrap(
                 alignment: WrapAlignment.spaceEvenly,
                 children: List.generate(languages.length, (index) {
@@ -567,6 +524,9 @@ class _CreateTopicScreenState extends State<CreateTopicScreen> {
                         Text(
                           value[0].toUpperCase() + value.substring(1),
                           textAlign: TextAlign.center,
+                          style: TextStyle(
+                              color:
+                                  Theme.of(context).textTheme.bodyLarge?.color),
                         ),
                       ],
                     ),
@@ -585,7 +545,6 @@ class _CreateTopicScreenState extends State<CreateTopicScreen> {
                             selectedMultipleChoice != null &&
                             selectedTopic.isNotEmpty
                         ? () {
-                            // print("Button Pressed");
                             postData(
                                 context,
                                 selectedTopic,

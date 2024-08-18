@@ -50,7 +50,7 @@ class MyApp extends StatelessWidget {
         debugShowCheckedModeBanner: false,
         title: 'Ekstraksi File',
         theme: ThemeData(
-          primaryColor: Color(0xFF1C88BF),
+          primaryColor: Colors.white,
           colorScheme: ColorScheme.light(
             primary: Colors.indigo,
             onPrimary: Colors.white,
@@ -67,6 +67,7 @@ class MyApp extends StatelessWidget {
             unselectedItemColor: Color(0xFF121212),
           ),
           textTheme: TextTheme(
+            bodySmall: TextStyle(color: Color(0xFF1C88BF)),
             bodyLarge: TextStyle(color: Color(0xFF121212)),
             bodyMedium: TextStyle(color: Color(0xFF121212)),
             displayLarge: TextStyle(color: Color(0xFF121212)),
@@ -78,6 +79,7 @@ class MyApp extends StatelessWidget {
             primary: Colors.white,
             onPrimary: Color(0xFF121212),
           ),
+          cardColor: Color(0xFF1C88BF),
           scaffoldBackgroundColor: Color(0xFF121212),
           appBarTheme: AppBarTheme(
             backgroundColor: Color(0xFF121212),
@@ -95,6 +97,7 @@ class MyApp extends StatelessWidget {
             unselectedItemColor: Colors.white,
           ),
           textTheme: TextTheme(
+            bodySmall: TextStyle(color: Color(0xFF1C88BF)),
             bodyLarge: TextStyle(color: Colors.white),
             bodyMedium: TextStyle(color: Colors.white70),
             displayLarge: TextStyle(color: Colors.white),

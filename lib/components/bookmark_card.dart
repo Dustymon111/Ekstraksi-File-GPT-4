@@ -45,12 +45,12 @@ Widget buildBookmarkCard({
             ),
           ],
         ),
-        trailing: IconButton(
-          icon: Icon(Icons.delete, color: Colors.red),
-          onPressed: () {
-            print("Item telah dihapus!");
-          },
-        ),
+        // trailing: IconButton(
+        //   icon: Icon(Icons.delete, color: Colors.red),
+        //   onPressed: () {
+        //     print("Item telah dihapus!");
+        //   },
+        // ),
         onTap: () {
           context.read<GlobalProvider>().setBookmarkId(bookmarkId);
           Navigator.push(

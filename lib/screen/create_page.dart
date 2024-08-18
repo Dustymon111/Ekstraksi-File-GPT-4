@@ -18,11 +18,15 @@ class _CreateScreenState extends State<CreateScreen> {
           children: [
             Container(
               decoration: BoxDecoration(
-                color: Theme.of(context).appBarTheme.backgroundColor,
-                borderRadius: BorderRadius.only(
-                  bottomRight: Radius.circular(50.0),
-                ),
-              ),
+                  color: Theme.of(context).appBarTheme.backgroundColor,
+                  borderRadius: BorderRadius.only(
+                      bottomRight: Radius.circular(50.0),
+                      bottomLeft: Radius.circular(40.0)),
+                  border: Border(
+                      bottom: BorderSide(
+                    color: Color(0xFF1C88BF),
+                    width: 2.0,
+                  ))),
               padding: const EdgeInsets.all(16.0),
               child: Column(
                 children: [
@@ -30,18 +34,17 @@ class _CreateScreenState extends State<CreateScreen> {
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: [
                       CircleAvatar(
-                        radius: 40,
-                        backgroundColor: Colors.white,
-                        child: Icon(Icons.school,
-                            color: Color(0xFF1C88BF), size: 40),
+                        radius: 45,
+                        backgroundColor: Colors.transparent,
+                        child: Image.asset("assets/educraft_logo_finish.png"),
                       ),
-                      SizedBox(width: 16.0),
+                      SizedBox(width: 12.0),
                       Flexible(
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: const [
                             Text(
-                              "EduCraft..",
+                              "EduCraft...",
                               style: TextStyle(
                                 color: Colors.white,
                                 fontSize: 24,

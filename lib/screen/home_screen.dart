@@ -1,3 +1,6 @@
+import 'package:aplikasi_ekstraksi_file_gpt4/models/question_set_model.dart';
+import 'package:aplikasi_ekstraksi_file_gpt4/providers/question_provider.dart';
+import 'package:aplikasi_ekstraksi_file_gpt4/screen/create_topic_screen.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'dart:async';
@@ -10,6 +13,7 @@ import 'package:aplikasi_ekstraksi_file_gpt4/screen/login_screen.dart';
 import 'package:aplikasi_ekstraksi_file_gpt4/screen/profile_screen.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:intl/intl.dart';
 
 // import 'package:path/path.dart';
 import 'package:provider/provider.dart';
@@ -36,11 +40,14 @@ class _HomeState extends State<Home> {
   int bookCount = 0;
   int exerciseCount = 0;
 
-  final color = [Colors.red, Colors.yellow, Colors.blue];
+  // final color = [Colors.red, Colors.yellow, Colors.blue];
   List<String> assets = [
-    'assets/carousel1.png',
-    'assets/carousel2.png',
-    'assets/carousel3.png',
+    'assets/carousel_Pertama.png',
+    'assets/carousel_Kedua.png',
+    'assets/carousel_Ketiga.png',
+    'assets/carousel_Keempat.png',
+    'assets/carousel_Kelima.png',
+    'assets/carousel_Keenam.png',
   ];
 
   @override
@@ -95,6 +102,7 @@ class _HomeState extends State<Home> {
   @override
   Widget build(BuildContext context) {
     var themeprov = Provider.of<ThemeNotifier>(context);
+
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false,
@@ -182,19 +190,287 @@ class _HomeState extends State<Home> {
   }
 
   Widget buildHomePage(BuildContext context) {
+    final questionProv = Provider.of<QuestionProvider>(context);
+
+    // Sort exercises dan ambil yang terbaru
+    List<QuestionSet> latestExercises = List.from(questionProv.questionSets)
+      ..sort((a, b) => b.createdAt!.compareTo(a.createdAt!));
+
+    // Memastikan hanya 3 exercise yang ditampilkan jika lebih dari 3
+    if (latestExercises.length > 3) {
+      latestExercises = latestExercises.take(3).toList();
+    }
+
     return Scaffold(
-      body: SingleChildScrollView(
-        child: Column(
-          children: [
-            Container(
+      body: Stack(
+        children: [
+          SingleChildScrollView(
+            child: Padding(
+              padding:
+                  EdgeInsets.only(top: 160.0), // Sesuaikan dengan tinggi header
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const SizedBox(height: 40),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      Row(
+                        children: [
+                          Icon(Icons.subject, size: 30),
+                          SizedBox(height: 5),
+                          Text(
+                            "$bookCount Book",
+                            style: TextStyle(
+                              fontSize: 18,
+                              color:
+                                  Theme.of(context).textTheme.bodyLarge?.color,
+                            ),
+                          ),
+                        ],
+                      ),
+                      Row(
+                        children: [
+                          Icon(Icons.topic, size: 30),
+                          SizedBox(height: 5),
+                          Text(
+                            "$exerciseCount Exercise",
+                            style: TextStyle(
+                              fontSize: 18,
+                              color:
+                                  Theme.of(context).textTheme.bodyLarge?.color,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 20),
+                  Center(
+                    child: ElevatedButton(
+                      onPressed: () {
+                        _onTabTapped(1);
+                      },
+                      child: LayoutBuilder(
+                        builder: (context, constraints) {
+                          double screenWidth =
+                              MediaQuery.of(context).size.width;
+                          double basePaddingHorizontal = screenWidth * 0.1;
+                          double additionalPadding = 30.0;
+                          double paddingHorizontal =
+                              basePaddingHorizontal + additionalPadding;
+                          double paddingVertical = 15.0;
+                          double fontSize = screenWidth * 0.05;
+
+                          return Padding(
+                            padding: EdgeInsets.symmetric(
+                                horizontal: paddingHorizontal,
+                                vertical: paddingVertical),
+                            child: Text(
+                              "Create New",
+                              style: TextStyle(
+                                fontSize: fontSize,
+                                color: Theme.of(context)
+                                    .textTheme
+                                    .bodyLarge
+                                    ?.color,
+                              ),
+                            ),
+                          );
+                        },
+                      ),
+                      style: ElevatedButton.styleFrom(
+                        side: BorderSide(
+                          color: Color(0xFF1C88BF),
+                          width: 3,
+                        ),
+                        backgroundColor:
+                            Theme.of(context).scaffoldBackgroundColor,
+                        foregroundColor: Color(0xFF1C88BF),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 40),
+
+                  // Instruksi dan carousel jika exercise <= 3
+                  if (exerciseCount <= 3) ...[
+                    Padding(
+                      padding: EdgeInsets.symmetric(
+                        horizontal: MediaQuery.of(context).size.width * 0.06,
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            "Instructions",
+                            style: TextStyle(
+                              fontSize: 24,
+                              fontWeight: FontWeight.bold,
+                              color:
+                                  Theme.of(context).textTheme.bodyLarge?.color,
+                            ),
+                          ),
+                          Text(
+                            "For new users, please follow these steps",
+                            style: TextStyle(
+                              fontSize: 16,
+                              color:
+                                  Theme.of(context).textTheme.bodyLarge?.color,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    SizedBox(
+                      height: 300,
+                      width: MediaQuery.of(context).size.width,
+                      child: PageView.builder(
+                        itemCount: assets.length,
+                        controller: PageController(
+                          initialPage: 0,
+                          viewportFraction: 1,
+                        ),
+                        physics: BouncingScrollPhysics(),
+                        itemBuilder: (context, index) {
+                          return Padding(
+                            padding:
+                                const EdgeInsets.symmetric(horizontal: 6.0),
+                            child: ClipRRect(
+                              borderRadius: BorderRadius.circular(16),
+                              child: Container(
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(16),
+                                ),
+                                child: Image.asset(
+                                  assets[index],
+                                  fit: BoxFit.contain,
+                                ),
+                              ),
+                            ),
+                          );
+                        },
+                      ),
+                    ),
+                  ]
+                  // Daftar exercise jika lebih dari 3
+                  else ...[
+                    Padding(
+                      padding: EdgeInsets.only(
+                          left: 16.0), // Atur margin kiri di sini
+                      child: Text(
+                        "Latest Exercise",
+                        style: TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                          color: Theme.of(context).textTheme.bodyLarge?.color,
+                        ),
+                      ),
+                    ),
+                    ListView.builder(
+                      shrinkWrap: true,
+                      physics: NeverScrollableScrollPhysics(),
+                      itemCount: latestExercises.length,
+                      itemBuilder: (context, index) {
+                        print("index : $index");
+                        QuestionSet questionSet = latestExercises[index];
+
+                        return Card(
+                          margin: const EdgeInsets.all(14.0),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10),
+                            side: BorderSide(
+                              color: Colors.blue, // border color
+                              width: 1, // border width
+                            ),
+                          ),
+                          elevation: 3,
+                          child: Padding(
+                            padding:
+                                const EdgeInsets.all(12.0), // Adjust padding
+                            child: ListTile(
+                              contentPadding: EdgeInsets.symmetric(
+                                  horizontal: 16, vertical: 8),
+                              title: Text(
+                                questionSet.title ??
+                                    'Question Set ${index + 1}',
+                                style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    color: Theme.of(context)
+                                        .textTheme
+                                        .bodyLarge
+                                        ?.color,
+                                    overflow: TextOverflow.ellipsis),
+                                maxLines: 1,
+                              ),
+                              subtitle: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    'Number of Questions: ${questionSet.questionCount}',
+                                  ),
+                                  SizedBox(height: 4),
+                                  Text(
+                                    'Created At: ${questionSet.createdAt != null ? DateFormat('yyyy MMMM dd').format(questionSet.createdAt!) : 'Not Available'}',
+                                    style: TextStyle(
+                                      color: Theme.of(context)
+                                          .textTheme
+                                          .bodySmall
+                                          ?.color,
+                                    ),
+                                  ),
+                                  Text(
+                                    'Finished At: ${questionSet.finishedAt != null ? DateFormat('yyyy MMMM dd').format(questionSet.finishedAt!) : 'Not Finished'}',
+                                    style: TextStyle(
+                                      color: Theme.of(context)
+                                          .textTheme
+                                          .bodySmall
+                                          ?.color,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              trailing: Text(
+                                questionSet.status == "Selesai"
+                                    ? "${questionSet.point}/100"
+                                    : "Not Finished",
+                                style: TextStyle(
+                                  color: questionSet.status == "Selesai"
+                                      ? Colors.green
+                                      : Colors.red,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              onTap: () {
+                                // Implementasi navigasi ke halaman detail exercise
+                              },
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+                  ],
+                ],
+              ),
+            ),
+          ),
+          Positioned(
+            top: 0,
+            left: 0,
+            right: 0,
+            child: Container(
               decoration: BoxDecoration(
                   color: Theme.of(context).appBarTheme.backgroundColor,
-                  borderRadius:
-                      BorderRadius.only(bottomRight: Radius.circular(50.0))),
+                  borderRadius: BorderRadius.only(
+                    bottomRight: Radius.circular(50.0),
+                  ),
+                  border: Border(
+                      bottom: BorderSide(
+                    color: Color(0xFF1C88BF),
+                    width: 2.0,
+                  ))),
               padding: EdgeInsets.symmetric(
-                vertical: 16.0,
-                horizontal:
-                    MediaQuery.of(context).size.width * 0.05, // Dynamic padding
+                vertical: 12.0,
+                horizontal: MediaQuery.of(context).size.width * 0.05,
               ),
               child: Column(
                 children: [
@@ -202,27 +478,29 @@ class _HomeState extends State<Home> {
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: [
                       CircleAvatar(
-                        radius: 45,
-                        backgroundColor: Colors.white,
-                        child: const Icon(Icons.school,
-                            color: Color(0xFF1C88BF), size: 40),
+                        radius: 55,
+                        backgroundColor: Colors.transparent,
+                        child: Image.asset("assets/educraft_logo_finish.png"),
                       ),
-                      SizedBox(width: 20),
+                      SizedBox(width: 10),
                       Flexible(
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              "Welcome to EduCraft..",
-                              style:
-                                  TextStyle(color: Colors.white, fontSize: 18),
+                              "Welcome to EduCraft",
+                              style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 18,
+                                  height: 1.3),
                             ),
                             Text(
                               context.read<UserProvider>().username,
                               style: TextStyle(
                                   color: Colors.white,
                                   fontSize: 28,
-                                  fontWeight: FontWeight.bold),
+                                  fontWeight: FontWeight.bold,
+                                  height: 0.9),
                             ),
                             Text(
                               "Knowledge Flows Freely with Practice",
@@ -238,134 +516,8 @@ class _HomeState extends State<Home> {
                 ],
               ),
             ),
-            const SizedBox(height: 20),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: [
-                Row(
-                  children: [
-                    Icon(Icons.subject, size: 30),
-                    SizedBox(height: 5),
-                    Text("$bookCount Book",
-                        style: TextStyle(
-                          fontSize: 18,
-                          color: Theme.of(context).textTheme.bodyLarge?.color,
-                        )),
-                  ],
-                ),
-                Row(
-                  children: [
-                    Icon(Icons.topic, size: 30),
-                    SizedBox(height: 5),
-                    Text("$exerciseCount Exercise",
-                        style: TextStyle(
-                          fontSize: 18,
-                          color: Theme.of(context).textTheme.bodyLarge?.color,
-                        )),
-                  ],
-                ),
-              ],
-            ),
-            const SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: () {
-                _onTabTapped(1);
-              },
-              child: LayoutBuilder(
-                builder: (context, constraints) {
-                  double screenWidth = MediaQuery.of(context).size.width;
-                  double basePaddingHorizontal =
-                      screenWidth * 0.1; // Basic padding based on screen width
-                  double additionalPadding =
-                      30.0; // Additional padding to increase left and right padding
-                  double paddingHorizontal =
-                      basePaddingHorizontal + additionalPadding;
-                  double paddingVertical = 15.0; // Fixed vertical padding
-                  double fontSize = screenWidth *
-                      0.05; // Adjust font size based on screen width
-
-                  return Padding(
-                    padding: EdgeInsets.symmetric(
-                        horizontal: paddingHorizontal,
-                        vertical: paddingVertical),
-                    child: Text(
-                      "Create New",
-                      style: TextStyle(
-                        fontSize: fontSize,
-                        color: Theme.of(context).textTheme.bodyLarge?.color,
-                      ),
-                    ),
-                  );
-                },
-              ),
-              style: ElevatedButton.styleFrom(
-                side: BorderSide(
-                  color: Color(0xFF1C88BF),
-                  width: 3,
-                ),
-                backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-                foregroundColor: Color(0xFF1C88BF),
-              ),
-            ),
-            const SizedBox(
-              height: 20,
-            ),
-            Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text("Instructions",
-                      style: TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
-                          color: Theme.of(context).textTheme.bodyLarge?.color)),
-                  Text("For new users, follow these steps!",
-                      style: TextStyle(
-                          fontSize: 16,
-                          color: Theme.of(context).textTheme.bodyLarge?.color)),
-                  const SizedBox(height: 20),
-                  SizedBox(
-                    height: 200,
-                    width: MediaQuery.of(context).size.width,
-                    child: PageView.builder(
-                      itemCount: assets.length,
-                      padEnds: false,
-                      pageSnapping: false,
-                      reverse: true,
-                      controller:
-                          PageController(initialPage: 1, viewportFraction: 0.7),
-                      itemBuilder: (context, index) {
-                        return Container(
-                          height: 500,
-                          margin: EdgeInsets.all(8),
-                          clipBehavior: Clip.antiAlias,
-                          decoration: BoxDecoration(
-                            color: color[index],
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                          child: Image.asset(
-                            assets[index],
-                            fit: BoxFit.cover,
-                          ),
-                        );
-                      },
-                    ),
-                  ),
-                  const SizedBox(height: 10),
-                  Align(
-                    alignment: Alignment.centerRight,
-                    child: TextButton(
-                      onPressed: () {},
-                      child: const Text("See all",
-                          style: TextStyle(color: Colors.blue)),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }

@@ -29,14 +29,10 @@ class _SplashScreenState extends State<SplashScreen> {
           width: 150,
           height: 150,
           decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              border: Border.all(color: Colors.white, width: 2)),
-          child: Center(
-            child: Text(
-              "Logo here..",
-              style: TextStyle(color: Colors.white, fontSize: 20),
-            ),
+            shape: BoxShape.circle,
+            // border: Border.all(color: Colors.white, width: 2)
           ),
+          child: Center(child: Image.asset('assets/educraft_logo_finish.png')),
         ),
       ),
     );

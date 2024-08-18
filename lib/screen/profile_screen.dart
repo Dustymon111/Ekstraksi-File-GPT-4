@@ -62,17 +62,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
               ),
               child: Row(
                 children: [
-                  const CircleAvatar(
+                  CircleAvatar(
                     radius: 40,
-                    backgroundColor: Color(0xFF1C88BF),
-                    child: Text(
-                      "TS",
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 24,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
+                    backgroundColor: Colors.transparent,
+                    child: Image.asset('assets/educraft_logo_finish.png'),
                   ),
                   const SizedBox(width: 16),
                   Expanded(
@@ -108,33 +101,33 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   const SizedBox(height: 24),
-                  Text(
-                    "Settings",
-                    style: TextStyle(
-                      fontSize: 22,
-                      fontWeight: FontWeight.bold,
-                      color: Theme.of(context).textTheme.bodyMedium?.color,
-                    ),
-                  ),
-                  const SizedBox(height: 8),
-                  Text(
-                    "Change Email",
-                    style: TextStyle(
-                      fontSize: 18,
-                      color: Theme.of(context).textTheme.bodyLarge?.color,
-                    ),
-                  ),
-                  const SizedBox(height: 4),
-                  Text(
-                    "Change Password",
-                    style: TextStyle(
-                      fontSize: 18,
-                      color: Theme.of(context).textTheme.bodyLarge?.color,
-                    ),
-                  ),
-                  const SizedBox(height: 24),
-                  const Divider(thickness: 2),
-                  const SizedBox(height: 20),
+                  // Text(
+                  //   "Settings",
+                  //   style: TextStyle(
+                  //     fontSize: 22,
+                  //     fontWeight: FontWeight.bold,
+                  //     color: Theme.of(context).textTheme.bodyMedium?.color,
+                  //   ),
+                  // ),
+                  // const SizedBox(height: 8),
+                  // Text(
+                  //   "Change Email",
+                  //   style: TextStyle(
+                  //     fontSize: 18,
+                  //     color: Theme.of(context).textTheme.bodyLarge?.color,
+                  //   ),
+                  // ),
+                  // const SizedBox(height: 4),
+                  // Text(
+                  //   "Change Password",
+                  //   style: TextStyle(
+                  //     fontSize: 18,
+                  //     color: Theme.of(context).textTheme.bodyLarge?.color,
+                  //   ),
+                  // ),
+                  // const SizedBox(height: 24),
+                  // const Divider(thickness: 2),
+                  // const SizedBox(height: 20),
                   Text(
                     "Help And Information",
                     style: TextStyle(
