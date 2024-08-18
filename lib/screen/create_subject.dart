@@ -147,7 +147,7 @@ class _CreateSubjectState extends State<CreateSubject> {
             PdfDocument(inputBytes: File(filePath).readAsBytesSync());
 
         // Send file to Python backend
-        var uri = Uri.parse('$localhost:$port/ekstrak-info');
+        var uri = Uri.parse('$serverUrl/ekstrak-info');
         var request = http.MultipartRequest('POST', uri)
           ..files.add(
             http.MultipartFile(

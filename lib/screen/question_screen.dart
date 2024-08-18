@@ -118,7 +118,7 @@ class _QuestionScreenState extends State<QuestionScreen> {
       },
     );
 
-    final url = Uri.parse('$localhost:$port/essay-checker');
+    final url = Uri.parse('$serverUrl/essay-checker');
     final response = await http.post(
       url,
       headers: <String, String>{
