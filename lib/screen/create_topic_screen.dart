@@ -269,22 +269,24 @@ class _CreateTopicScreenState extends State<CreateTopicScreen> {
                 child: ListTile(
                   title: Text("Choose Chapters"),
                   onTap: () async {
-                    final selectedTopicsIdResult = await Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => ChapterSelectionScreen(
-                          selectedChapters: selectedTopicsId,
-                          bookId: selectedSubject!,
+                    if (selectedSubject != null) {
+                      final selectedTopicsIdResult = await Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => ChapterSelectionScreen(
+                            selectedChapters: selectedTopicsId,
+                            bookId: selectedSubject!,
+                          ),
                         ),
-                      ),
-                    );
+                      );
 
-                    if (selectedTopicsIdResult != null) {
-                      setState(() {
-                        selectedTopicsId = selectedTopicsIdResult;
-                        subjectId = selectedTopicsId[0];
-                        print(subjectId);
-                      });
+                      if (selectedTopicsIdResult != null) {
+                        setState(() {
+                          selectedTopicsId = selectedTopicsIdResult;
+                          subjectId = selectedTopicsId[0];
+                          print(subjectId);
+                        });
+                      }
                     }
                   },
                 ),
