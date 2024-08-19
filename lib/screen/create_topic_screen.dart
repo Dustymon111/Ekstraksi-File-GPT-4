@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-// import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:provider/provider.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:http/http.dart' as http;
@@ -32,8 +32,8 @@ class _CreateTopicScreenState extends State<CreateTopicScreen> {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final String serverUrl =
       'https://ekstraksi-file-gpt-4-server-xzcbfs2fqq-et.a.run.app';
-  // final String localhost = dotenv.env["LOCALHOST"]!;
-  // final String port = dotenv.env["PORT"]!;
+  final String localhost = dotenv.env["LOCALHOST"]!;
+  final String port = dotenv.env["PORT"]!;
   List<String> selectedTopicsId = [];
   TextEditingController exerciseTitle = TextEditingController();
 
@@ -73,7 +73,7 @@ class _CreateTopicScreenState extends State<CreateTopicScreen> {
       },
     );
 
-    final url = Uri.parse('$serverUrl/question-maker');
+    final url = Uri.parse('$localhost:$port/question-maker');
     final response = await http.post(
       url,
       headers: <String, String>{
@@ -280,91 +280,95 @@ class _CreateTopicScreenState extends State<CreateTopicScreen> {
                 ),
                 child: ListTile(
                   title: Text("Choose Chapters"),
-                  onTap: () async {
-                    List<String> tempSelectedTopicsId =
-                        List.from(selectedTopicsId);
-                    await showDialog(
-                      context: context,
-                      builder: (BuildContext context) {
-                        return StatefulBuilder(
-                          builder:
-                              (BuildContext context, StateSetter setState) {
-                            return AlertDialog(
-                              title: Text("Choose Chapters"),
-                              content: Column(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  Text(
-                                    "If you choose more than one topic, it will be added to the custom topic instead.",
-                                    style:
-                                        Theme.of(context).textTheme.bodyLarge,
-                                  ),
-                                  SizedBox(
-                                      height:
-                                          16), // Add some space between the subtitle and the list
-                                  Expanded(
-                                    child: SingleChildScrollView(
-                                      child: ListBody(
-                                        children: subjectProv.filteredSubjects
-                                            .where((Subject value) =>
-                                                value.title != "Custom Topic")
-                                            .map((Subject value) {
-                                          return CheckboxListTile(
-                                            title: Text(value.title),
-                                            value: tempSelectedTopicsId
-                                                .contains(value.id),
-                                            onChanged: (bool? isSelected) {
-                                              setState(() {
-                                                if (isSelected == true) {
-                                                  tempSelectedTopicsId
-                                                      .add(value.id!);
-                                                  selectedTopic
-                                                      .add(value.title);
-                                                } else {
-                                                  tempSelectedTopicsId
-                                                      .remove(value.id);
-                                                  selectedTopic
-                                                      .remove(value.title);
-                                                }
-                                                print(selectedTopic);
-                                              });
-                                            },
-                                          );
-                                        }).toList(),
-                                      ),
+                  onTap: selectedSubject == null
+                      ? null
+                      : () async {
+                          List<String> tempSelectedTopicsId =
+                              List.from(selectedTopicsId);
+                          await showDialog(
+                            context: context,
+                            builder: (BuildContext context) {
+                              return StatefulBuilder(
+                                builder: (BuildContext context,
+                                    StateSetter setState) {
+                                  return AlertDialog(
+                                    title: Text("Choose Chapters"),
+                                    content: Column(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        Text(
+                                          "If you choose more than one topic, it will be added to the custom topic instead.",
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .bodyLarge,
+                                        ),
+                                        SizedBox(
+                                            height:
+                                                16), // Add some space between the subtitle and the list
+                                        Expanded(
+                                          child: SingleChildScrollView(
+                                            child: ListBody(
+                                              children: subjectProv
+                                                  .filteredSubjects
+                                                  .where((Subject value) =>
+                                                      value.title !=
+                                                      "Custom Topic")
+                                                  .map((Subject value) {
+                                                return CheckboxListTile(
+                                                  title: Text(value.title),
+                                                  value: tempSelectedTopicsId
+                                                      .contains(value.id),
+                                                  onChanged:
+                                                      (bool? isSelected) {
+                                                    setState(() {
+                                                      if (isSelected == true) {
+                                                        tempSelectedTopicsId
+                                                            .add(value.id!);
+                                                        selectedTopic
+                                                            .add(value.title);
+                                                      } else {
+                                                        tempSelectedTopicsId
+                                                            .remove(value.id);
+                                                        selectedTopic.remove(
+                                                            value.title);
+                                                      }
+                                                      print(selectedTopic);
+                                                    });
+                                                  },
+                                                );
+                                              }).toList(),
+                                            ),
+                                          ),
+                                        )
+                                      ],
                                     ),
-                                  )
-                                ],
-                              ),
-                              actions: <Widget>[
-                                TextButton(
-                                  child: Text("Cancel"),
-                                  onPressed: () {
-                                    Navigator.of(context).pop();
-                                  },
-                                ),
-                                TextButton(
-                                  child: Text("Choose"),
-                                  onPressed: () {
-                                    Navigator.of(context)
-                                        .pop(tempSelectedTopicsId);
-                                  },
-                                ),
-                              ],
-                            );
-                          },
-                        );
-                      },
-                    ).then((selectedTopicsIdResult) {
-                      if (selectedTopicsIdResult != null) {
-                        setState(() {
-                          selectedTopicsId = selectedTopicsIdResult;
-                          subjectId = selectedTopicsId[0];
-                          print(subjectId);
-                        });
-                      }
-                    });
-                  },
+                                    actions: <Widget>[
+                                      TextButton(
+                                        child: Text("Cancel"),
+                                        onPressed: () {
+                                          Navigator.of(context).pop();
+                                        },
+                                      ),
+                                      TextButton(
+                                        child: Text("Choose"),
+                                        onPressed: () {
+                                          Navigator.of(context)
+                                              .pop(tempSelectedTopicsId);
+                                        },
+                                      ),
+                                    ],
+                                  );
+                                },
+                              );
+                            },
+                          ).then((selectedTopicsIdResult) {
+                            if (selectedTopicsIdResult != null) {
+                              setState(() {
+                                selectedTopicsId = selectedTopicsIdResult;
+                              });
+                            }
+                          });
+                        },
                 ),
               ),
               SizedBox(height: 20),
@@ -379,6 +383,9 @@ class _CreateTopicScreenState extends State<CreateTopicScreen> {
                       onDeleted: () {
                         setState(() {
                           selectedTopicsId.remove(topicId);
+                          selectedTopic.remove(topicTitle);
+                          subjectId = selectedTopicsId[0];
+                          print(subjectId);
                         });
                       },
                     );

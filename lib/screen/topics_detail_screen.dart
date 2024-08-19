@@ -270,7 +270,6 @@ class _SubjectDetailScreenState extends State<SubjectDetailScreen> {
                       questionProvider.questionSets;
                   QuestionSet questionSet = questionSets[index];
                   List<Question> questions = questionSet.questions;
-
                   return Card(
                     margin: const EdgeInsets.only(bottom: 8.0),
                     shape: RoundedRectangleBorder(
@@ -287,7 +286,9 @@ class _SubjectDetailScreenState extends State<SubjectDetailScreen> {
                         contentPadding:
                             EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                         title: Text(
-                          questionSet.title ?? 'Question Set ${index + 1}',
+                          questionSet.title != null && questionSet.title != ""
+                              ? questionSet.title!
+                              : 'Question Set ${index + 1}',
                           style: TextStyle(
                               fontWeight: FontWeight.bold,
                               overflow: TextOverflow.ellipsis),

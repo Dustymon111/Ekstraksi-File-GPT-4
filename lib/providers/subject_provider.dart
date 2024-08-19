@@ -9,21 +9,6 @@ class SubjectProvider with ChangeNotifier {
   List<Subject> get allSubjects => _allSubjects;
   List<Subject> get filteredSubjects => _filteredSubjects;
 
-  String getSubjectTitleById(String id) {
-    // Mencari subject dengan ID yang sesuai
-    final subject = _allSubjects.firstWhere(
-      (subject) => subject.id == id,
-      orElse: () => Subject(
-          id: 'unknown',
-          title: 'Unknown Topic',
-          description: '',
-          bookmarkId: '',
-          questionSetIds: [],
-          sortIndex: 0),
-    );
-    return subject.title;
-  }
-
   Future<void> fetchAllSubjectsFromAllBooks() async {
     try {
       final querySnapshot = await FirebaseFirestore.instance
@@ -40,6 +25,21 @@ class SubjectProvider with ChangeNotifier {
     } catch (e) {
       print("Error fetching subjects: $e");
     }
+  }
+
+  String getSubjectTitleById(String id) {
+    // Mencari subject dengan ID yang sesuai
+    final subject = _allSubjects.firstWhere(
+      (subject) => subject.id == id,
+      orElse: () => Subject(
+          id: 'unknown',
+          title: 'Unknown Topic',
+          description: '',
+          bookmarkId: '',
+          questionSetIds: [],
+          sortIndex: 0),
+    );
+    return subject.title;
   }
 
   void filterSubjectByBookId(String bookId) {
