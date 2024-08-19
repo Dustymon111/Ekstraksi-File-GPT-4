@@ -35,16 +35,18 @@ class BookmarkDetailScreen extends StatelessWidget {
                   // Bookmark details
                   Text(
                     bookmark.title,
-                    style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                    style: TextStyle(fontSize: 24, 
+                    fontWeight: FontWeight.bold,
+                    color: Theme.of(context).textTheme.bodyLarge?.color),
                   ),
                   SizedBox(height: 8),
                   Text(
                     'Author(s): ${bookmark.author.join(', ')}',
-                    style: TextStyle(fontSize: 16),
+                    style: TextStyle(fontSize: 16, color: Theme.of(context).textTheme.bodyLarge?.color),
                   ),
                   Text(
                     'Number Of Pages: ${bookmark.totalPages.toString()}',
-                    style: TextStyle(fontSize: 16),
+                    style: TextStyle(fontSize: 16, color: Theme.of(context).textTheme.bodyLarge?.color),
                   ),
                   SizedBox(height: 16),
                   Center(
@@ -54,7 +56,8 @@ class BookmarkDetailScreen extends StatelessWidget {
                             builder: (context) => BookDetailScreen(
                                 title: bookmark.title,
                                 author: bookmark.author.join(', '),
-                                totalPages: bookmark.totalPages)));
+                                totalPages: bookmark.totalPages,
+                                subjects: subjects)));
                       },
                       style: OutlinedButton.styleFrom(
                         side: BorderSide(color: Color(0xFF1C88BF), width: 2),
@@ -73,12 +76,12 @@ class BookmarkDetailScreen extends StatelessWidget {
                   ),
                   SizedBox(height: 16),
                   Text(
-                    "Your Topics (${subjects.length})",
-                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                    "Chapters In Your Book (${subjects.length})",
+                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Theme.of(context).textTheme.bodyLarge?.color),
                   ),
                   Text(
-                    "List of topics that you have created",
-                    style: TextStyle(fontSize: 16),
+                    "List of chapters that you have extracted",
+                    style: TextStyle(fontSize: 16, color: Theme.of(context).textTheme.bodyLarge?.color),
                   ),
                   SizedBox(height: 8),
                   if (snapshot.connectionState == ConnectionState.waiting)

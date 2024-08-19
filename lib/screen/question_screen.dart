@@ -170,8 +170,8 @@ class _QuestionScreenState extends State<QuestionScreen> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: const Text('Submit Latihan?'),
-          content: const Text('Periksa kembali jawaban anda jika belum yakin'),
+          title: const Text('Submit Exercise?'),
+          content: const Text('Double-check your answer if you not sure.'),
           actions: <Widget>[
             TextButton(
               style: TextButton.styleFrom(
@@ -341,6 +341,7 @@ class _QuestionScreenState extends State<QuestionScreen> {
       child: Scaffold(
         appBar: AppBar(
           title: const Text('Question List'),
+          backgroundColor: Color(0xFF1C88BF),
           actions: [
             Switch(
               thumbIcon: themeprov.isDarkTheme

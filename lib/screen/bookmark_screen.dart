@@ -39,7 +39,7 @@ class _BookmarkScreenState extends State<BookmarkScreen> {
                 ),
                 focusedBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.all(Radius.circular(20)),
-                  borderSide: BorderSide(color: Colors.black),
+                  borderSide: BorderSide(color: Color(0xFF1C88BF)),
                 ),
                 enabledBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.all(Radius.circular(20)),

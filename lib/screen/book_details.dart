@@ -1,14 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:aplikasi_ekstraksi_file_gpt4/models/subject_model.dart';
 
 class BookDetailScreen extends StatelessWidget {
   final String title;
   final String author;
   final int totalPages;
+  final List<Subject> subjects;
 
   BookDetailScreen({
     required this.title,
     required this.author,
     required this.totalPages,
+    required this.subjects,
   });
 
   @override
@@ -25,67 +28,109 @@ class BookDetailScreen extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
-                title,
-                style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Theme.of(context).textTheme.bodyLarge?.color),
-              ),
-              SizedBox(height: 8),
-              Text(
-                'Author : $author',
-                style: TextStyle(fontSize: 16, color: Theme.of(context).textTheme.bodyLarge?.color),
-              ),
-              SizedBox(height: 8),
-              Text(
-                'Number Of Pages : $totalPages Pages',
-                style: TextStyle(fontSize: 16, color: Theme.of(context).textTheme.bodyLarge?.color),
+              // Book title with elegant style
+              Center(
+                child: Text(
+                  title,
+                  style: TextStyle(
+                    fontSize: 28,
+                    fontWeight: FontWeight.bold,
+                    color: Theme.of(context).textTheme.bodyLarge?.color,
+                  ),
+                ),
               ),
               SizedBox(height: 16),
-              Text(
-                'Table Of Contents',
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Theme.of(context).textTheme.bodyLarge?.color),
+
+              // Book cover placeholder
+              Center(
+                child: Container(
+                  height: 200,
+                  width: 150,
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(10),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Color(0xFF1C88BF),
+                        spreadRadius: 2,
+                        blurRadius: 7,
+                        offset: Offset(0, 3),
+                      ),
+                    ],
+                  ),
+                  child: Icon(
+                    Icons.book,
+                    size: 80,
+                    color: Color(0xFF1C88BF),
+                  ),
+                ),
               ),
-              SizedBox(height: 8),
-              ListView(
-                shrinkWrap: true,
-                physics: NeverScrollableScrollPhysics(),
+              SizedBox(height: 16),
+
+              // Author and page count
+              Column(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  ListTile(
-                    title: Text('Bab I ...'),
-                    leading: Icon(Icons.arrow_right),
+                  Text(
+                    'Author: $author',
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.w500,
+                      color: Theme.of(context).textTheme.bodyLarge?.color,
+                    ),
                   ),
-                  ListTile(
-                    title: Text('Bab II ...'),
-                    leading: Icon(Icons.arrow_right),
-                  ),
-                  ListTile(
-                    title: Text('Bab III ...'),
-                    leading: Icon(Icons.arrow_right),
-                  ),
-                  ListTile(
-                    title: Text('Bab IV ...'),
-                    leading: Icon(Icons.arrow_right),
-                  ),
-                  ListTile(
-                    title: Text('Bab V ...'),
-                    leading: Icon(Icons.arrow_right),
-                  ),
-                  ListTile(
-                    title: Text('Bab VI ...'),
-                    leading: Icon(Icons.arrow_right),
+                  Text(
+                    '$totalPages Pages',
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.w500,
+                      color: Theme.of(context).textTheme.bodyLarge?.color,
+                    ),
                   ),
                 ],
               ),
-              SizedBox(height: 16),
+              SizedBox(height: 30),
+
+              // Table of Contents title
               Text(
-                'Bibliography',
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Theme.of(context).textTheme.bodyLarge?.color),
+                'Chapters In this Book',
+                style: TextStyle(
+                  fontSize: 22,
+                  fontWeight: FontWeight.bold,
+                  color: Theme.of(context).textTheme.bodyLarge?.color,
+                ),
               ),
               SizedBox(height: 8),
-              Text(
-                'Aini, N., Sinurat, S., & Hutabarat, S. A. (2018). '
-                'Penerapan metode simple moving average untuk memprediksi hasil laba laundry karpet pada CV Homecare. J. Ris. Komput., vol. 5, no. 2, 167-175.',
-                style: TextStyle(fontSize: 16, color: Theme.of(context).textTheme.bodyLarge?.color),
+
+              // List of subjects with a card design
+              ListView.builder(
+                shrinkWrap: true,
+                physics: NeverScrollableScrollPhysics(),
+                itemCount: subjects.length,
+                itemBuilder: (context, index) {
+                  return Card(
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    elevation: 3,
+                    shadowColor: Color(0xFF1C88BF),
+                    margin: EdgeInsets.symmetric(vertical: 8),
+                    child: ListTile(
+                      leading:
+                          Icon(Icons.list_rounded, color: Color(0xFF1C88BF)),
+                      title: Text(
+                        subjects[index].title,
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.w500,
+                          color: Theme.of(context).textTheme.bodyLarge?.color,
+                        ),
+                      ),
+                    ),
+                  );
+                },
               ),
+              SizedBox(height: 16),
             ],
           ),
         ),

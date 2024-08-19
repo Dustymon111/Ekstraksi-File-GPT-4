@@ -212,7 +212,9 @@ class _SubjectDetailScreenState extends State<SubjectDetailScreen> {
               SizedBox(height: 16),
               Text(
                 'Number of Exercise(s): ${widget.subject.questionSetIds.length}',
-                style: TextStyle(fontSize: 16),
+                style: TextStyle(
+                    fontSize: 16,
+                    color: Theme.of(context).textTheme.bodyLarge?.color),
               ),
               SizedBox(height: 16),
               // Toggle chart visibility
@@ -291,7 +293,9 @@ class _SubjectDetailScreenState extends State<SubjectDetailScreen> {
                               : 'Question Set ${index + 1}',
                           style: TextStyle(
                               fontWeight: FontWeight.bold,
-                              overflow: TextOverflow.ellipsis),
+                              overflow: TextOverflow.ellipsis,
+                              color:
+                                  Theme.of(context).textTheme.bodyLarge?.color),
                           maxLines: 1,
                         ),
                         subtitle: Column(
@@ -305,13 +309,19 @@ class _SubjectDetailScreenState extends State<SubjectDetailScreen> {
                             Text(
                               'Created At: ${questionSet.createdAt != null ? DateFormat('yyyy MMMM dd').format(questionSet.createdAt!) : 'Not Available'}',
                               style: TextStyle(
-                                color: Colors.grey[600],
+                                color: Theme.of(context)
+                                    .textTheme
+                                    .bodySmall
+                                    ?.color,
                               ),
                             ),
                             Text(
                               'Finished At: ${questionSet.finishedAt != null ? DateFormat('yyyy MMMM dd').format(questionSet.finishedAt!) : 'Not Finished'}',
                               style: TextStyle(
-                                color: Colors.grey[600],
+                                color: Theme.of(context)
+                                    .textTheme
+                                    .bodySmall
+                                    ?.color,
                               ),
                             ),
                           ],
