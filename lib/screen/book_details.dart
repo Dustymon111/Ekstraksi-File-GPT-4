@@ -79,11 +79,12 @@ class BookDetailScreen extends StatelessWidget {
                       color: Theme.of(context).textTheme.bodyLarge?.color,
                     ),
                   ),
+                  SizedBox(height: 10,),
                   Text(
                     '$totalPages Pages',
                     style: TextStyle(
                       fontSize: 18,
-                      fontWeight: FontWeight.w500,
+                      fontWeight: FontWeight.bold,
                       color: Theme.of(context).textTheme.bodyLarge?.color,
                     ),
                   ),
