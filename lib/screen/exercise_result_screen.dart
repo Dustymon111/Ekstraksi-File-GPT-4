@@ -14,6 +14,7 @@ class ExerciseResultScreen extends StatelessWidget {
   final Map<int, dynamic> selectedOptions;
   final Subject subject;
   final double score;
+  final String duration;
 
   ExerciseResultScreen({
     required this.totalQuestions,
@@ -22,6 +23,7 @@ class ExerciseResultScreen extends StatelessWidget {
     required this.selectedOptions,
     required this.subject,
     required this.score,
+    required this.duration,
   });
 
   @override
@@ -68,6 +70,13 @@ class ExerciseResultScreen extends StatelessWidget {
                 SizedBox(height: 8),
                 Text(
                   'Score: $score',
+                  style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+                Text(
+                  'Duration: $duration',
                   style: TextStyle(
                     fontSize: 20,
                     fontWeight: FontWeight.w500,

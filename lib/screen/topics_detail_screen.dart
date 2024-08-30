@@ -91,6 +91,14 @@ class _SubjectDetailScreenState extends State<SubjectDetailScreen> {
                       color: Theme.of(context).textTheme.bodyLarge?.color,
                     ),
                   ),
+                  Text(
+                    'Duration: ${(questionSet.duration)}',
+                    style: TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.w500,
+                      color: Theme.of(context).textTheme.bodyLarge?.color,
+                    ),
+                  ),
                   SizedBox(height: 24),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,

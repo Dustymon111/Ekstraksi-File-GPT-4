@@ -47,6 +47,7 @@ class _QuestionScreenState extends State<QuestionScreen> {
       'https://ekstraksi-file-gpt-4-server-xzcbfs2fqq-et.a.run.app';
   // final String localhost = dotenv.env["LOCALHOST"]!;
   // final String port = dotenv.env["PORT"]!;
+  late Stopwatch durationStopwatch;
 
   bool areListsEqual(List<dynamic> list1, List<dynamic> list2) {
     if (list1.length != list2.length) {
@@ -65,6 +66,9 @@ class _QuestionScreenState extends State<QuestionScreen> {
   @override
   void initState() {
     super.initState();
+    durationStopwatch = Stopwatch();
+    durationStopwatch.start();
+
     context.read<QuestionProvider>().clearSelectedOption();
 
     for (int i = 0; i < widget.questions.length; i++) {
@@ -88,13 +92,22 @@ class _QuestionScreenState extends State<QuestionScreen> {
     super.dispose();
   }
 
+  String formatDuration(Duration duration) {
+    String twoDigits(int n) => n.toString().padLeft(2, '0');
+    String hours = twoDigits(duration.inHours);
+    String minutes = twoDigits(duration.inMinutes.remainder(60));
+    String seconds = twoDigits(duration.inSeconds.remainder(60));
+    return "$hours:$minutes:$seconds";
+  }
+
   Future<dynamic> checkEssayAnswer(
       BuildContext context, // Add BuildContext to manage dialogs
       List<Map<String, String>> answers,
       String userId,
       String filename,
       String subjectId,
-      String questionSetId) async {
+      String questionSetId,
+      String duration) async {
     // Show the initial dialog with loading animation
     Stopwatch stopwatch = Stopwatch()..start();
     showDialog(
@@ -130,6 +143,7 @@ class _QuestionScreenState extends State<QuestionScreen> {
         'filename': filename,
         'subjectId': subjectId,
         'questionSetId': questionSetId,
+        'duration': duration
       }),
     );
     stopwatch.stop();
@@ -179,6 +193,11 @@ class _QuestionScreenState extends State<QuestionScreen> {
               ),
               child: const Text('Submit'),
               onPressed: () async {
+                correctAnswers = 0;
+                mAnswerCorrect = 0;
+                mChoiceCorrect = 0;
+                essayCorrect = 0;
+                calculatedPoint = 0;
                 for (int i = 0; i < widget.questions.length; i++) {
                   if (widget.questions[i].type == 'm_answer') {
                     if (areListsEqual(
@@ -221,7 +240,8 @@ class _QuestionScreenState extends State<QuestionScreen> {
                       context.read<UserProvider>().userId,
                       filename!,
                       widget.subject.id!,
-                      questionSetId);
+                      questionSetId,
+                      formatDuration(durationStopwatch.elapsed));
                   setState(() {
                     correctAnswers += res['correct_answers'] as int;
                     essayCorrect += res['correct_answers'] as int;
@@ -334,7 +354,8 @@ class _QuestionScreenState extends State<QuestionScreen> {
         final bool shouldPop = await _showExitDialog(context);
         if (context.mounted && shouldPop) {
           context.read<QuestionProvider>().clearSelectedOption();
-
+          durationStopwatch.stop();
+          durationStopwatch.reset();
           Navigator.pop(context, widget.subject);
         }
       },
@@ -427,18 +448,20 @@ class _QuestionScreenState extends State<QuestionScreen> {
                 onPressed: () async {
                   bool shouldNavigate = await _dialogBuilder(context);
                   if (shouldNavigate) {
+                    durationStopwatch.stop();
                     Navigator.pushReplacement(
                       context,
                       MaterialPageRoute(
                         builder: (context) => ExerciseResultScreen(
-                            subject: widget.subject,
-                            questions:
-                                context.read<QuestionProvider>().questions,
-                            totalQuestions: widget.questions.length,
-                            correctAnswers: correctAnswers,
-                            selectedOptions:
-                                context.read<QuestionProvider>().selectedOption,
-                            score: calculatedPoint.roundToDouble()),
+                          subject: widget.subject,
+                          questions: context.read<QuestionProvider>().questions,
+                          totalQuestions: widget.questions.length,
+                          correctAnswers: correctAnswers,
+                          selectedOptions:
+                              context.read<QuestionProvider>().selectedOption,
+                          score: calculatedPoint.roundToDouble(),
+                          duration: formatDuration(durationStopwatch.elapsed),
+                        ),
                       ),
                     );
                   }

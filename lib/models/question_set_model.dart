@@ -13,6 +13,7 @@ class QuestionSet {
   DateTime? createdAt;
   DateTime? finishedAt;
   final String subjectId; // Reference to the Subject document
+  String? duration;
 
   QuestionSet({
     this.id,
@@ -24,8 +25,9 @@ class QuestionSet {
     required this.questions,
     required this.selectedOptions,
     required this.subjectId,
-    this.createdAt, // Allow this to be nullable
-    this.finishedAt, // Allow this to be nullable
+    this.createdAt,
+    this.finishedAt,
+    this.duration, // Initialize the duration field
   });
 
   factory QuestionSet.fromMap(Map<String, dynamic> data) {
@@ -55,7 +57,8 @@ class QuestionSet {
               ? (data['finishedAt'] as Timestamp).toDate()
               : DateTime.tryParse(data['finishedAt'] as String) ??
                   DateTime.now())
-          : null, // Handle null case
+          : null,
+      duration: data['duration'] ?? "", // Add duration mapping
     );
   }
 
@@ -73,10 +76,12 @@ class QuestionSet {
       'subjectId': subjectId,
       'createdAt': createdAt != null
           ? Timestamp.fromDate(createdAt!)
-          : null, // Handle null case
-      'finishedAt': createdAt != null
-          ? Timestamp.fromDate(createdAt!)
-          : null, // Handle null case
+          : null,
+      'finishedAt': finishedAt != null
+          ? Timestamp.fromDate(finishedAt!)
+          : null,
+      'duration': duration ?? "", // Add duration to the map
     };
   }
 }
+
