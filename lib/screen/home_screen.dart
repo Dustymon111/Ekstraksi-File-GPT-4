@@ -1,6 +1,5 @@
 import 'package:aplikasi_ekstraksi_file_gpt4/models/question_set_model.dart';
 import 'package:aplikasi_ekstraksi_file_gpt4/providers/question_provider.dart';
-import 'package:aplikasi_ekstraksi_file_gpt4/screen/create_topic_screen.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'dart:async';

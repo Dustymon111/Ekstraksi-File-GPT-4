@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-
-import 'package:aplikasi_ekstraksi_file_gpt4/models/bookmark_model.dart';
 import 'package:aplikasi_ekstraksi_file_gpt4/providers/bookmark_provider.dart';
 
 class SelectBookScreen extends StatefulWidget {

@@ -3,13 +3,10 @@ import 'package:aplikasi_ekstraksi_file_gpt4/components/select_book_screen.dart'
 import 'package:aplikasi_ekstraksi_file_gpt4/components/select_chapters.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
+// import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:provider/provider.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:http/http.dart' as http;
-
-import 'package:aplikasi_ekstraksi_file_gpt4/models/bookmark_model.dart';
-import 'package:aplikasi_ekstraksi_file_gpt4/models/subject_model.dart';
 import 'package:aplikasi_ekstraksi_file_gpt4/providers/bookmark_provider.dart';
 import 'package:aplikasi_ekstraksi_file_gpt4/providers/subject_provider.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
@@ -277,7 +274,7 @@ class _CreateTopicScreenState extends State<CreateTopicScreen> {
                         ),
                       );
 
-                      if (selectedTopicsResult[0] != null) {
+                      if (selectedTopicsResult != null) {
                         setState(() {
                           selectedTopicsId = selectedTopicsResult[0];
                           subjectId = selectedTopicsId[0];
@@ -295,11 +292,9 @@ class _CreateTopicScreenState extends State<CreateTopicScreen> {
                 Wrap(
                   spacing: 8.0,
                   children: selectedTopicsId.map((topicId) {
+                    subjectId = selectedTopicsId[0];
                     String topicTitle =
                         subjectProv.getSubjectTitleById(topicId);
-                    // selectedTopic.add(topicTitle);
-                    // print("selected topic id : $selectedTopicsId");
-                    // print("topics title : $topicTitle");
                     print("topik list : $selectedTopic");
                     return Chip(
                       label: Text(topicTitle),
@@ -308,10 +303,6 @@ class _CreateTopicScreenState extends State<CreateTopicScreen> {
                           selectedTopicsId.remove(topicId);
                           selectedTopic.remove(topicTitle);
                           print("topik list setelah dihapus: $selectedTopic");
-
-                          if (selectedTopicsId.isNotEmpty) {
-                            subjectId = selectedTopicsId[0];
-                          }
                         });
                       },
                     );
