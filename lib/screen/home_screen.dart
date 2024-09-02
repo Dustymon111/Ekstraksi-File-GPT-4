@@ -357,13 +357,27 @@ class _HomeState extends State<Home> {
                     Padding(
                       padding: EdgeInsets.only(
                           left: 16.0), // Atur margin kiri di sini
-                      child: Text(
-                        "Latest Exercise",
-                        style: TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
-                          color: Theme.of(context).textTheme.bodyLarge?.color,
-                        ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            "Latest Exercise",
+                            style: TextStyle(
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold,
+                              color:
+                                  Theme.of(context).textTheme.bodyLarge?.color,
+                            ),
+                          ),
+                          Text(
+                            "It displays the last exercise you opened",
+                            style: TextStyle(
+                              fontSize: 16,
+                              color:
+                                  Theme.of(context).textTheme.bodyLarge?.color,
+                            ),
+                          ),
+                        ],
                       ),
                     ),
                     ListView.builder(
@@ -478,9 +492,34 @@ class _HomeState extends State<Home> {
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: [
                       CircleAvatar(
-                        radius: 55,
+                        radius: 45,
                         backgroundColor: Colors.transparent,
-                        child: Image.asset("assets/educraft_logo_finish.png"),
+                        child: Container(
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            color: Colors.white,
+                            boxShadow: [
+                              BoxShadow(
+                                color: Theme.of(context).splashColor,
+                                spreadRadius: 3,
+                                blurRadius: 8,
+                                offset: Offset(0,
+                                    4), // Slightly increased offset for more depth
+                              ),
+                              BoxShadow(
+                                color: Theme.of(context)
+                                    .splashColor, // Soft inner shadow effect
+                                spreadRadius: -4,
+                                blurRadius: 6,
+                                offset: Offset(0, -3),
+                              ),
+                            ],
+                          ),
+                          child: Padding(
+                            padding: const EdgeInsets.all(4.0),
+                            child: Image.asset("assets/logo.png"),
+                          ),
+                        ),
                       ),
                       SizedBox(width: 10),
                       Flexible(

@@ -17,26 +17,29 @@ class CustomElevatedButton extends StatelessWidget {
       style: ButtonStyle(
         backgroundColor: WidgetStateProperty.resolveWith((states) {
           if (states.contains(WidgetState.disabled)) {
-            return theme.colorScheme.onSurface.withOpacity(0.38);
+            return theme.colorScheme.background;
           }
-          return theme.colorScheme.primary;
+          return theme.colorScheme.background;
         }),
         foregroundColor: WidgetStateProperty.resolveWith((states) {
           if (states.contains(WidgetState.disabled)) {
-            return theme.colorScheme.onSurface.withOpacity(0.18);
+            return theme.colorScheme.background;
           }
-          return theme.colorScheme.onPrimary;
+          return theme.colorScheme.background;
         }),
         padding: WidgetStateProperty.all(
             EdgeInsets.symmetric(horizontal: 24, vertical: 12)),
-        textStyle: WidgetStateProperty.all(TextStyle(fontSize: 16)),
+        textStyle: WidgetStateProperty.all(TextStyle(
+          fontSize: 16,
+          color: Theme.of(context).textTheme.bodyLarge?.color,
+        )),
       ),
       onPressed: onPressed,
       child: Text(
         label,
         style: TextStyle(
           fontSize: 16,
-          color: Theme.of(context).scaffoldBackgroundColor,
+          color: Theme.of(context).textTheme.bodyLarge?.color,
         ),
       ),
     );

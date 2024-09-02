@@ -14,13 +14,13 @@ import 'package:aplikasi_ekstraksi_file_gpt4/screen/test_screen.dart';
 import 'package:firebase_app_check/firebase_app_check.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
+// import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:provider/provider.dart';
 import 'firebase_options.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await dotenv.load(fileName: ".env");
+  // await dotenv.load(fileName: ".env");
   // OpenAI.apiKey = dotenv.env["OPENAI_API_KEY"]!;
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
@@ -50,11 +50,12 @@ class MyApp extends StatelessWidget {
         debugShowCheckedModeBanner: false,
         title: 'Ekstraksi File',
         theme: ThemeData(
-          shadowColor: Colors.grey,
+          shadowColor: Color(0xFF1C88BF),
+          splashColor: Colors.black.withOpacity(0.3),
           primaryColor: Colors.white,
           colorScheme: ColorScheme.light(
             primary: Color(0xFF1C88BF),
-            background: Color(0xFF1C88BF),
+            background: Colors.white,
             onPrimary: Colors.white,
           ),
           scaffoldBackgroundColor: Colors.white,
@@ -76,6 +77,7 @@ class MyApp extends StatelessWidget {
           ),
         ),
         darkTheme: ThemeData(
+          splashColor: Colors.white.withOpacity(0.5),
           shadowColor: Color(0xFF1C88BF),
           primaryColor: Color(0xFF121212),
           colorScheme: ColorScheme.dark(

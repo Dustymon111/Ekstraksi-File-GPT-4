@@ -96,6 +96,8 @@ class _CreateTopicScreenState extends State<CreateTopicScreen> {
       }),
     );
 
+    print("Subject Id : $subjectId");
+
     Navigator.of(context).pop();
     stopwatch.stop();
     if (response.statusCode == 200) {
@@ -278,6 +280,8 @@ class _CreateTopicScreenState extends State<CreateTopicScreen> {
                       if (selectedTopicsResult[0] != null) {
                         setState(() {
                           selectedTopicsId = selectedTopicsResult[0];
+                          subjectId = selectedTopicsId[0];
+                          print("subject id : $subjectId");
                           selectedTopic = selectedTopicsResult[1];
                           print(selectedTopic);
                         });
@@ -551,6 +555,7 @@ class _CreateTopicScreenState extends State<CreateTopicScreen> {
                     onPressed: selectedSubject != null &&
                             selectedEssay != null &&
                             selectedMultipleChoice != null &&
+                            subjectId != null &&
                             selectedTopic.isNotEmpty
                         ? () {
                             postData(

@@ -123,7 +123,7 @@ class BookmarkDetailScreen extends StatelessWidget {
                           },
                           child: Container(
                             decoration: BoxDecoration(
-                              color: Theme.of(context).colorScheme.background,
+                              color: Theme.of(context).scaffoldBackgroundColor,
                               borderRadius: BorderRadius.circular(8),
                               boxShadow: [
                                 BoxShadow(
@@ -143,7 +143,10 @@ class BookmarkDetailScreen extends StatelessWidget {
                                     Text(
                                       subject.title,
                                       style: TextStyle(
-                                          color: Colors.white,
+                                          color: Theme.of(context)
+                                              .textTheme
+                                              .bodyLarge
+                                              ?.color,
                                           fontSize: 16,
                                           fontWeight: FontWeight.bold),
                                       textAlign: TextAlign.center,
@@ -153,7 +156,12 @@ class BookmarkDetailScreen extends StatelessWidget {
                                     SizedBox(height: 8),
                                     Text(
                                       '${subject.questionSetIds.length} Exercise(s)',
-                                      style: TextStyle(color: Colors.white),
+                                      style: TextStyle(
+                                        color: Theme.of(context)
+                                            .textTheme
+                                            .bodyLarge
+                                            ?.color,
+                                      ),
                                     ),
                                   ],
                                 ),

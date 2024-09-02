@@ -23,7 +23,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
       builder: (BuildContext dialogContext) {
         return AlertDialog(
           title: Text(title),
-          content: Text(content),
+          content: Text(
+            content,
+            style:
+                TextStyle(color: Theme.of(context).textTheme.bodyLarge?.color),
+          ),
           actions: [
             TextButton(
               child: const Text("OK"),
@@ -65,7 +69,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   CircleAvatar(
                     radius: 40,
                     backgroundColor: Colors.transparent,
-                    child: Image.asset('assets/educraft_logo_finish.png'),
+                    child: Image.asset('assets/logo.png'),
                   ),
                   const SizedBox(width: 16),
                   Expanded(
@@ -242,7 +246,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         }
                       },
                       child: const Text('Logout'),
-                      
                     ),
                   ),
                 ],
