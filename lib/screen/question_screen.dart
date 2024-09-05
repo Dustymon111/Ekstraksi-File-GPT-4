@@ -196,9 +196,10 @@ class _QuestionScreenState extends State<QuestionScreen> {
               style: TextButton.styleFrom(
                 textStyle: Theme.of(context).textTheme.labelLarge,
               ),
-              child: const Text(
+              child: Text(
                 'Submit',
-                style: TextStyle(color: Colors.white),
+                style: TextStyle(
+                    color: Theme.of(context).textTheme.bodyLarge?.color),
               ),
               onPressed: () async {
                 correctAnswers = 0;
