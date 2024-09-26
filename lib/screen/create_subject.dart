@@ -197,7 +197,8 @@ class _CreateSubjectState extends State<CreateSubject> {
           // Handle non-200 response from the backend
           print("status code: ${response.statusCode}");
           Fluttertoast.showToast(
-            msg: "Failed to extract module, please try again",
+            msg:
+                "Extraction failed. Please try again and ensure that the file contains text and not only images.",
             toastLength: Toast.LENGTH_LONG,
             gravity: ToastGravity.BOTTOM,
             backgroundColor: Colors.black,
@@ -210,7 +211,8 @@ class _CreateSubjectState extends State<CreateSubject> {
         Navigator.of(context)
             .pop(); // Ensure dialog is closed if an error occurs
         Fluttertoast.showToast(
-          msg: "Failed to extract module, please try again",
+          msg:
+              "Extraction failed. Please try again and ensure that the file contains text and not only images.",
           toastLength: Toast.LENGTH_LONG,
           gravity: ToastGravity.BOTTOM,
           backgroundColor: Colors.black,
@@ -302,6 +304,16 @@ class _CreateSubjectState extends State<CreateSubject> {
               ),
             ],
           ),
+          SizedBox(
+            height: 8,
+          ),
+          Padding(
+            padding: const EdgeInsets.all(10.0),
+            child: Text(
+              "Note: Please ensure that the file contains text and not only images.",
+              style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold),
+            ),
+          )
         ],
       ),
     );
