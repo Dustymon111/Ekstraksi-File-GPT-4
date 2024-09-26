@@ -184,14 +184,23 @@ class _QuestionScreenState extends State<QuestionScreen> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: const Text('Submit Exercise?'),
+          title: Text(
+            'Submit Exercise?',
+            style: TextStyle(
+              color: Theme.of(context).textTheme.bodyLarge?.color,
+            ),
+          ),
           content: const Text('Double-check your answer if you not sure.'),
           actions: <Widget>[
             TextButton(
               style: TextButton.styleFrom(
                 textStyle: Theme.of(context).textTheme.labelLarge,
               ),
-              child: const Text('Submit'),
+              child: Text(
+                'Submit',
+                style: TextStyle(
+                    color: Theme.of(context).textTheme.bodyLarge?.color),
+              ),
               onPressed: () async {
                 correctAnswers = 0;
                 mAnswerCorrect = 0;
@@ -297,7 +306,10 @@ class _QuestionScreenState extends State<QuestionScreen> {
               style: TextButton.styleFrom(
                 textStyle: Theme.of(context).textTheme.labelLarge,
               ),
-              child: const Text('Cancel'),
+              child: Text(
+                'Cancel',
+                style: TextStyle(color: Colors.red),
+              ),
               onPressed: () {
                 Navigator.pop(
                     context, false); // Close the dialog and return false

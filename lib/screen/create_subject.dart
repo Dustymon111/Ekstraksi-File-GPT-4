@@ -106,6 +106,7 @@ class _CreateSubjectState extends State<CreateSubject> {
     if (pickedFile != null) {
       try {
         final filePath = pickedFile!.path!;
+        print("file path : $filePath");
         final fileName = path.basename(filePath.split('/').last);
 
         // Create a reference to Firebase Storage
@@ -145,6 +146,8 @@ class _CreateSubjectState extends State<CreateSubject> {
         final bookUrl = await storageRef.getDownloadURL();
         PdfDocument document =
             PdfDocument(inputBytes: File(filePath).readAsBytesSync());
+        print("Document : $document");
+        print('PDF document loaded successfully');
 
         // Send file to Python backend
         var uri = Uri.parse('$serverUrl/ekstrak-info');

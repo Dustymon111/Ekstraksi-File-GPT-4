@@ -35,18 +35,23 @@ class BookmarkDetailScreen extends StatelessWidget {
                   // Bookmark details
                   Text(
                     bookmark.title,
-                    style: TextStyle(fontSize: 24, 
-                    fontWeight: FontWeight.bold,
-                    color: Theme.of(context).textTheme.bodyLarge?.color),
+                    style: TextStyle(
+                        fontSize: 24,
+                        fontWeight: FontWeight.bold,
+                        color: Theme.of(context).textTheme.bodyLarge?.color),
                   ),
                   SizedBox(height: 8),
                   Text(
                     'Author(s): ${bookmark.author.join(', ')}',
-                    style: TextStyle(fontSize: 16, color: Theme.of(context).textTheme.bodyLarge?.color),
+                    style: TextStyle(
+                        fontSize: 16,
+                        color: Theme.of(context).textTheme.bodyLarge?.color),
                   ),
                   Text(
                     'Number Of Pages: ${bookmark.totalPages.toString()}',
-                    style: TextStyle(fontSize: 16, color: Theme.of(context).textTheme.bodyLarge?.color),
+                    style: TextStyle(
+                        fontSize: 16,
+                        color: Theme.of(context).textTheme.bodyLarge?.color),
                   ),
                   SizedBox(height: 16),
                   Center(
@@ -74,16 +79,21 @@ class BookmarkDetailScreen extends StatelessWidget {
                       ),
                     ),
                   ),
-                  SizedBox(height: 16),
+                  SizedBox(height: 20),
                   Text(
                     "Chapters In Your Book (${subjects.length})",
-                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Theme.of(context).textTheme.bodyLarge?.color),
+                    style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                        color: Theme.of(context).textTheme.bodyLarge?.color),
                   ),
                   Text(
                     "List of chapters that you have extracted",
-                    style: TextStyle(fontSize: 16, color: Theme.of(context).textTheme.bodyLarge?.color),
+                    style: TextStyle(
+                        fontSize: 16,
+                        color: Theme.of(context).textTheme.bodyLarge?.color),
                   ),
-                  SizedBox(height: 8),
+                  SizedBox(height: 12),
                   if (snapshot.connectionState == ConnectionState.waiting)
                     Center(child: CircularProgressIndicator())
                   else if (snapshot.hasError)
@@ -113,11 +123,11 @@ class BookmarkDetailScreen extends StatelessWidget {
                           },
                           child: Container(
                             decoration: BoxDecoration(
-                              color: Color(0xFF1C88BF),
+                              color: Theme.of(context).scaffoldBackgroundColor,
                               borderRadius: BorderRadius.circular(8),
                               boxShadow: [
                                 BoxShadow(
-                                  color: Colors.grey.withOpacity(0.5),
+                                  color: Theme.of(context).shadowColor,
                                   spreadRadius: 2,
                                   blurRadius: 5,
                                   offset: Offset(0, 3),
@@ -133,7 +143,10 @@ class BookmarkDetailScreen extends StatelessWidget {
                                     Text(
                                       subject.title,
                                       style: TextStyle(
-                                          color: Colors.white,
+                                          color: Theme.of(context)
+                                              .textTheme
+                                              .bodyLarge
+                                              ?.color,
                                           fontSize: 16,
                                           fontWeight: FontWeight.bold),
                                       textAlign: TextAlign.center,
@@ -143,7 +156,12 @@ class BookmarkDetailScreen extends StatelessWidget {
                                     SizedBox(height: 8),
                                     Text(
                                       '${subject.questionSetIds.length} Exercise(s)',
-                                      style: TextStyle(color: Colors.white),
+                                      style: TextStyle(
+                                        color: Theme.of(context)
+                                            .textTheme
+                                            .bodyLarge
+                                            ?.color,
+                                      ),
                                     ),
                                   ],
                                 ),
