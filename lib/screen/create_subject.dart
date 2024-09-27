@@ -128,7 +128,7 @@ class _CreateSubjectState extends State<CreateSubject> {
                       size: MediaQuery.of(context).size.width * 0.2,
                       secondRingColor: Colors.lightBlue,
                       thirdRingColor: Colors.grey),
-                  SizedBox(width: 20),
+                  SizedBox(height: 20),
                   Text('Extracting file...'),
                 ],
               ),
@@ -234,91 +234,88 @@ class _CreateSubjectState extends State<CreateSubject> {
   Widget build(BuildContext context) {
     var themeprov = Provider.of<ThemeNotifier>(context);
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Color(0xFF1C88BF),
-        actions: [
-          Switch(
-            thumbIcon: themeprov.isDarkTheme
-                ? WidgetStateProperty.all(const Icon(Icons.nights_stay))
-                : WidgetStateProperty.all(const Icon(Icons.sunny)),
-            activeColor: Colors.white,
-            inactiveThumbColor: Colors.indigo,
-            value: themeprov.isDarkTheme,
-            onChanged: (bool value) {
-              themeprov.toggleTheme();
-            },
-          ),
-        ],
-      ),
-      body: PageView(
-        children: <Widget>[buildSubjectPage(context)],
-      ),
-    );
-  }
-
-  Widget buildSubjectPage(BuildContext context) {
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: <Widget>[
-          pickedFile != null
-              ? Container(
-                  width: MediaQuery.of(context).size.width / 1.5,
-                  height: MediaQuery.of(context).size.height / 1.5,
-                  alignment: Alignment.center,
-                  child: SfPdfViewer.file(
-                    scrollDirection: PdfScrollDirection.horizontal,
-                    pageLayoutMode: PdfPageLayoutMode.single,
-                    File(pickedFile!.path!),
-                  ),
-                )
-              : Container(
-                  child: Text(
-                    "Upload Your File",
-                    style: TextStyle(
-                        fontSize: 24,
-                        color: Theme.of(context).textTheme.bodyLarge?.color),
+        appBar: AppBar(
+          backgroundColor: Color(0xFF1C88BF),
+          actions: [
+            Switch(
+              thumbIcon: themeprov.isDarkTheme
+                  ? WidgetStateProperty.all(const Icon(Icons.nights_stay))
+                  : WidgetStateProperty.all(const Icon(Icons.sunny)),
+              activeColor: Colors.white,
+              inactiveThumbColor: Colors.indigo,
+              value: themeprov.isDarkTheme,
+              onChanged: (bool value) {
+                themeprov.toggleTheme();
+              },
+            ),
+          ],
+        ),
+        body: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              pickedFile != null
+                  ? Container(
+                      width: MediaQuery.of(context).size.width / 1.5,
+                      height: MediaQuery.of(context).size.height / 1.5,
+                      alignment: Alignment.center,
+                      child: SfPdfViewer.file(
+                        scrollDirection: PdfScrollDirection.horizontal,
+                        pageLayoutMode: PdfPageLayoutMode.single,
+                        File(pickedFile!.path!),
+                      ),
+                    )
+                  : Container(
+                      child: Text(
+                        "Upload Your File",
+                        style: TextStyle(
+                            fontSize: 24,
+                            color:
+                                Theme.of(context).textTheme.bodyLarge?.color),
+                      ),
+                    ),
+              Container(
+                padding: const EdgeInsets.only(right: 10, left: 10),
+                child: Text(
+                  fileName,
+                  overflow: TextOverflow.ellipsis,
+                  style: const TextStyle(
+                    fontSize: 18,
                   ),
                 ),
-          Container(
-            padding: const EdgeInsets.only(right: 10, left: 10),
-            child: Text(
-              fileName,
-              overflow: TextOverflow.ellipsis,
-              style: const TextStyle(
-                fontSize: 18,
               ),
-            ),
-          ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [
-              CustomElevatedButton(
-                label: pickedFile != null ? "Change File" : "Upload File",
-                onPressed: pickFile,
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  CustomElevatedButton(
+                    label: pickedFile != null ? "Change File" : "Upload File",
+                    onPressed: pickFile,
+                  ),
+                  CustomElevatedButton(
+                    label: "Extract File",
+                    onPressed: pickedFile != null
+                        ? () async {
+                            await uploadFile(context);
+                          }
+                        : null,
+                  ),
+                ],
               ),
-              CustomElevatedButton(
-                label: "Extract File",
-                onPressed: pickedFile != null
-                    ? () async {
-                        await uploadFile(context);
-                      }
-                    : null,
+              SizedBox(
+                height: 8,
               ),
+              Padding(
+                padding: const EdgeInsets.all(10.0),
+                child: Text(
+                  "Note:\nPlease ensure that the file contains texts,\nnot only images.",
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                      color: Color.fromARGB(255, 160, 156, 156),
+                      fontWeight: FontWeight.bold),
+                ),
+              )
             ],
           ),
-          SizedBox(
-            height: 8,
-          ),
-          Padding(
-            padding: const EdgeInsets.all(10.0),
-            child: Text(
-              "Note: Please ensure that the file contains text and not only images.",
-              style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold),
-            ),
-          )
-        ],
-      ),
-    );
+        ));
   }
 }

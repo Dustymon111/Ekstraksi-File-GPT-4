@@ -3,17 +3,23 @@ import 'package:fl_chart/fl_chart.dart';
 
 class CustomLineChart extends StatelessWidget {
   final List<double> yValues;
+  final List<String>
+      statuses; // Assuming statuses are strings like "finished" or "not finished"
+
+  CustomLineChart({
+    required this.yValues,
+    required this.statuses,
+  })  : assert(yValues.length == statuses.length,
+            "yValues and statuses must have the same length"),
+        maxX = (yValues.isNotEmpty) ? yValues.length.toDouble() : 10,
+        minX = 1,
+        maxY = 100,
+        minY = 0;
+
   final double maxX;
   final double minX;
   final double maxY;
   final double minY;
-
-  CustomLineChart({
-    required this.yValues,
-  })  : maxX = (yValues.isNotEmpty) ? yValues.length.toDouble() : 10,
-        minX = 1,
-        maxY = 100,
-        minY = 0;
 
   @override
   Widget build(BuildContext context) {
@@ -21,10 +27,21 @@ class CustomLineChart extends StatelessWidget {
       return Center(child: Text('No data available'));
     }
 
+    // Filter the spots based on status and score
     List<FlSpot> spots = List.generate(
       yValues.length,
-      (index) => FlSpot((index + 1).toDouble(), yValues[index]),
-    );
+      (index) {
+        if (statuses[index] != "Selesai" && yValues[index] == 0) {
+          return null; // Skip this point
+        }
+        return FlSpot((index + 1).toDouble(), yValues[index]);
+      },
+    ).whereType<FlSpot>().toList(); // Remove null values
+
+    // If no valid data points remain
+    if (spots.isEmpty) {
+      return Center(child: Text('No valid data available'));
+    }
 
     return Container(
       padding: EdgeInsets.all(10),

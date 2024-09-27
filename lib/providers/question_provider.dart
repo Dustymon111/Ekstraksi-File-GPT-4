@@ -68,7 +68,7 @@ class QuestionProvider extends ChangeNotifier {
     _essayAnswers.clear();
   }
 
-  Future<void> fetchQuestionSets(String subjectId) async {
+  Future<List<QuestionSet>> fetchQuestionSets(String subjectId) async {
     try {
       QuerySnapshot questionSetSnapshot = await _firestore
           .collection('question_set')
@@ -79,40 +79,50 @@ class QuestionProvider extends ChangeNotifier {
         _questionSets.clear();
 
         _questionSets = await Future.wait(
-            questionSetSnapshot.docs.map((questionSetDoc) async {
-          final data = questionSetDoc.data() as Map<String, dynamic>;
-          final questionSet = QuestionSet.fromMap(data);
-          questionSet.id = questionSetDoc.id;
+          questionSetSnapshot.docs.map((questionSetDoc) async {
+            final data = questionSetDoc.data() as Map<String, dynamic>;
 
-          // Fetch questions for each question set
-          QuerySnapshot questionSnapshot =
-              await questionSetDoc.reference.collection('question').get();
-          questionSet.questions = questionSnapshot.docs.map((questionDoc) {
-            return Question.fromMap(questionDoc.data() as Map<String, dynamic>);
-          }).toList();
+            final questionSet = QuestionSet.fromMap(data);
+            questionSet.id = questionSetDoc.id;
 
-          questionSet.questions.sort((a, b) {
-            return typePriority
-                .indexOf(a.type)
-                .compareTo(typePriority.indexOf(b.type));
-          });
-          return questionSet;
-        }).toList());
+            QuerySnapshot questionSnapshot =
+                await questionSetDoc.reference.collection('question').get();
+
+            questionSet.questions = questionSnapshot.docs.map((questionDoc) {
+              return Question.fromMap(
+                  questionDoc.data() as Map<String, dynamic>);
+            }).toList();
+
+            questionSet.questions.sort((a, b) {
+              return typePriority
+                  .indexOf(a.type)
+                  .compareTo(typePriority.indexOf(b.type));
+            });
+
+            return questionSet;
+          }).toList(),
+        );
+
         _notifyChanges();
+        return _questionSets;
       } else {
         print('No question sets found for the current subject.');
         _questionSets = [];
         _notifyChanges();
+        return _questionSets;
       }
     } catch (e) {
       print('Error fetching question sets: $e');
       Fluttertoast.showToast(
-          msg: "Error fetching question sets: $e",
-          toastLength: Toast.LENGTH_LONG,
-          gravity: ToastGravity.BOTTOM,
-          backgroundColor: Colors.red,
-          textColor: Colors.white,
-          fontSize: 16.0);
+        msg: "Error fetching question sets: $e",
+        toastLength: Toast.LENGTH_LONG,
+        gravity: ToastGravity.BOTTOM,
+        backgroundColor: Colors.red,
+        textColor: Colors.white,
+        fontSize: 16.0,
+      );
+
+      return [];
     }
   }
 
@@ -186,7 +196,8 @@ class QuestionProvider extends ChangeNotifier {
     }
   }
 
-  Stream<List<double>> getPointsStreamFromFirestore(String subjectId) {
+  Stream<List<Map<String, dynamic>>> getPointsStreamFromFirestore(
+      String subjectId) {
     return FirebaseFirestore.instance
         .collection('question_set')
         .where('subjectId', isEqualTo: subjectId)
@@ -194,7 +205,10 @@ class QuestionProvider extends ChangeNotifier {
         .map((snapshot) {
       return snapshot.docs.map((doc) {
         final data = doc.data() as Map<String, dynamic>;
-        return (data['point'] as num).toDouble();
+        return {
+          'point': (data['point'] as num).toDouble(),
+          'status': data['status'] as String, // Assuming status is a String
+        };
       }).toList();
     });
   }

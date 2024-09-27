@@ -60,7 +60,7 @@ class _CreateTopicScreenState extends State<CreateTopicScreen> {
             children: [
               LoadingAnimationWidget.prograssiveDots(
                 color: Colors.blue,
-                size: MediaQuery.of(context).size.width * 0.25,
+                size: MediaQuery.of(context).size.width * 0.2,
               ),
               SizedBox(height: 20),
               Text(

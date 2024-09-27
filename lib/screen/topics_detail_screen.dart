@@ -25,13 +25,15 @@ class SubjectDetailScreen extends StatefulWidget {
 
 class _SubjectDetailScreenState extends State<SubjectDetailScreen> {
   bool _isChartVisible = false; // State variable to manage chart visibility
+  late Future<List<QuestionSet>> _futureQuestionSets;
 
   @override
   void initState() {
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      context.read<QuestionProvider>().fetchQuestionSets(widget.subject.id!);
       context.read<QuestionProvider>().clearSelectedOption();
     });
+    _futureQuestionSets =
+        context.read<QuestionProvider>().fetchQuestionSets(widget.subject.id!);
     super.initState();
   }
 
@@ -199,7 +201,7 @@ class _SubjectDetailScreenState extends State<SubjectDetailScreen> {
         backgroundColor: Color(0xFF1C88BF),
       ),
       body: Padding(
-        padding: const EdgeInsets.all(16.0),
+        padding: const EdgeInsets.symmetric(horizontal: 16),
         child: SingleChildScrollView(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -248,7 +250,7 @@ class _SubjectDetailScreenState extends State<SubjectDetailScreen> {
                 ),
               ),
               if (_isChartVisible)
-                StreamBuilder<List<double>>(
+                StreamBuilder<List<Map<String, dynamic>>>(
                   stream: questionProvider
                       .getPointsStreamFromFirestore(widget.subject.id!),
                   builder: (context, snapshot) {
@@ -257,7 +259,14 @@ class _SubjectDetailScreenState extends State<SubjectDetailScreen> {
                     } else if (snapshot.hasError) {
                       return Center(child: Text('Error: ${snapshot.error}'));
                     } else if (snapshot.hasData && snapshot.data != null) {
-                      return CustomLineChart(yValues: snapshot.data!);
+                      List<double> scores = snapshot.data!
+                          .map((data) => data['point'] as double)
+                          .toList();
+                      List<String> statuses = snapshot.data!
+                          .map((data) => data['status'] as String)
+                          .toList();
+                      return CustomLineChart(
+                          yValues: scores, statuses: statuses);
                     } else {
                       return Center(child: Text('No data available'));
                     }
@@ -271,111 +280,129 @@ class _SubjectDetailScreenState extends State<SubjectDetailScreen> {
                     fontWeight: FontWeight.bold,
                     color: Theme.of(context).textTheme.bodyLarge?.color),
               ),
-              ListView.builder(
-                shrinkWrap: true,
-                physics: NeverScrollableScrollPhysics(),
-                itemCount: questionProvider.questionSets.length,
-                itemBuilder: (context, index) {
-                  List<QuestionSet> questionSets =
-                      questionProvider.questionSets;
-                  QuestionSet questionSet = questionSets[index];
-                  List<Question> questions = questionSet.questions;
-                  return Card(
-                    margin: const EdgeInsets.only(bottom: 8.0),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10),
-                      side: BorderSide(
-                        color: Colors.blue, // border color
-                        width: 1, // border width
-                      ),
-                    ),
-                    elevation: 3,
-                    child: Padding(
-                      padding: const EdgeInsets.all(12.0), // Adjust padding
-                      child: ListTile(
-                        contentPadding:
-                            EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                        title: Text(
-                          questionSet.title != null && questionSet.title != ""
-                              ? questionSet.title!
-                              : 'Question Set ${index + 1}',
-                          style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              overflow: TextOverflow.ellipsis,
-                              color:
-                                  Theme.of(context).textTheme.bodyLarge?.color),
-                          maxLines: 1,
-                        ),
-                        subtitle: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              'Number of Questions: ${questionSet.questionCount}',
+              FutureBuilder<List<QuestionSet>>(
+                future:
+                    _futureQuestionSets, // Ensure the correct Future is passed here
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return Center(child: CircularProgressIndicator());
+                  } else if (snapshot.hasError) {
+                    return Center(child: Text('Error: ${snapshot.error}'));
+                  } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                    return Center(child: Text('No question sets available.'));
+                  } else {
+                    List<QuestionSet> questionSets = snapshot.data!;
+
+                    return ListView.builder(
+                      shrinkWrap: true,
+                      physics: NeverScrollableScrollPhysics(),
+                      itemCount: questionSets.length,
+                      itemBuilder: (context, index) {
+                        QuestionSet questionSet = questionSets[index];
+                        List<Question> questions = questionSet.questions;
+
+                        return Card(
+                          margin: const EdgeInsets.only(bottom: 8.0),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10),
+                            side: BorderSide(
+                              color: Colors.blue,
+                              width: 1,
                             ),
-                            SizedBox(
-                                height: 4), // Add spacing between subtitles
-                            Text(
-                              'Created At: ${questionSet.createdAt != null ? DateFormat('yyyy MMMM dd').format(questionSet.createdAt!) : 'Not Available'}',
-                              style: TextStyle(
-                                color: Theme.of(context)
-                                    .textTheme
-                                    .bodySmall
-                                    ?.color,
-                              ),
-                            ),
-                            Text(
-                              'Finished At: ${questionSet.finishedAt != null ? DateFormat('yyyy MMMM dd').format(questionSet.finishedAt!) : 'Not Finished'}',
-                              style: TextStyle(
-                                color: Theme.of(context)
-                                    .textTheme
-                                    .bodySmall
-                                    ?.color,
-                              ),
-                            ),
-                          ],
-                        ),
-                        trailing: Text(
-                          questionSet.status == "Selesai"
-                              ? "${questionSet.point}/100"
-                              : "Not Finished",
-                          style: TextStyle(
-                            color: questionSet.status == "Selesai"
-                                ? Colors.green
-                                : Colors.red,
-                            fontWeight: FontWeight.bold,
                           ),
-                        ),
-                        onTap: () {
-                          context
-                              .read<GlobalProvider>()
-                              .setQuestionSetIndex(index);
-                          if (questionSet.status == "Selesai") {
-                            _showResultDialog(
-                              context,
-                              questionProvider.questionSets[index],
-                              questionSet.questions,
-                            );
-                          } else {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => QuestionScreen(
-                                  questions: questions
-                                      .where((e) =>
-                                          e.questionSetId == questionSet.id)
-                                      .toList(),
-                                  questionSetId: questionSet.id!,
-                                  subject: widget.subject,
+                          elevation: 3,
+                          child: Padding(
+                            padding: const EdgeInsets.all(12.0),
+                            child: ListTile(
+                              contentPadding: EdgeInsets.symmetric(
+                                  horizontal: 16, vertical: 8),
+                              title: Text(
+                                questionSet.title!.isNotEmpty
+                                    ? questionSet.title!
+                                    : 'Question Set ${index + 1}',
+                                style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    overflow: TextOverflow.ellipsis,
+                                    color: Theme.of(context)
+                                        .textTheme
+                                        .bodyLarge
+                                        ?.color),
+                                maxLines: 1,
+                              ),
+                              subtitle: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    'Number of Questions: ${questionSet.questionCount}',
+                                  ),
+                                  SizedBox(height: 4),
+                                  Text(
+                                    'Created At: ${questionSet.createdAt != null ? DateFormat('yyyy MMMM dd').format(questionSet.createdAt!) : 'Not Available'}',
+                                    style: TextStyle(
+                                      color: Theme.of(context)
+                                          .textTheme
+                                          .bodySmall
+                                          ?.color,
+                                    ),
+                                  ),
+                                  Text(
+                                    'Finished At: ${questionSet.finishedAt != null ? DateFormat('yyyy MMMM dd').format(questionSet.finishedAt!) : 'Not Finished'}',
+                                    style: TextStyle(
+                                      color: Theme.of(context)
+                                          .textTheme
+                                          .bodySmall
+                                          ?.color,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              trailing: Text(
+                                questionSet.status == "Selesai"
+                                    ? "${questionSet.point}/100"
+                                    : "Not Finished",
+                                style: TextStyle(
+                                  color: questionSet.status == "Selesai"
+                                      ? Colors.green
+                                      : Colors.red,
+                                  fontWeight: FontWeight.bold,
                                 ),
                               ),
-                            );
-                          }
-                        },
-                      ),
-                    ),
-                  );
+                              onTap: () {
+                                context
+                                    .read<GlobalProvider>()
+                                    .setQuestionSetIndex(index);
+                                if (questionSet.status == "Selesai") {
+                                  _showResultDialog(
+                                    context,
+                                    questionSets[index],
+                                    questions,
+                                  );
+                                } else {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => QuestionScreen(
+                                        questions: questions
+                                            .where((e) =>
+                                                e.questionSetId ==
+                                                questionSet.id)
+                                            .toList(),
+                                        questionSetId: questionSet.id!,
+                                        subject: widget.subject,
+                                      ),
+                                    ),
+                                  );
+                                }
+                              },
+                            ),
+                          ),
+                        );
+                      },
+                    );
+                  }
                 },
               ),
+
               SizedBox(
                 height: 10,
               ),

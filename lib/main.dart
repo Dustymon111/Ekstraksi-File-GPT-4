@@ -53,23 +53,23 @@ class MyApp extends StatelessWidget {
           shadowColor: Color(0xFF1C88BF),
           splashColor: Colors.black.withOpacity(0.3),
           primaryColor: Colors.white,
-          colorScheme: ColorScheme.light(
+          colorScheme: const ColorScheme.light(
             primary: Color(0xFF1C88BF),
-            background: Colors.white,
+            surface: Colors.white,
             onPrimary: Colors.white,
           ),
           scaffoldBackgroundColor: Colors.white,
-          appBarTheme: AppBarTheme(
+          appBarTheme: const AppBarTheme(
             backgroundColor: Color(0xFF1C88BF),
             titleTextStyle: TextStyle(color: Colors.white, fontSize: 20),
             iconTheme: IconThemeData(color: Colors.white),
           ),
-          bottomNavigationBarTheme: BottomNavigationBarThemeData(
+          bottomNavigationBarTheme: const BottomNavigationBarThemeData(
             backgroundColor: Colors.white,
             selectedItemColor: Color(0xFF1C88BF),
             unselectedItemColor: Color(0xFF121212),
           ),
-          textTheme: TextTheme(
+          textTheme: const TextTheme(
             bodySmall: TextStyle(color: Color(0xFF1C88BF)),
             bodyLarge: TextStyle(color: Color(0xFF121212)),
             bodyMedium: TextStyle(color: Color(0xFF121212)),
@@ -79,15 +79,15 @@ class MyApp extends StatelessWidget {
         darkTheme: ThemeData(
           splashColor: Colors.white.withOpacity(0.5),
           shadowColor: Color(0xFF1C88BF),
-          primaryColor: Color(0xFF121212),
-          colorScheme: ColorScheme.dark(
+          primaryColor: const Color(0xFF121212),
+          colorScheme: const ColorScheme.dark(
             primary: Colors.white,
-            background: Colors.black,
+            surface: Colors.black,
             onPrimary: Color(0xFF121212),
           ),
-          cardColor: Color(0xFF1C88BF),
+          cardColor: const Color(0xFF1C88BF),
           scaffoldBackgroundColor: Color(0xFF121212),
-          appBarTheme: AppBarTheme(
+          appBarTheme: const AppBarTheme(
             backgroundColor: Color(0xFF121212),
             titleTextStyle: TextStyle(color: Colors.white, fontSize: 20),
             iconTheme: IconThemeData(color: Colors.white),
@@ -97,12 +97,12 @@ class MyApp extends StatelessWidget {
           //   backgroundColor: Color(0xFF1C88BF),
           // )),
 
-          bottomNavigationBarTheme: BottomNavigationBarThemeData(
+          bottomNavigationBarTheme: const BottomNavigationBarThemeData(
             backgroundColor: Color(0xFF1C1C1C),
             selectedItemColor: Color(0xFF1C88BF),
             unselectedItemColor: Colors.white,
           ),
-          textTheme: TextTheme(
+          textTheme: const TextTheme(
             bodySmall: TextStyle(color: Color(0xFF1C88BF)),
             bodyLarge: TextStyle(color: Colors.white),
             bodyMedium: TextStyle(color: Colors.white70),
