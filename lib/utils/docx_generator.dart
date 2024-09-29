@@ -1,9 +1,12 @@
 import 'package:aplikasi_ekstraksi_file_gpt4/models/question_model.dart';
 import 'package:docx_template/docx_template.dart';
+import 'package:flutter/material.dart';
 import 'dart:io';
 import 'package:flutter/services.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
-Future<void> generateQuestionsDocx(List<Question> questions) async {
+Future<void> generateQuestionsDocx(
+    List<Question> questions, String title) async {
   try {
     // Load the DOCX template file
     final data = await rootBundle.load('assets/templates - 50 soal.docx');
@@ -71,11 +74,19 @@ Future<void> generateQuestionsDocx(List<Question> questions) async {
     }
 
     final generatedBytes = await docx.generate(content);
-    final outputFile =
-        File('/storage/emulated/0/Documents/ExerciseSample50.docx');
+    final outputFile = File('/storage/emulated/0/Documents/$title.docx');
     if (generatedBytes != null) {
       await outputFile.writeAsBytes(generatedBytes);
     }
+
+    Fluttertoast.showToast(
+      msg: "Exercise Exported as Docx to Device's Document Folder.",
+      toastLength: Toast.LENGTH_LONG,
+      gravity: ToastGravity.BOTTOM,
+      backgroundColor: Colors.lightBlue,
+      textColor: Colors.white,
+      fontSize: 16.0,
+    );
 
     print('DOCX file generated and saved successfully.');
   } catch (e) {

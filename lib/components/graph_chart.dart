@@ -3,14 +3,18 @@ import 'package:fl_chart/fl_chart.dart';
 
 class CustomLineChart extends StatelessWidget {
   final List<double> yValues;
-  final List<String>
-      statuses; // Assuming statuses are strings like "finished" or "not finished"
+  final List<String> statuses;
+  final List<DateTime> createdAt; // Add a parameter for createdAt
 
   CustomLineChart({
     required this.yValues,
     required this.statuses,
-  })  : assert(yValues.length == statuses.length,
-            "yValues and statuses must have the same length"),
+    required this.createdAt,
+  })  : assert(
+            yValues.length == statuses.length &&
+                statuses.length ==
+                    createdAt.length, // Ensure they all have the same length
+            "yValues, statuses, and createdAt must have the same length"),
         maxX = (yValues.isNotEmpty) ? yValues.length.toDouble() : 10,
         minX = 1,
         maxY = 100,
@@ -27,14 +31,33 @@ class CustomLineChart extends StatelessWidget {
       return Center(child: Text('No data available'));
     }
 
+    // Combine yValues, statuses, and createdAt into a list of tuples for sorting
+    List<Map<String, dynamic>> combinedList = List.generate(
+      yValues.length,
+      (index) => {
+        'yValue': yValues[index],
+        'status': statuses[index],
+        'createdAt': createdAt[index],
+      },
+    );
+
+    // Sort the list based on createdAt dates
+    combinedList.sort((a, b) => a['createdAt'].compareTo(b['createdAt']));
+
+    // Extract sorted values
+    List<double> sortedYValues =
+        combinedList.map((e) => e['yValue'] as double).toList();
+    List<String> sortedStatuses =
+        combinedList.map((e) => e['status'] as String).toList();
+
     // Filter the spots based on status and score
     List<FlSpot> spots = List.generate(
-      yValues.length,
+      sortedYValues.length,
       (index) {
-        if (statuses[index] != "Selesai" && yValues[index] == 0) {
+        if (sortedStatuses[index] != "Selesai" && sortedYValues[index] == 0) {
           return null; // Skip this point
         }
-        return FlSpot((index + 1).toDouble(), yValues[index]);
+        return FlSpot((index + 1).toDouble(), sortedYValues[index]);
       },
     ).whereType<FlSpot>().toList(); // Remove null values
 

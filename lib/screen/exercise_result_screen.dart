@@ -1,5 +1,6 @@
 import 'package:aplikasi_ekstraksi_file_gpt4/components/custom_button.dart';
 import 'package:aplikasi_ekstraksi_file_gpt4/models/question_model.dart';
+import 'package:aplikasi_ekstraksi_file_gpt4/models/question_set_model.dart';
 import 'package:aplikasi_ekstraksi_file_gpt4/models/subject_model.dart';
 import 'package:aplikasi_ekstraksi_file_gpt4/providers/question_provider.dart';
 import 'package:aplikasi_ekstraksi_file_gpt4/screen/answers_screen.dart';
@@ -15,6 +16,7 @@ class ExerciseResultScreen extends StatelessWidget {
   final Subject subject;
   final double score;
   final String duration;
+  final QuestionSet questionSet;
 
   ExerciseResultScreen({
     required this.totalQuestions,
@@ -24,6 +26,7 @@ class ExerciseResultScreen extends StatelessWidget {
     required this.subject,
     required this.score,
     required this.duration,
+    required this.questionSet,
   });
 
   @override
@@ -103,9 +106,10 @@ class ExerciseResultScreen extends StatelessWidget {
                 SizedBox(height: 16),
                 CustomElevatedButton(
                   onPressed: () {
-                    generateQuestionsDocx(questions);
+                    generateQuestionsDocx(questions,
+                        questionSet.title ?? "Exercise ${questionSet.id}");
                   },
-                  label: 'Generate Docx',
+                  label: 'Export As Document',
                 ),
                 SizedBox(height: 16),
                 CustomElevatedButton(
@@ -114,7 +118,7 @@ class ExerciseResultScreen extends StatelessWidget {
                       context,
                     );
                   },
-                  label: 'Selesai',
+                  label: 'Exit',
                 ),
                 SizedBox(height: 16),
               ],

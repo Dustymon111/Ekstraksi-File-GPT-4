@@ -10,7 +10,6 @@ import 'package:aplikasi_ekstraksi_file_gpt4/screen/question_screen.dart';
 import 'package:aplikasi_ekstraksi_file_gpt4/utils/docx_generator.dart';
 import 'package:flutter/material.dart';
 import 'package:aplikasi_ekstraksi_file_gpt4/models/subject_model.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
@@ -160,16 +159,10 @@ class _SubjectDetailScreenState extends State<SubjectDetailScreen> {
                               ),
                             ),
                             onPressed: () {
-                              generateQuestionsDocx(questions);
-                              Fluttertoast.showToast(
-                                msg:
-                                    "Soal tersimpan di folder document perangkat.",
-                                toastLength: Toast.LENGTH_LONG,
-                                gravity: ToastGravity.BOTTOM,
-                                backgroundColor: Colors.black,
-                                textColor: Colors.white,
-                                fontSize: 16.0,
-                              );
+                              generateQuestionsDocx(
+                                  questions,
+                                  questionSet.title ??
+                                      "Exercise ${questionSet.id}");
                             },
                             child: Text(
                               'Export as Document',
@@ -265,8 +258,15 @@ class _SubjectDetailScreenState extends State<SubjectDetailScreen> {
                       List<String> statuses = snapshot.data!
                           .map((data) => data['status'] as String)
                           .toList();
+                      List<DateTime> createdDate = snapshot.data!
+                          .map((data) => data['createdAt'] as DateTime)
+                          .toList();
+
                       return CustomLineChart(
-                          yValues: scores, statuses: statuses);
+                        yValues: scores,
+                        statuses: statuses,
+                        createdAt: createdDate,
+                      );
                     } else {
                       return Center(child: Text('No data available'));
                     }
@@ -382,14 +382,14 @@ class _SubjectDetailScreenState extends State<SubjectDetailScreen> {
                                     context,
                                     MaterialPageRoute(
                                       builder: (context) => QuestionScreen(
-                                        questions: questions
-                                            .where((e) =>
-                                                e.questionSetId ==
-                                                questionSet.id)
-                                            .toList(),
-                                        questionSetId: questionSet.id!,
-                                        subject: widget.subject,
-                                      ),
+                                          questions: questions
+                                              .where((e) =>
+                                                  e.questionSetId ==
+                                                  questionSet.id)
+                                              .toList(),
+                                          questionSetId: questionSet.id!,
+                                          subject: widget.subject,
+                                          questionSet: questionSet),
                                     ),
                                   );
                                 }

@@ -103,6 +103,22 @@ class QuestionProvider extends ChangeNotifier {
           }).toList(),
         );
 
+        _questionSets.sort((a, b) {
+          final dateA = _parseDate(a.createdAt);
+          final dateB = _parseDate(b.createdAt);
+
+          // Compare dates, with null dates treated as the oldest
+          if (dateA != null && dateB != null) {
+            return dateA.compareTo(dateB); // Sort by latest date first
+          } else if (dateA == null && dateB != null) {
+            return 1; // Treat null dates as older
+          } else if (dateA != null && dateB == null) {
+            return -1;
+          } else {
+            return 0; // Both dates are null
+          }
+        });
+
         _notifyChanges();
         return _questionSets;
       } else {
@@ -205,9 +221,20 @@ class QuestionProvider extends ChangeNotifier {
         .map((snapshot) {
       return snapshot.docs.map((doc) {
         final data = doc.data() as Map<String, dynamic>;
+        // Check if 'createdAt' is a String or Timestamp and handle accordingly
+        DateTime createdAt;
+        if (data['createdAt'] is Timestamp) {
+          createdAt = (data['createdAt'] as Timestamp).toDate();
+        } else if (data['createdAt'] is String) {
+          createdAt = DateTime.parse(data['createdAt']);
+        } else {
+          createdAt = DateTime
+              .now(); // Default to current time if no valid date is found
+        }
         return {
           'point': (data['point'] as num).toDouble(),
           'status': data['status'] as String, // Assuming status is a String
+          'createdAt': createdAt
         };
       }).toList();
     });
@@ -285,29 +312,51 @@ class QuestionProvider extends ChangeNotifier {
     return pointCalculation;
   }
 
-  Stream<List<QuestionSet>> getQuestionSetsStream(String subjectId) {
-    return FirebaseFirestore.instance
-        .collection('question_set')
-        .where('subjectId', isEqualTo: subjectId)
-        .snapshots()
-        .asyncMap((snapshot) async {
-      List<QuestionSet> questionSets = await Future.wait(
-        snapshot.docs.map((doc) async {
-          final data = doc.data() as Map<String, dynamic>;
-          final questionSet = QuestionSet.fromMap(data);
-          questionSet.id = doc.id;
+  // Helper function to parse date
+  DateTime? _parseDate(dynamic createdAt) {
+    if (createdAt == null) return null;
 
-          // Fetch questions for each question set
-          final questionSnapshot =
-              await doc.reference.collection('question').get();
-          questionSet.questions = questionSnapshot.docs.map((questionDoc) {
-            return Question.fromMap(questionDoc.data() as Map<String, dynamic>);
-          }).toList();
-          return questionSet;
-        }).toList(),
-      );
-      return questionSets;
-    });
+    if (createdAt is String) {
+      try {
+        return DateTime.parse(_convertDateFormat(createdAt));
+      } catch (e) {
+        print("Error parsing date: $e");
+        return null;
+      }
+    } else if (createdAt is DateTime) {
+      return createdAt; // If it's already a DateTime, return it directly
+    } else {
+      return null;
+    }
+  }
+
+  String _convertDateFormat(String dateStr) {
+    // Assuming dateStr is in "YYYY MMMM dd" format like "2024 August 19"
+    final dateParts = dateStr.split(' ');
+    final year = dateParts[0];
+    final month = dateParts[1];
+    final day = dateParts[2];
+
+    final monthNumber = _getMonthNumber(month);
+    return "$year-${monthNumber.toString().padLeft(2, '0')}-$day";
+  }
+
+  int _getMonthNumber(String month) {
+    const months = [
+      'January',
+      'February',
+      'March',
+      'April',
+      'May',
+      'June',
+      'July',
+      'August',
+      'September',
+      'October',
+      'November',
+      'December'
+    ];
+    return months.indexOf(month) + 1;
   }
 
   void _notifyChanges() {

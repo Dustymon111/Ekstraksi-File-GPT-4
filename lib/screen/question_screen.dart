@@ -4,6 +4,7 @@ import 'package:aplikasi_ekstraksi_file_gpt4/components/essay_question_card.dart
 import 'package:aplikasi_ekstraksi_file_gpt4/components/m_answer_question_card.dart';
 import 'package:aplikasi_ekstraksi_file_gpt4/components/m_choice_question_card.dart';
 import 'package:aplikasi_ekstraksi_file_gpt4/models/question_model.dart';
+import 'package:aplikasi_ekstraksi_file_gpt4/models/question_set_model.dart';
 import 'package:aplikasi_ekstraksi_file_gpt4/models/subject_model.dart';
 import 'package:aplikasi_ekstraksi_file_gpt4/providers/bookmark_provider.dart';
 import 'package:aplikasi_ekstraksi_file_gpt4/providers/global_provider.dart';
@@ -23,10 +24,13 @@ class QuestionScreen extends StatefulWidget {
   final List<Question> questions;
   final String questionSetId;
   final Subject subject;
-  QuestionScreen(
-      {required this.questions,
-      required this.questionSetId,
-      required this.subject});
+  final QuestionSet questionSet;
+  QuestionScreen({
+    required this.questions,
+    required this.questionSetId,
+    required this.subject,
+    required this.questionSet,
+  });
 
   @override
   _QuestionScreenState createState() => _QuestionScreenState();
@@ -473,6 +477,7 @@ class _QuestionScreenState extends State<QuestionScreen> {
                               context.read<QuestionProvider>().selectedOption,
                           score: calculatedPoint.roundToDouble(),
                           duration: formatDuration(durationStopwatch.elapsed),
+                          questionSet: widget.questionSet,
                         ),
                       ),
                     );
